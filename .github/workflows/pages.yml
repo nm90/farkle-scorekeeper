@@ -1,0 +1,55 @@
+name: Deploy Six Bones to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Cancel any older, pending runs if a new push happens
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      # The app is a single static file — stage just that, so CLAUDE.md and
+      # anything else in the repo never ships to the public site.
+      - name: Stage the site
+        run: |
+          mkdir -p _site
+          cp index.html _site/
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+          # Unique per run attempt: deploy-pages errors out if it finds more
+          # than one "github-pages" artifact on the run, which happens when a
+          # run is re-run and the prior attempt's artifact is still present.
+          name: github-pages-${{ github.run_attempt }}
+
+      # Explicit condition so deployment only runs if the artifact upload
+      # was completely successful
+      - id: deployment
+        if: success()
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages-${{ github.run_attempt }}
