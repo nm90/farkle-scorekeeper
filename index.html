@@ -211,6 +211,8 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 }
 .btn.blood:hover{filter:brightness(1.1)}
 .btn.ghost{background:transparent;padding:8px 12px;font-size:11px}
+/* a ghost button that latches — the optional rule reads as lit while it runs */
+.btn.ghost[aria-pressed="true"]{border-color:rgba(var(--brass-rgb),.5);color:var(--brass-hi)}
 .btn.tiny{padding:5px 9px;font-size:10px;letter-spacing:.12em}
 
 /* ---------- toolbar ---------- */
@@ -921,6 +923,7 @@ kbd{
     <button class="btn ghost" id="rulesBtn" data-lex="rulesBtn">Rules of the House</button>
     <button class="btn ghost" id="undoBtn" data-lex="undo" hidden>Undo</button>
     <button class="btn ghost" id="soundBtn">Sound: On</button>
+    <button class="btn ghost" id="stakesToggle" aria-pressed="false" hidden>High Stakes: Off</button>
     <button class="btn ghost" id="newBtn" data-lex="newGame" hidden>New Game</button>
   </nav>
 
@@ -1379,6 +1382,11 @@ var DRESSINGS = [
       dice:function(n){ return n + (n === 1 ? " bone" : " bones"); },
       stakesLabel:"High Stakes",
       stakesOff:"Off — a fresh six each turn", stakesOn:"On — the pot rides on the leavings",
+      stakesToggle:function(on){ return "High Stakes: " + (on ? "On" : "Off"); },
+      stakesLocked:"A gamble is already in the air.",
+      logStakesOn:"The house calls high stakes. The pot opens empty.",
+      logStakesOff:function(amt){ return "The house calls off high stakes." +
+        (amt ? " The " + amt + " pot goes back behind the bar." : ""); },
       potLab:"The pot", potStandsLab:"Still standing",
       potIdle:"Fattens with every cash-in. Dies on a farkle, or on a gamble passed up.",
       stakesOrElse:"Pass, and the pot dies with them.",
@@ -1403,7 +1411,8 @@ var DRESSINGS = [
       keysNote:
         "<b>Keys.</b> <kbd>1</kbd>&ndash;<kbd>6</kbd> set aside a die &middot; <kbd>Backspace</kbd> clear &middot; " +
         "<kbd>Enter</kbd> keep &amp; reroll &middot; <kbd>B</kbd> cash in &middot; <kbd>F</kbd> farkle &middot; " +
-        "<kbd>U</kbd> undo &middot; <kbd>G</kbd> take the gamble &middot; <kbd>T</kbd> change the dressing",
+        "<kbd>U</kbd> undo &middot; <kbd>G</kbd> take the gamble &middot; <kbd>H</kbd> high stakes on/off &middot; " +
+        "<kbd>T</kbd> change the dressing",
       rulesNote:
         "<b>The turn.</b> Roll six bones. Set aside at least one scoring die, then either roll what’s left " +
         "or cash in what you’ve gathered. Roll nothing that scores and you’ve <b>farkled</b> — " +
@@ -1479,6 +1488,11 @@ var DRESSINGS = [
       dice:function(n){ return n + (n === 1 ? " cube" : " cubes"); },
       stakesLabel:"Greed Protocol",
       stakesOff:"Off — a fresh six each run", stakesOn:"On — salvage drains the cache",
+      stakesToggle:function(on){ return "Greed Protocol: " + (on ? "On" : "Off"); },
+      stakesLocked:"Protocol is mid-run. Can't unload it now.",
+      logStakesOn:"Greed protocol engaged. The cache boots empty.",
+      logStakesOff:function(amt){ return "Greed protocol disengaged." +
+        (amt ? " The " + amt + " cache is dumped." : ""); },
       potLab:"Cache", potStandsLab:"Still cached",
       potIdle:"Grows with every upload. Purged by a crash, or by salvage refused.",
       stakesOrElse:"Refuse, and the cache purges.",
@@ -1503,7 +1517,8 @@ var DRESSINGS = [
       keysNote:
         "<b>Keys.</b> <kbd>1</kbd>&ndash;<kbd>6</kbd> lock a cube &middot; <kbd>Backspace</kbd> flush &middot; " +
         "<kbd>Enter</kbd> lock &amp; reroll &middot; <kbd>B</kbd> upload &middot; <kbd>F</kbd> crash &middot; " +
-        "<kbd>U</kbd> rollback &middot; <kbd>G</kbd> salvage &middot; <kbd>T</kbd> change the skin",
+        "<kbd>U</kbd> rollback &middot; <kbd>G</kbd> salvage &middot; <kbd>H</kbd> greed protocol on/off &middot; " +
+        "<kbd>T</kbd> change the skin",
       rulesNote:
         "<b>The run.</b> Roll six cubes. Lock at least one scoring cube, then reroll what’s left " +
         "or upload what you’ve buffered. Roll nothing that scores and you <b>crash</b> — " +
@@ -1579,6 +1594,11 @@ var DRESSINGS = [
       dice:function(n){ return n + (n === 1 ? " die" : " dice"); },
       stakesLabel:"The Scoop",
       stakesOff:"Off — six fresh dice each edition", stakesOn:"On — the scoop takes the fund",
+      stakesToggle:function(on){ return "The Scoop: " + (on ? "On" : "Off"); },
+      stakesLocked:"A scoop is already being chased.",
+      logStakesOn:"The desk opens a fund. It starts at nothing.",
+      logStakesOff:function(amt){ return "The desk closes the fund." +
+        (amt ? " The " + amt + " on it returns to petty cash." : ""); },
       potLab:"The fund", potStandsLab:"Still open",
       potIdle:"Every filing pays in. A spike — or a scoop passed up — empties it.",
       stakesOrElse:"Pass, and the fund is spiked.",
@@ -1604,7 +1624,8 @@ var DRESSINGS = [
       keysNote:
         "<b>Keys.</b> <kbd>1</kbd>&ndash;<kbd>6</kbd> set a die &middot; <kbd>Backspace</kbd> reset &middot; " +
         "<kbd>Enter</kbd> set &amp; reroll &middot; <kbd>B</kbd> file it &middot; <kbd>F</kbd> spike it &middot; " +
-        "<kbd>U</kbd> retract &middot; <kbd>G</kbd> take the scoop &middot; <kbd>T</kbd> change the edition",
+        "<kbd>U</kbd> retract &middot; <kbd>G</kbd> take the scoop &middot; <kbd>H</kbd> the scoop on/off &middot; " +
+        "<kbd>T</kbd> change the edition",
       rulesNote:
         "<b>The turn.</b> Roll six dice. Set at least one scoring die, then either reroll what’s left " +
         "or file what you’ve gathered. Roll nothing that scores and the story is <b>spiked</b> — " +
@@ -1680,6 +1701,11 @@ var DRESSINGS = [
       dice:function(n){ return n + (n === 1 ? " cube" : " cubes"); },
       stakesLabel:"Big Bonus",
       stakesOff:"Off — six cubes every turn", stakesOn:"On — leftovers win the jar!",
+      stakesToggle:function(on){ return "Big Bonus: " + (on ? "On!" : "Off"); },
+      stakesLocked:"Somebody's already going for it!",
+      logStakesOn:"Big bonus is on! The jar starts empty.",
+      logStakesOff:function(amt){ return "Big bonus is off." +
+        (amt ? " The " + amt + " jar goes back on the shelf." : ""); },
       potLab:"Candy jar", potStandsLab:"Still full!",
       potIdle:"Every scoop fills the jar. A strike-out or a pass spills it!",
       stakesOrElse:"Pass, and the jar spills!",
@@ -1704,7 +1730,8 @@ var DRESSINGS = [
       keysNote:
         "<b>Keys.</b> <kbd>1</kbd>&ndash;<kbd>6</kbd> keep a cube &middot; <kbd>Backspace</kbd> undo all &middot; " +
         "<kbd>Enter</kbd> keep &amp; roll &middot; <kbd>B</kbd> scoop it up &middot; <kbd>F</kbd> oh no &middot; " +
-        "<kbd>U</kbd> undo &middot; <kbd>G</kbd> grab leftovers &middot; <kbd>T</kbd> change the look",
+        "<kbd>U</kbd> undo &middot; <kbd>G</kbd> grab leftovers &middot; <kbd>H</kbd> big bonus on/off &middot; " +
+        "<kbd>T</kbd> change the look",
       rulesNote:
         "<b>Your turn.</b> Roll six cubes. Keep at least one that scores, then roll the rest " +
         "or scoop up what you’ve got. Roll nothing that scores and you lose the whole turn.<br><br>" +
@@ -1832,6 +1859,7 @@ function renderAll(){
   $("game").hidden = !on;
   $("newBtn").hidden = !on;
   $("undoBtn").hidden = !on;
+  $("stakesToggle").hidden = !on;   // the setup screen has its own select
   $("soundBtn").textContent = L.sound(!muted);
   renderRules();
   if(!on){ renderRoster(); $("potLine").innerHTML = L.potLineIdle; return; }
@@ -1839,6 +1867,7 @@ function renderAll(){
   $("potLine").innerHTML = L.potLine(num(state.target));
   $("undoBtn").disabled = undoStack.length === 0;
   renderTurn();
+  renderStakesToggle();
   renderStakes();
   renderPad();
   renderReading();
@@ -1899,6 +1928,18 @@ function renderTurn(){
 // moment dice are set aside, and reopens if the pad is cleared — so the three
 // handlers that touch the pad repaint all of it together.
 function renderPadArea(){ renderPad(); renderReading(); renderStakes(); }
+
+// The toolbar latch for the optional rule. It is locked — not hidden — while a
+// gamble is armed: those dice were rolled short on the promise of a pot, and
+// the app keeps promises it has already made.
+function renderStakesToggle(){
+  var b = $("stakesToggle"), locked = state.stakes === "armed";
+  b.hidden = state.over;
+  b.textContent = L.stakesToggle(!!state.highStakes);
+  b.setAttribute("aria-pressed", state.highStakes ? "true" : "false");
+  b.disabled = locked;
+  b.title = locked ? L.stakesLocked : "";
+}
 
 function renderStakes(){
   var el = $("stakesSlot");
@@ -2050,6 +2091,29 @@ function prevName(){
   var n = state.players.length;
   return state.players[(state.cur + n - 1) % n].name;
 }
+// The table can pick the variant up or put it down mid-game — it is a house
+// rule, not a game move, so it takes effect from here forward and nothing
+// already scored is revisited. The pot, though, is always reset to nothing:
+// while the rule was off no farkle ever killed it, so whatever `bankBtn` piled
+// up in the meantime was never a pot anyone played for. Starting empty also
+// means the first player offered the leavings risks nothing by passing.
+// Refused while a gamble is armed — see renderStakesToggle.
+function toggleStakes(){
+  if(!state || state.over || state.stakes === "armed") return;
+  snapshot();
+  state.highStakes = !state.highStakes;
+  if(state.highStakes){
+    state.pot = 0;
+    addLog("note", L.logStakesOn);
+    SFX.hot();
+  }else{
+    addLog("note", L.logStakesOff(state.pot > 0 ? num(state.pot) : 0));
+    state.pot = 0;
+    SFX.drop();
+  }
+  renderAll(); save();
+}
+
 function takeStakes(){
   if(!offerOpen()) return;
   snapshot();
@@ -2237,6 +2301,7 @@ $("soundBtn").addEventListener("click", function(){
   if(!muted) SFX.pick();
   save();
 });
+$("stakesToggle").addEventListener("click", toggleStakes);
 $("rulesBtn").addEventListener("click", function(){ $("rulesDlg").showModal(); });
 $("closeRules").addEventListener("click", function(){ $("rulesDlg").close(); });
 $("rulesDlg").addEventListener("click", function(e){
@@ -2261,6 +2326,7 @@ document.addEventListener("keydown", function(e){
     case "f": case "F": e.preventDefault(); $("bustBtn").click(); break;
     case "u": case "U": e.preventDefault(); undo(); break;
     case "g": case "G": e.preventDefault(); takeStakes(); break;
+    case "h": case "H": e.preventDefault(); toggleStakes(); break;
   }
 });
 

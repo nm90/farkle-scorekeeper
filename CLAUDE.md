@@ -29,7 +29,7 @@ cost of clarity about the actual score. Numbers stay numbers everywhere.
 | `<style>` ~9–470 | Base CSS. Ordered by region, with `/* ---------- name ---------- */` banners. |
 | `<style>` ~473–865 | The three non-default dressings, one `/* ===== DRESSING n ===== */` block each. |
 | `<header class="masthead">` | Title, tagline, and `#potLine` (target score, rewritten at render). |
-| `<nav class="toolbar">` | `#dressing` swatches + Rules / Undo / Sound / New Game. `#undoBtn` and `#newBtn` are hidden until a game exists. |
+| `<nav class="toolbar">` | `#dressing` swatches + Rules / Undo / Sound / High Stakes / New Game. `#undoBtn`, `#stakesToggle` and `#newBtn` are hidden until a game exists. |
 | `<section id="setup">` | Roster builder + pot/buy-in selects. Visible when `state === null`. |
 | `<section id="game">` | `#crownSlot` (winner banner) + `.board` — a 2-col grid: turn panel left, ledger + log right. Collapses to 1 col under 880px. |
 | `<dialog id="rulesDlg">` | Scoring table and key bindings. Update this whenever scoring changes. |
@@ -173,7 +173,8 @@ whatever the table has put in since the last farkle. See "High Stakes".
 ## High Stakes (optional variant)
 
 Turned on per game from the setup panel (`#stakesSel` → `state.highStakes`); off by default, and a
-game saved before the option existed simply reads as off.
+game saved before the option existed simply reads as off. It can also be picked up or put down
+**mid-game** — see "The mid-game toggle" below.
 
 The rule: you may open your turn with the dice the last player left on the table instead of a fresh
 six. Score with **any** of them on that first roll and you collect `state.pot` — a progressive pot,
@@ -238,6 +239,31 @@ the variant, not an oversight.
   `potStandsLab`, `potIdle`, `stakesOrElse`, `logPotDead`, `logPotPassed`, and friends). The idle line doubles as the rule's inline explanation, so
   keep it accurate in all four when the economy changes.
 
+### The mid-game toggle
+
+`#stakesToggle` in the toolbar (or <kbd>H</kbd>) flips `state.highStakes` through `toggleStakes()`,
+so a table can take the variant up or drop it without abandoning the game. It is a house rule, not a
+game move: it applies from that moment forward and nothing already scored is revisited. It *is*
+snapshotted, so Undo puts the rule back — unlike the dressing, which deliberately isn't.
+
+- **Both edges reset the pot to 0.** `state.pot` is fed by `bankBtn` unconditionally, so it has been
+  quietly accruing even in a game that never played the variant — but no farkle ever killed it there,
+  so that figure was never a pot anyone played for. Enabling starts from nothing rather than handing
+  the next player a windfall; disabling clears it because the money has nowhere to go. `logStakesOn` /
+  `logStakesOff(amt)` record both, and `logStakesOff` drops its money clause when the pot was empty.
+- **An offer can open the instant you enable it.** `state.carry` is maintained by every turn-ending
+  path whether or not the variant is on, so the dice really are on the table and `offerOpen()` is
+  telling the truth. The pot is 0 at that moment, so the first player offered risks nothing by
+  passing — which is why enabling can't spring a trap.
+- **Locked while a gamble is armed.** `renderStakesToggle()` disables the button (with `stakesLocked`
+  as its `title`) and `toggleStakes()` bails on `state.stakes === "armed"`. Those dice were rolled
+  short on the promise of a pot; the app keeps promises it has already made. Every other state is
+  fair game, including a resolved `"won"` turn — that money is already folded into `state.turn`.
+- **Per-dressing copy**: `stakesToggle(on)` (the latch label, built like `sound(on)`), `stakesLocked`,
+  `logStakesOn`, `logStakesOff(amt)` — plus <kbd>H</kbd> in every `keysNote`.
+- The latch is lit via `.btn.ghost[aria-pressed="true"]`, a token-only rule, so it re-colors per
+  dressing with no per-dressing CSS.
+
 ## Turn flow
 
 Set aside scoring dice → **Keep & Reroll** (`commitPad`) adds to `state.turn` and subtracts from
@@ -283,7 +309,10 @@ for the progressive pot: accrual across players, collection, the won pot not ref
 farkle killing it, an empty pot paying nothing, the short-buy-in exemption, and per-dressing naming;
 plus a 19-assertion walkthrough of the worked example above, including the same pot being won twice;
 plus 28 for passing on the gamble — the pot dying on the first commit, surviving an uncommitted pad,
-surviving a bare table, undo, and the per-dressing warning):
+surviving a bare table, undo, and the per-dressing warning; plus 67 for the mid-game toggle — the
+silent accrual not becoming the pot, both log lines, undo, the offer opening on real leavings, the
+latch refusing clicks and <kbd>H</kbd> mid-gamble, <kbd>H</kbd> ignored in a field, hidden on the
+setup screen and after the game ends, and all four voices):
 
 ```bash
 python3 -m http.server 8731 &                      # serve the project
