@@ -1,0 +1,2274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Six Bones — Saloon Ledger</title>
+<style>
+/* ============================================================
+   SIX BONES · a farkle ledger
+   Four dressings — saloon, neon, broadsheet, bubblegum.
+   Every color, radius, font and texture is a token on :root.
+   A theme block re-points the tokens, then adds only the rules
+   that carry its vibe (texture, motion, letterforms, chrome).
+   ============================================================ */
+:root{
+  /* ---- palette: saloon, the default dressing ---- */
+  --ink:#0e0a08;
+  --wood:#1b1310;
+  --wood-2:#241a14;
+  --parch:#e9dcbd;
+  --parch-2:#d6c298;
+  --parch-3:#bfa87c;
+  --brass:#d4a53a;
+  --brass-hi:#f0d78a;
+  --brass-lo:#8a6a1c;
+  --oxblood:#9a2f27;
+  --oxblood-hi:#c8483c;
+  --felt:#2f5344;
+  --felt-hi:#4c8168;
+  --smoke:rgba(233,220,189,.55);
+  --hot:#ffb347;
+  --hot-rgb:255,179,71;
+
+  /* rgb triplets, so tints can be mixed per theme */
+  --brass-rgb:212,165,58;
+  --brass-hi-rgb:240,215,138;
+  --oxblood-rgb:154,47,39;
+  --felt-rgb:47,83,68;
+  --tint-rgb:233,220,189;
+  --stamp-rgb:200,72,60;
+  --stamp-gold-rgb:240,215,138;
+
+  /* ---- surfaces ---- */
+  --rule:rgba(var(--brass-rgb),.28);
+  --shadow:0 18px 44px rgba(0,0,0,.55);
+  --sheen:rgba(255,225,170,.07);
+  --tint:rgba(var(--tint-rgb),.06);
+  --tint-2:rgba(var(--tint-rgb),.02);
+  --tint-deep:rgba(0,0,0,.2);
+  --panel-bg:
+    linear-gradient(180deg,rgba(var(--tint-rgb),.045),rgba(var(--tint-rgb),.015)),
+    linear-gradient(180deg,var(--wood-2),var(--wood));
+  --panel-inner:rgba(var(--brass-rgb),.16);
+  --panel-inner-inset:5px;
+  --backdrop:rgba(8,5,3,.78);
+  --field-bg:rgba(0,0,0,.3);
+  --opt-bg:#1b1310;
+  --placeholder:rgba(191,168,124,.5);
+  --faint:rgba(191,168,124,.35);
+  --focus:rgba(var(--brass-rgb),.14);
+  --btn-bg:linear-gradient(180deg,rgba(var(--tint-rgb),.12),rgba(var(--tint-rgb),.03));
+  --btn-hover:linear-gradient(180deg,rgba(var(--tint-rgb),.2),rgba(var(--tint-rgb),.06));
+  --tally-bg:linear-gradient(180deg,rgba(var(--felt-rgb),.28),rgba(var(--felt-rgb),.1));
+  --tally-border:rgba(76,129,104,.35);
+  --tally-lab:#9dc4b1;
+  --tally-amt:#e6f2ea;
+  --tally-glow:0 2px 10px rgba(76,129,104,.5);
+
+  /* ---- geometry & letterforms ---- */
+  --r-sm:2px;
+  --r-md:3px;
+  --border-w:1px;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,"Times New Roman",serif;
+  --mono:"SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;
+  --display:var(--serif);
+  --h1-size:clamp(34px,8vw,68px);
+  --h1-track:.16em;
+  --h1-weight:700;
+  --h1-case:uppercase;
+  --h1-grad:linear-gradient(180deg,var(--brass-hi) 0%,var(--brass) 46%,var(--brass-lo) 100%);
+  --h1-shadow:0 3px 0 rgba(0,0,0,.35);
+  --h1-filter:drop-shadow(0 4px 10px rgba(0,0,0,.6));
+  --label-track:.32em;
+  --ease:cubic-bezier(.2,.8,.3,1);
+
+  /* ---- backdrop, texture, light ---- */
+  --body-bg:
+    radial-gradient(1200px 700px at 50% -12%, #3a2a1c 0%, transparent 62%),
+    radial-gradient(800px 600px at 12% 108%, #2a1d16 0%, transparent 60%),
+    linear-gradient(178deg,#150e0b 0%,#0b0705 100%);
+  --grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/></filter><rect width='160' height='160' filter='url(%23n)' opacity='.5'/></svg>");
+  --grain-size:auto;
+  --grain-op:.32;
+  --grain-blend:overlay;
+  --glow:radial-gradient(ellipse at center, rgba(255,190,90,.16), rgba(255,150,50,.05) 42%, transparent 70%);
+  --glow-anim:flicker 7s ease-in-out infinite;
+  --glow-top:-22vh;
+  --glow-h:70vh;
+
+  /* ---- dice art ---- */
+  --die-a:#f3e9d2;
+  --die-b:#cdbb95;
+  --die-edge:#8a7550;
+  --die-edge-w:2;
+  --die-sheen:rgba(255,255,255,.45);
+  --pip:#2a1c12;
+  --die-shadow:drop-shadow(0 4px 6px rgba(0,0,0,.5));
+  --die-hover:translateY(-2px) rotate(-2deg);
+
+  /* ---- the select caret, baked per dressing ---- */
+  --caret:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%23d4a53a' stroke-width='1.6'/></svg>");
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:var(--serif);
+  color:var(--parch);
+  background:var(--body-bg);
+  background-attachment:fixed;
+  min-height:100%;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+/* texture: film grain, scanlines, halftone or nothing */
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:99;
+  opacity:var(--grain-op);mix-blend-mode:var(--grain-blend);
+  background-image:var(--grain);
+  background-size:var(--grain-size);
+}
+/* the light in the room */
+body::before{
+  content:"";position:fixed;left:50%;top:var(--glow-top);width:120vw;height:var(--glow-h);transform:translateX(-50%);
+  pointer-events:none;z-index:0;
+  background:var(--glow);
+  animation:var(--glow-anim);
+}
+@keyframes flicker{0%,100%{opacity:.9}22%{opacity:.72}38%{opacity:1}55%{opacity:.8}72%{opacity:.95}}
+@keyframes hum{0%,100%{opacity:.55;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.06)}}
+@keyframes drift{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(3vh)}}
+
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:22px 18px 64px}
+
+/* ---------- masthead ---------- */
+.masthead{text-align:center;padding:14px 0 6px;position:relative}
+.masthead .bones{display:flex;gap:7px;justify-content:center;margin-bottom:12px}
+.masthead .bones svg{width:22px;height:22px;opacity:.75;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6))}
+.masthead .bones svg:nth-child(2n){transform:rotate(9deg)}
+.masthead .bones svg:nth-child(3n){transform:rotate(-7deg)}
+h1{
+  margin:0;font-size:var(--h1-size);line-height:.94;
+  letter-spacing:var(--h1-track);text-indent:var(--h1-track);
+  font-family:var(--display);font-weight:var(--h1-weight);text-transform:var(--h1-case);
+  color:transparent;background:var(--h1-grad);
+  -webkit-background-clip:text;background-clip:text;
+  text-shadow:var(--h1-shadow);
+  filter:var(--h1-filter);
+}
+.tagline{
+  margin:10px auto 0;font-size:clamp(11px,2.2vw,13px);letter-spacing:.42em;text-indent:.42em;
+  text-transform:uppercase;color:var(--parch-3);
+}
+.divider{display:flex;align-items:center;gap:12px;margin:16px auto 0;max-width:620px;color:var(--brass)}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--rule),transparent)}
+.divider span{font-size:12px;letter-spacing:.3em;text-transform:uppercase;opacity:.8}
+
+/* ---------- panels ---------- */
+.panel{
+  position:relative;
+  background:var(--panel-bg);
+  border:var(--border-w) solid var(--rule);
+  border-radius:var(--r-md);
+  box-shadow:var(--shadow), inset 0 1px 0 var(--sheen);
+  padding:20px;
+}
+.panel::before{
+  content:"";position:absolute;inset:var(--panel-inner-inset);
+  border:1px solid var(--panel-inner);border-radius:var(--r-sm);pointer-events:none;
+}
+.panel > *{position:relative}
+h2{
+  margin:0 0 4px;font-size:13px;letter-spacing:var(--label-track);text-indent:var(--label-track);
+  text-transform:uppercase;color:var(--brass);font-weight:600;
+}
+.sub{margin:0 0 16px;font-size:13px;color:var(--parch-3);font-style:italic}
+
+/* ---------- buttons ---------- */
+button{font-family:inherit;color:inherit;cursor:pointer}
+.btn{
+  appearance:none;border:var(--border-w) solid var(--rule);border-radius:var(--r-sm);
+  background:var(--btn-bg);
+  color:var(--parch);padding:11px 18px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+  transition:transform .12s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
+  box-shadow:inset 0 1px 0 var(--sheen);
+}
+.btn:hover{background:var(--btn-hover);border-color:rgba(var(--brass-rgb),.55)}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.32;cursor:not-allowed;transform:none}
+.btn.brass{
+  background:linear-gradient(180deg,var(--brass-hi),var(--brass) 55%,#a37c1e);
+  color:#2a1c05;border-color:#7d5f14;font-weight:700;
+  box-shadow:0 6px 16px rgba(180,130,30,.28), inset 0 1px 0 rgba(255,255,225,.6);
+}
+.btn.brass:hover{filter:brightness(1.08)}
+.btn.blood{
+  background:linear-gradient(180deg,var(--oxblood-hi),var(--oxblood) 60%,#6d1e18);
+  color:#f6e2d8;border-color:#5c1a15;font-weight:700;
+  box-shadow:0 6px 16px rgba(140,40,32,.32), inset 0 1px 0 rgba(255,190,175,.28);
+}
+.btn.blood:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent;padding:8px 12px;font-size:11px}
+.btn.tiny{padding:5px 9px;font-size:10px;letter-spacing:.12em}
+
+/* ---------- toolbar ---------- */
+.toolbar{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;align-items:center;margin:18px 0 22px}
+
+/* ---------- dressing picker ---------- */
+.dressing{
+  display:flex;align-items:center;gap:6px;padding:5px 8px;
+  border:var(--border-w) solid var(--rule);border-radius:var(--r-sm);background:var(--field-bg);
+}
+.dressing .lab{
+  font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--parch-3);
+  margin-right:2px;font-style:normal;
+}
+.swatch{
+  position:relative;width:32px;height:22px;padding:0;overflow:hidden;
+  border:1px solid var(--rule);border-radius:var(--r-sm);background:none;display:flex;
+  transition:transform .14s var(--ease), box-shadow .18s ease, border-color .18s ease, opacity .18s ease;
+  opacity:.62;
+}
+.swatch i{flex:1}
+.swatch:hover{transform:translateY(-2px);opacity:1}
+.swatch[aria-pressed="true"]{opacity:1;border-color:var(--brass);box-shadow:0 0 0 2px var(--focus)}
+/* each chip wears its own dressing, whatever the page is wearing */
+.swatch[data-set="saloon"] i:nth-child(1){background:#1b1310}
+.swatch[data-set="saloon"] i:nth-child(2){background:#d4a53a}
+.swatch[data-set="saloon"] i:nth-child(3){background:#9a2f27}
+.swatch[data-set="neon"] i:nth-child(1){background:#04060f}
+.swatch[data-set="neon"] i:nth-child(2){background:#00e9ff}
+.swatch[data-set="neon"] i:nth-child(3){background:#ff1f7a}
+.swatch[data-set="broadsheet"] i:nth-child(1){background:#efece1}
+.swatch[data-set="broadsheet"] i:nth-child(2){background:#17150f}
+.swatch[data-set="broadsheet"] i:nth-child(3){background:#b3241c}
+.swatch[data-set="bubblegum"] i:nth-child(1){background:#ff3fa4}
+.swatch[data-set="bubblegum"] i:nth-child(2){background:#5eead4}
+.swatch[data-set="bubblegum"] i:nth-child(3){background:#ffd84d}
+/* the room dims for a beat when the dressing changes */
+.veil{position:fixed;inset:0;z-index:98;pointer-events:none;background:var(--ink);animation:veil .5s ease forwards}
+@keyframes veil{0%{opacity:.85}100%{opacity:0}}
+
+/* ---------- setup ---------- */
+#setup{max-width:640px;margin:0 auto}
+.roster{list-style:none;margin:0 0 14px;padding:0;display:flex;flex-direction:column;gap:8px}
+.roster:empty{display:none}
+.roster li{
+  display:flex;align-items:center;gap:12px;padding:10px 12px;
+  background:linear-gradient(90deg,var(--tint),var(--tint-2));
+  border-left:3px solid var(--brass);border-radius:var(--r-sm);
+}
+.roster .seat{font-size:10px;letter-spacing:.2em;color:var(--parch-3);text-transform:uppercase;min-width:52px}
+.roster .nm{flex:1;font-size:18px}
+.row{display:flex;gap:8px}
+input[type=text],input[type=number],select{
+  font-family:inherit;font-size:16px;color:var(--parch);
+  background:var(--field-bg);border:var(--border-w) solid var(--rule);border-radius:var(--r-sm);padding:11px 13px;
+  outline:none;transition:border-color .18s ease, box-shadow .18s ease;
+}
+input[type=text]:focus,select:focus{border-color:var(--brass);box-shadow:0 0 0 3px var(--focus)}
+input::placeholder{color:var(--placeholder);font-style:italic}
+select{
+  appearance:none;-webkit-appearance:none;padding-right:34px;
+  background-image:var(--caret);
+  background-repeat:no-repeat;background-position:right 12px center;background-size:11px;
+}
+select option{background:var(--opt-bg);color:var(--parch)}
+.grow{flex:1;min-width:0}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:14px;margin:22px 0 20px}
+.opts label{display:flex;flex-direction:column;gap:7px;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--parch-3)}
+.opts select{width:100%}
+
+/* ---------- game grid ---------- */
+.board{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;align-items:start}
+@media (max-width:880px){.board{grid-template-columns:1fr}}
+
+/* ---------- turn panel ---------- */
+.nowup{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.nowup .who{font-size:clamp(26px,5.5vw,40px);line-height:1.05;color:var(--parch);letter-spacing:.02em}
+.nowup .who em{font-style:normal;color:var(--brass)}
+.hand{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--parch-3)}
+
+.tally{
+  display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;
+  padding:14px 16px;margin-bottom:16px;border-radius:var(--r-sm);
+  background:var(--tally-bg);
+  border:var(--border-w) solid var(--tally-border);
+}
+.tally .lab{font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--tally-lab)}
+.tally .amt{font-size:clamp(32px,7vw,46px);line-height:1;font-variant-numeric:tabular-nums;color:var(--tally-amt);text-shadow:var(--tally-glow)}
+.dieleft{display:flex;flex-direction:column;align-items:flex-end;gap:7px}
+.dieleft .pips{display:flex;gap:4px}
+.dieleft .pips svg{width:17px;height:17px}
+.dieleft .pips svg.spent{opacity:.2}
+
+/* ---------- high stakes ---------- */
+.stakes{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:10px 14px;margin-bottom:14px;border-radius:var(--r-sm);font-size:14px;line-height:1.4;
+  border:var(--border-w) solid rgba(var(--hot-rgb),.5);
+  background:linear-gradient(180deg,rgba(var(--hot-rgb),.15),rgba(var(--hot-rgb),.04));
+}
+.stakes .txt{flex:1;min-width:170px}
+.stakes b{color:var(--hot)}
+.stakes .potbox{
+  display:flex;flex-direction:column;align-items:flex-end;gap:3px;line-height:1;
+  padding-left:14px;border-left:1px solid rgba(var(--hot-rgb),.35);
+}
+.stakes .potbox .lab{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--parch-3)}
+.stakes .potbox .amt{font-size:23px;font-variant-numeric:tabular-nums;color:var(--hot)}
+.stakes .warn{color:var(--oxblood-hi);font-weight:600}
+.stakes.armed{border-style:dashed}
+.stakes.won{
+  border-color:var(--tally-border);background:var(--tally-bg);color:var(--tally-lab);
+}
+.stakes.won b{color:var(--tally-amt)}
+.stakes.won .potbox{border-left-color:var(--tally-border)}
+.stakes.won .potbox .amt{color:var(--tally-amt)}
+/* an empty pot reads dead — taking the leavings after a farkle wins nothing */
+.stakes.empty{border-color:var(--rule);background:linear-gradient(180deg,var(--tint),var(--tint-2))}
+.stakes.empty b{color:var(--parch-2)}
+.stakes.empty .potbox{border-left-color:var(--rule)}
+.stakes.empty .potbox .amt{color:var(--parch-3)}
+[data-theme="broadsheet"] .stakes{border-width:2px}
+[data-theme="bubblegum"] .stakes{border-width:2px;border-radius:var(--r-md)}
+
+/* ---------- dice pad ---------- */
+.padhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.pad{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+@media (max-width:520px){.pad{grid-template-columns:repeat(3,1fr)}}
+.face{
+  position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:11px 5px 9px;border-radius:var(--r-md);border:var(--border-w) solid var(--rule);
+  background:linear-gradient(180deg,var(--tint),var(--tint-deep));
+  transition:transform .12s ease,border-color .18s ease,background .18s ease;
+}
+.face.has{
+  border-color:var(--brass);
+  background:linear-gradient(180deg,rgba(var(--brass-rgb),.16),rgba(var(--brass-rgb),.04));
+  box-shadow:0 0 0 1px rgba(var(--brass-rgb),.2), 0 8px 18px rgba(0,0,0,.35);
+}
+.face.dead{
+  border-color:rgba(var(--oxblood-rgb),.6);
+  background:linear-gradient(180deg,rgba(var(--oxblood-rgb),.2),rgba(var(--oxblood-rgb),.05));
+}
+.face .die{width:100%;max-width:56px;height:auto;cursor:pointer;filter:var(--die-shadow);transition:transform .14s cubic-bezier(.34,1.7,.5,1)}
+.face .die:hover{transform:var(--die-hover)}
+.face .die:active{transform:scale(.94)}
+.face .ct{
+  font-size:20px;font-variant-numeric:tabular-nums;min-width:22px;text-align:center;
+  color:var(--parch-3);
+}
+.face.has .ct{color:var(--brass-hi)}
+.face .minus{
+  position:absolute;top:5px;right:5px;width:20px;height:20px;line-height:1;padding:0;border-radius:50%;
+  border:1px solid var(--rule);background:var(--field-bg);color:var(--parch-3);font-size:14px;
+  display:none;align-items:center;justify-content:center;
+}
+.face.has .minus{display:flex}
+.face .minus:hover{border-color:var(--oxblood-hi);color:var(--oxblood-hi)}
+
+/* dice art: pips are styled here so a dressing can re-cut them */
+.die-face{stroke:var(--die-edge);stroke-width:var(--die-edge-w)}
+.die-inner{fill:none;stroke:var(--die-sheen);stroke-width:1.5}
+.die-stop-a{stop-color:var(--die-a)}
+.die-stop-b{stop-color:var(--die-b)}
+.pip{fill:var(--pip)}
+.pip-hi{fill:rgba(255,255,255,.55)}
+
+/* ---------- reading ---------- */
+.reading{
+  margin-top:14px;padding:13px 15px;min-height:72px;border-radius:var(--r-sm);
+  background:repeating-linear-gradient(180deg,var(--tint) 0 27px,transparent 27px 28px), var(--tint-deep);
+  border:var(--border-w) solid var(--rule);
+}
+.reading .empty{font-style:italic;color:var(--parch-3);font-size:14px;opacity:.75}
+.combo{display:flex;justify-content:space-between;gap:12px;font-size:15px;line-height:28px}
+.combo b{color:var(--brass-hi);font-weight:600;font-variant-numeric:tabular-nums}
+.combo.bad{color:var(--oxblood-hi)}
+.combo.total{border-top:1px dashed var(--rule);margin-top:5px;padding-top:5px;font-size:17px}
+.hot{
+  margin-top:9px;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--hot);
+  animation:pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:16px}
+@media (max-width:520px){.actions{grid-template-columns:1fr}}
+.manual{display:flex;gap:8px;align-items:center;margin-top:12px}
+.manual input{width:110px;font-size:15px;padding:8px 10px}
+.manual .hint{font-size:11px;color:var(--parch-3);font-style:italic}
+
+/* ---------- scoreboard ---------- */
+.ledger{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px}
+.ledger li{
+  position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;
+  padding:11px 12px;border-radius:var(--r-sm);border:1px solid transparent;
+  background:linear-gradient(90deg,var(--tint-2),transparent);
+  transition:background .2s ease,border-color .2s ease;
+}
+.ledger li.up{
+  border-color:rgba(var(--brass-rgb),.45);
+  background:linear-gradient(90deg,rgba(var(--brass-rgb),.14),rgba(var(--brass-rgb),.02));
+}
+.ledger li.up::before{
+  content:"";position:absolute;left:-1px;top:-1px;bottom:-1px;width:3px;background:var(--brass);
+}
+.ledger .mark{width:20px;text-align:center;font-size:14px;color:var(--brass);opacity:.85}
+.ledger .nm{font-size:18px;line-height:1.2}
+.ledger .nm small{display:block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--parch-3);margin-top:3px;font-style:normal}
+.ledger .sc{font-size:23px;font-variant-numeric:tabular-nums;color:var(--parch);text-align:right}
+.ledger li.up .sc{color:var(--brass-hi)}
+.bar{grid-column:1/-1;height:3px;background:var(--tint-deep);border-radius:2px;overflow:hidden;margin-top:2px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--brass-lo),var(--brass-hi));transition:width .55s var(--ease)}
+.ledger li.leader .mark{color:var(--brass-hi);text-shadow:0 0 10px rgba(var(--brass-hi-rgb),.6)}
+
+/* ---------- log ---------- */
+.log{list-style:none;margin:0;padding:0;max-height:280px;overflow-y:auto;font-size:14px}
+.log li{padding:7px 2px;border-bottom:1px dotted rgba(var(--brass-rgb),.16);display:flex;gap:9px;align-items:baseline}
+.log li:last-child{border-bottom:0}
+.log .rnd{font-size:9px;letter-spacing:.14em;color:var(--parch-3);min-width:44px;text-transform:uppercase;opacity:.8}
+.log .txt{flex:1;color:var(--smoke)}
+.log .txt b{color:var(--parch)}
+.log li.k-bank .txt b{color:var(--felt-hi)}
+.log li.k-bust .txt b{color:var(--oxblood-hi)}
+.log .empty{font-style:italic;opacity:.5}
+.log::-webkit-scrollbar{width:6px}
+.log::-webkit-scrollbar-thumb{background:rgba(var(--brass-rgb),.28);border-radius:3px}
+
+.stack{display:flex;flex-direction:column;gap:18px}
+
+/* ---------- farkle stamp + shake ---------- */
+@keyframes shake{
+  0%,100%{transform:translate3d(0,0,0)}
+  15%{transform:translate3d(-9px,3px,0) rotate(-.5deg)}
+  30%{transform:translate3d(8px,-3px,0) rotate(.4deg)}
+  45%{transform:translate3d(-6px,2px,0)}
+  60%{transform:translate3d(5px,-2px,0)}
+  80%{transform:translate3d(-3px,1px,0)}
+}
+body.quake .wrap{animation:shake .5s ease}
+.stamp{
+  position:fixed;inset:0;z-index:60;display:grid;place-items:center;pointer-events:none;
+}
+.stamp span{
+  font-family:var(--display);
+  font-size:clamp(40px,13vw,140px);font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  text-align:center;line-height:1;
+  color:rgba(var(--stamp-rgb),.9);border:8px solid rgba(var(--stamp-rgb),.75);border-radius:8px;padding:.06em .16em;
+  transform:rotate(-13deg) scale(2.2);opacity:0;
+  text-shadow:0 0 30px rgba(var(--stamp-rgb),.5);box-shadow:0 0 50px rgba(var(--stamp-rgb),.25);
+  animation:stampin 1.15s cubic-bezier(.2,1.3,.35,1) forwards;
+}
+@keyframes stampin{
+  0%{opacity:0;transform:rotate(-13deg) scale(2.4)}
+  22%{opacity:1;transform:rotate(-13deg) scale(1)}
+  70%{opacity:1;transform:rotate(-13deg) scale(1)}
+  100%{opacity:0;transform:rotate(-13deg) scale(1.06)}
+}
+.stamp.gold span{
+  color:rgba(var(--stamp-gold-rgb),.95);border-color:rgba(var(--stamp-gold-rgb),.8);
+  text-shadow:0 0 34px rgba(var(--stamp-gold-rgb),.6);box-shadow:0 0 50px rgba(var(--stamp-gold-rgb),.25);
+}
+
+/* ---------- victory ---------- */
+.crown{
+  text-align:center;padding:26px 20px;margin-bottom:18px;border-radius:var(--r-md);
+  background:linear-gradient(180deg,rgba(var(--brass-rgb),.2),rgba(var(--brass-rgb),.04));
+  border:var(--border-w) solid rgba(var(--brass-rgb),.5);box-shadow:var(--shadow), inset 0 1px 0 var(--sheen);
+}
+.crown .lab{font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:var(--brass);margin-bottom:10px}
+.crown .nm{font-family:var(--display);font-size:clamp(30px,7vw,52px);color:var(--brass-hi);line-height:1.05;text-shadow:0 3px 18px rgba(var(--brass-rgb),.4)}
+.crown .sc{margin-top:8px;color:var(--parch-3);font-style:italic}
+
+/* ---------- rules dialog ---------- */
+dialog{
+  border:var(--border-w) solid var(--rule);border-radius:var(--r-md);padding:0;max-width:600px;width:calc(100% - 32px);
+  background:var(--panel-bg);color:var(--parch);box-shadow:var(--shadow);
+}
+dialog::backdrop{background:var(--backdrop);backdrop-filter:blur(3px)}
+.dlg{padding:26px}
+.dlg h3{margin:0 0 3px;font-size:13px;letter-spacing:.3em;text-transform:uppercase;color:var(--brass)}
+.dlg .sub{margin-bottom:18px}
+table.rules{width:100%;border-collapse:collapse;font-size:15px}
+table.rules td{padding:8px 0;border-bottom:1px dotted rgba(var(--brass-rgb),.18)}
+table.rules td:last-child{text-align:right;color:var(--brass-hi);font-variant-numeric:tabular-nums;white-space:nowrap;padding-left:12px}
+.note{margin-top:16px;font-size:13px;line-height:1.65;color:var(--smoke)}
+.note b{color:var(--parch)}
+kbd{
+  font-family:var(--mono);font-size:11px;background:var(--field-bg);border:1px solid var(--rule);
+  border-radius:3px;padding:1px 5px;color:var(--brass-hi)
+}
+.foot{margin-top:22px;text-align:right}
+.credit{text-align:center;margin-top:34px;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--faint)}
+
+/* ============================================================
+   DRESSING 2 · NEON — an arcade cabinet at 3am.
+   Monospaced, sharp-cornered, scanlined, everything humming.
+   ============================================================ */
+:root[data-theme="neon"]{
+  color-scheme:dark;
+  --ink:#03040a;
+  --wood:#070c1a;
+  --wood-2:#0d1428;
+  --parch:#ddf6ff;
+  --parch-2:#9fd8ee;
+  --parch-3:#6d92b6;
+  --brass:#00e9ff;
+  --brass-hi:#b8fbff;
+  --brass-lo:#067d94;
+  --oxblood:#d1105e;
+  --oxblood-hi:#ff5c9c;
+  --felt:#5b21b6;
+  --felt-hi:#c4a2ff;
+  --smoke:rgba(190,230,255,.62);
+  --hot:#ff1f7a;
+  --hot-rgb:255,31,122;
+  --brass-rgb:0,233,255;
+  --brass-hi-rgb:184,251,255;
+  --oxblood-rgb:255,31,122;
+  --felt-rgb:91,33,182;
+  --tint-rgb:0,233,255;
+  --stamp-rgb:255,31,122;
+  --stamp-gold-rgb:0,233,255;
+
+  --shadow:0 0 0 1px rgba(0,233,255,.07), 0 18px 44px rgba(0,0,0,.72), 0 0 34px rgba(0,233,255,.1);
+  --sheen:rgba(0,233,255,.14);
+  --tint:rgba(0,233,255,.05);
+  --tint-2:rgba(0,233,255,.02);
+  --tint-deep:rgba(0,0,0,.42);
+  --panel-bg:
+    linear-gradient(180deg,rgba(0,233,255,.05),rgba(255,31,122,.035)),
+    linear-gradient(180deg,var(--wood-2),var(--wood));
+  --panel-inner:rgba(255,31,122,.25);
+  --panel-inner-inset:3px;
+  --backdrop:rgba(2,4,10,.86);
+  --field-bg:rgba(0,22,38,.55);
+  --opt-bg:#0d1428;
+  --placeholder:rgba(109,146,182,.6);
+  --faint:rgba(109,146,182,.4);
+  --tally-bg:linear-gradient(180deg,rgba(91,33,182,.4),rgba(91,33,182,.12));
+  --tally-border:rgba(196,162,255,.42);
+  --tally-lab:#c4a2ff;
+  --tally-amt:#f0e6ff;
+  --tally-glow:0 0 18px rgba(196,162,255,.75);
+
+  --r-sm:0px;
+  --r-md:0px;
+  --serif:ui-monospace,"SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;
+  --display:var(--serif);
+  --h1-size:clamp(28px,6.4vw,58px);
+  --h1-track:.3em;
+  --h1-grad:linear-gradient(180deg,#ffffff 0%,#00e9ff 42%,#ff1f7a 100%);
+  --h1-shadow:none;
+  --h1-filter:drop-shadow(0 0 22px rgba(0,233,255,.55));
+  --label-track:.4em;
+
+  --body-bg:
+    radial-gradient(900px 520px at 80% -12%, rgba(255,31,122,.22), transparent 62%),
+    radial-gradient(760px 520px at 8% 106%, rgba(0,233,255,.18), transparent 60%),
+    linear-gradient(#04060f,#03040a);
+  --grain:
+    repeating-linear-gradient(180deg, rgba(0,233,255,.11) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(255,31,122,.05) 0 1px, transparent 1px 4px);
+  --grain-op:.55;
+  --grain-blend:screen;
+  --glow:radial-gradient(ellipse at center, rgba(0,233,255,.14), rgba(255,31,122,.07) 46%, transparent 72%);
+  --glow-anim:hum 4.5s ease-in-out infinite;
+
+  --die-a:#101c38;
+  --die-b:#060b18;
+  --die-edge:#00e9ff;
+  --die-edge-w:2.5;
+  --die-sheen:rgba(255,31,122,.4);
+  --pip:#00e9ff;
+  --die-shadow:drop-shadow(0 0 7px rgba(0,233,255,.5));
+  --die-hover:translateY(-3px) scale(1.04);
+  --caret:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%2300e9ff' stroke-width='1.6'/></svg>");
+}
+[data-theme="neon"] body{text-shadow:0 0 12px rgba(0,233,255,.14)}
+[data-theme="neon"] h2,[data-theme="neon"] .dlg h3{text-shadow:0 0 14px rgba(0,233,255,.5)}
+[data-theme="neon"] .tagline{color:var(--oxblood-hi);text-shadow:0 0 12px rgba(255,31,122,.55)}
+[data-theme="neon"] .sub,[data-theme="neon"] .manual .hint,[data-theme="neon"] .crown .sc{font-style:normal;opacity:.85}
+[data-theme="neon"] .btn{
+  background:var(--field-bg);border-color:var(--brass);
+  box-shadow:inset 0 0 12px rgba(0,233,255,.12), 0 0 10px rgba(0,233,255,.12);
+}
+[data-theme="neon"] .btn:hover{background:rgba(0,233,255,.14);box-shadow:0 0 18px rgba(0,233,255,.35)}
+[data-theme="neon"] .btn.brass{
+  background:linear-gradient(180deg,#00e9ff,#0090ad);color:#001318;border-color:#8ef6ff;
+  box-shadow:0 0 22px rgba(0,233,255,.5), inset 0 1px 0 rgba(255,255,255,.6);text-shadow:none;
+}
+[data-theme="neon"] .btn.blood{
+  background:linear-gradient(180deg,#ff5c9c,#c50f5c);color:#1b0010;border-color:#ff9ac3;
+  box-shadow:0 0 22px rgba(255,31,122,.45), inset 0 1px 0 rgba(255,255,255,.4);text-shadow:none;
+}
+[data-theme="neon"] .roster li{border-left-width:4px}
+[data-theme="neon"] .face.has{box-shadow:0 0 0 1px var(--brass), 0 0 22px rgba(0,233,255,.35)}
+[data-theme="neon"] .stamp span{border-width:4px;border-radius:0;letter-spacing:.2em;transform:rotate(0) scale(2.2)}
+[data-theme="neon"] .stamp span{animation:glitchin 1.15s steps(12) forwards}
+@keyframes glitchin{
+  0%{opacity:0;transform:scale(1.5) skewX(18deg)}
+  10%{opacity:1;transform:scale(1) skewX(-9deg)}
+  16%{transform:scale(1) skewX(7deg) translateX(9px)}
+  24%{transform:scale(1) skewX(0) translateX(-6px)}
+  70%{opacity:1;transform:scale(1) skewX(0)}
+  84%{opacity:1;transform:scale(1.02) skewX(-4deg) translateX(5px)}
+  100%{opacity:0;transform:scale(1.05)}
+}
+[data-theme="neon"] .crown{border-width:2px;box-shadow:var(--shadow), 0 0 40px rgba(0,233,255,.2)}
+
+/* ============================================================
+   DRESSING 3 · BROADSHEET — a morning paper on newsprint.
+   Letterpress, halftone, hairline rules, no glow anywhere.
+   ============================================================ */
+:root[data-theme="broadsheet"]{
+  color-scheme:light;
+  --ink:#17150f;
+  --wood:#f6f2e6;
+  --wood-2:#fffdf5;
+  --parch:#17150f;
+  --parch-2:#3c372b;
+  --parch-3:#6f6858;
+  --brass:#17150f;
+  --brass-hi:#000000;
+  --brass-lo:#4a4335;
+  --oxblood:#a81f18;
+  --oxblood-hi:#c62d21;
+  --felt:#1d5a3e;
+  --felt-hi:#166b45;
+  --smoke:rgba(23,21,15,.75);
+  --hot:#a81f18;
+  --hot-rgb:168,31,24;
+  --brass-rgb:23,21,15;
+  --brass-hi-rgb:23,21,15;
+  --oxblood-rgb:168,31,24;
+  --felt-rgb:29,90,62;
+  --tint-rgb:23,21,15;
+  --stamp-rgb:168,31,24;
+  --stamp-gold-rgb:23,21,15;
+
+  --rule:rgba(23,21,15,.32);
+  --shadow:5px 5px 0 rgba(23,21,15,.1);
+  --sheen:rgba(255,255,255,.7);
+  --tint:rgba(23,21,15,.05);
+  --tint-2:rgba(23,21,15,.03);
+  --tint-deep:rgba(23,21,15,.05);
+  --panel-bg:linear-gradient(180deg,#fffdf5,#f6f2e6);
+  --panel-inner:rgba(23,21,15,.2);
+  --panel-inner-inset:4px;
+  --backdrop:rgba(23,21,15,.62);
+  --field-bg:rgba(23,21,15,.045);
+  --opt-bg:#fffdf5;
+  --placeholder:rgba(111,104,88,.75);
+  --faint:rgba(111,104,88,.6);
+  --focus:rgba(23,21,15,.12);
+  --tally-bg:linear-gradient(180deg,rgba(29,90,62,.1),rgba(29,90,62,.03));
+  --tally-border:rgba(29,90,62,.4);
+  --tally-lab:#1d5a3e;
+  --tally-amt:#17150f;
+  --tally-glow:none;
+
+  --r-sm:0px;
+  --r-md:0px;
+  --serif:"Iowan Old Style",Georgia,"Times New Roman",Times,serif;
+  --display:"Bodoni MT",Didot,"Playfair Display","Iowan Old Style",Georgia,serif;
+  --h1-size:clamp(38px,9.5vw,84px);
+  --h1-track:.01em;
+  --h1-weight:700;
+  --h1-grad:linear-gradient(180deg,#17150f,#17150f);
+  --h1-shadow:none;
+  --h1-filter:none;
+  --label-track:.26em;
+
+  --body-bg:linear-gradient(180deg,#efece0,#e6e2d3);
+  --grain:radial-gradient(rgba(23,21,15,.5) 22%, transparent 23%);
+  --grain-size:3px 3px;
+  --grain-op:.22;
+  --grain-blend:multiply;
+  --glow:none;
+  --glow-anim:none;
+
+  --die-a:#ffffff;
+  --die-b:#f0ede1;
+  --die-edge:#17150f;
+  --die-edge-w:3;
+  --die-sheen:rgba(23,21,15,.28);
+  --pip:#17150f;
+  --die-shadow:drop-shadow(2px 2px 0 rgba(23,21,15,.22));
+  --die-hover:translateY(-2px);
+  --caret:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%2317150f' stroke-width='1.6'/></svg>");
+}
+[data-theme="broadsheet"] h1{border-top:4px solid var(--ink);border-bottom:2px solid var(--ink);padding:6px 0 8px;text-indent:0}
+[data-theme="broadsheet"] .tagline{letter-spacing:.24em;text-indent:.24em;color:var(--parch-2)}
+[data-theme="broadsheet"] .divider span{font-weight:700;opacity:1}
+[data-theme="broadsheet"] .panel{border-width:2px;border-color:var(--ink)}
+[data-theme="broadsheet"] .panel::before{border-style:solid;border-color:rgba(23,21,15,.22)}
+[data-theme="broadsheet"] h2{border-bottom:2px solid var(--ink);padding-bottom:6px;margin-bottom:8px;font-weight:700}
+[data-theme="broadsheet"] .btn{
+  background:#fffdf5;border:2px solid var(--ink);box-shadow:3px 3px 0 rgba(23,21,15,.18);font-weight:700;
+}
+[data-theme="broadsheet"] .btn:hover{background:var(--ink);color:#fffdf5;box-shadow:1px 1px 0 rgba(23,21,15,.3)}
+[data-theme="broadsheet"] .btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(23,21,15,.2)}
+[data-theme="broadsheet"] .btn.brass{background:var(--ink);color:#fffdf5;border-color:var(--ink)}
+[data-theme="broadsheet"] .btn.brass:hover{filter:none;background:#3c372b}
+[data-theme="broadsheet"] .btn.blood{background:var(--oxblood);color:#fffdf5;border-color:#7d1611}
+[data-theme="broadsheet"] .btn.blood:hover{filter:none;background:#7d1611}
+[data-theme="broadsheet"] .roster li,[data-theme="broadsheet"] .ledger li{border:1px solid rgba(23,21,15,.2)}
+[data-theme="broadsheet"] .ledger li.up{border-color:var(--ink);border-width:2px}
+[data-theme="broadsheet"] .ledger .sc{font-weight:700}
+[data-theme="broadsheet"] .log li{border-bottom:1px solid rgba(23,21,15,.18)}
+[data-theme="broadsheet"] .log .rnd{font-weight:700;color:var(--oxblood)}
+[data-theme="broadsheet"] .reading{background:repeating-linear-gradient(180deg,transparent 0 27px,rgba(23,21,15,.14) 27px 28px),#fffdf5}
+[data-theme="broadsheet"] .stamp span{
+  border-width:6px;border-radius:2px;font-weight:700;
+  text-shadow:none;box-shadow:none;color:rgba(var(--stamp-rgb),.82);
+  animation:slam 1.15s cubic-bezier(.3,1.8,.4,1) forwards;
+}
+@keyframes slam{
+  0%{opacity:0;transform:rotate(-13deg) scale(3.2)}
+  14%{opacity:1;transform:rotate(-13deg) scale(.96)}
+  20%{transform:rotate(-13deg) scale(1.02)}
+  26%{transform:rotate(-13deg) scale(1)}
+  74%{opacity:1;transform:rotate(-13deg) scale(1)}
+  100%{opacity:0;transform:rotate(-13deg) scale(1)}
+}
+[data-theme="broadsheet"] .crown{border:3px double var(--ink);background:#fffdf5}
+[data-theme="broadsheet"] .crown .nm{color:var(--ink);text-shadow:none}
+[data-theme="broadsheet"] kbd{background:#fffdf5;border:1px solid var(--ink);color:var(--ink);font-weight:700}
+[data-theme="broadsheet"] .swatch,[data-theme="broadsheet"] .dressing{border-color:rgba(23,21,15,.35)}
+
+/* ============================================================
+   DRESSING 4 · BUBBLEGUM — a plastic toy on a sunny table.
+   Rounded, chunky, sticker-shadowed, bouncing.
+   ============================================================ */
+:root[data-theme="bubblegum"]{
+  color-scheme:light;
+  --ink:#3a2a4d;
+  --wood:#fff8fc;
+  --wood-2:#ffffff;
+  --parch:#3a2a4d;
+  --parch-2:#5b4870;
+  --parch-3:#8f7fa6;
+  --brass:#ff3fa4;
+  --brass-hi:#e01582;
+  --brass-lo:#ffb3dc;
+  --oxblood:#ff6b35;
+  --oxblood-hi:#f0501a;
+  --felt:#14b8a6;
+  --felt-hi:#0d9488;
+  --smoke:rgba(58,42,77,.72);
+  --hot:#f59e0b;
+  --hot-rgb:245,158,11;
+  --brass-rgb:255,63,164;
+  --brass-hi-rgb:224,21,130;
+  --oxblood-rgb:255,107,53;
+  --felt-rgb:20,184,166;
+  --tint-rgb:255,63,164;
+  --stamp-rgb:255,107,53;
+  --stamp-gold-rgb:255,63,164;
+
+  --rule:rgba(58,42,77,.2);
+  --shadow:8px 8px 0 rgba(58,42,77,.14);
+  --sheen:rgba(255,255,255,.9);
+  --tint:rgba(255,63,164,.07);
+  --tint-2:rgba(255,63,164,.04);
+  --tint-deep:rgba(58,42,77,.06);
+  --panel-bg:linear-gradient(180deg,#ffffff,#fff8fc);
+  --panel-inner:rgba(255,63,164,.16);
+  --panel-inner-inset:7px;
+  --backdrop:rgba(58,42,77,.55);
+  --field-bg:#fff3f9;
+  --opt-bg:#ffffff;
+  --placeholder:rgba(143,127,166,.8);
+  --faint:rgba(143,127,166,.7);
+  --focus:rgba(255,63,164,.2);
+  --tally-bg:linear-gradient(180deg,#ccfbf1,#e9fffb);
+  --tally-border:#5eead4;
+  --tally-lab:#0d9488;
+  --tally-amt:#0f766e;
+  --tally-glow:none;
+
+  --r-sm:12px;
+  --r-md:22px;
+  --border-w:2px;
+  --serif:ui-rounded,"SF Pro Rounded","Varela Round","Trebuchet MS",system-ui,-apple-system,sans-serif;
+  --display:var(--serif);
+  --h1-size:clamp(40px,10vw,80px);
+  --h1-track:-.01em;
+  --h1-weight:800;
+  --h1-grad:linear-gradient(160deg,#ff3fa4 0%,#ff8a3d 38%,#ffd84d 62%,#14b8a6 100%);
+  --h1-shadow:4px 4px 0 rgba(58,42,77,.16);
+  --h1-filter:none;
+  --label-track:.18em;
+
+  --body-bg:
+    radial-gradient(680px 460px at 10% 4%, #ffe0f1 0%, transparent 62%),
+    radial-gradient(680px 460px at 92% 14%, #d8f6ff 0%, transparent 62%),
+    radial-gradient(760px 520px at 46% 104%, #fff2c6 0%, transparent 60%),
+    linear-gradient(160deg,#fdf7ff,#eafcff);
+  --grain:none;
+  --grain-op:0;
+  --grain-blend:normal;
+  --glow:radial-gradient(circle at 22% 40%, rgba(255,63,164,.16), transparent 42%),
+         radial-gradient(circle at 76% 60%, rgba(20,184,166,.16), transparent 44%);
+  --glow-anim:blob 9s ease-in-out infinite;
+  --glow-top:-8vh;
+  --glow-h:118vh;
+
+  --die-a:#ffffff;
+  --die-b:#ffeaf6;
+  --die-edge:#3a2a4d;
+  --die-edge-w:5;
+  --die-sheen:rgba(255,255,255,.9);
+  --pip:#3a2a4d;
+  --die-shadow:drop-shadow(0 5px 0 rgba(58,42,77,.18));
+  --die-hover:translateY(-5px) rotate(-8deg) scale(1.06);
+  --caret:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%23ff3fa4' stroke-width='2.4' stroke-linecap='round'/></svg>");
+}
+@keyframes blob{0%,100%{transform:translateX(-50%) translateY(0) scale(1)}50%{transform:translateX(-50%) translateY(-4vh) scale(1.08)}}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-5px) rotate(3deg)}}
+[data-theme="bubblegum"] .masthead .bones svg{animation:bob 2.6s ease-in-out infinite;filter:drop-shadow(0 3px 0 rgba(58,42,77,.2))}
+[data-theme="bubblegum"] .masthead .bones svg:nth-child(2n){animation-delay:.35s}
+[data-theme="bubblegum"] .masthead .bones svg:nth-child(3n){animation-delay:.7s}
+[data-theme="bubblegum"] .tagline{letter-spacing:.16em;text-indent:.16em;color:var(--brass-hi);font-weight:700}
+[data-theme="bubblegum"] .sub{font-style:normal}
+[data-theme="bubblegum"] .panel{border-color:var(--ink)}
+[data-theme="bubblegum"] .panel::before{border-style:dashed;border-width:2px}
+[data-theme="bubblegum"] h2{color:var(--brass-hi);font-weight:800}
+[data-theme="bubblegum"] .btn{
+  background:#fff;border:2px solid var(--ink);border-radius:999px;font-weight:800;letter-spacing:.1em;
+  box-shadow:0 4px 0 rgba(58,42,77,.22);
+}
+[data-theme="bubblegum"] .btn:hover{background:#fff3f9;transform:translateY(-2px);box-shadow:0 6px 0 rgba(58,42,77,.22)}
+[data-theme="bubblegum"] .btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(58,42,77,.22)}
+[data-theme="bubblegum"] .btn.brass{background:linear-gradient(180deg,#ff7cc2,#ff3fa4);color:#fff;border-color:var(--ink);text-shadow:0 1px 0 rgba(58,42,77,.3)}
+[data-theme="bubblegum"] .btn.blood{background:linear-gradient(180deg,#ffa06b,#ff6b35);color:#fff;border-color:var(--ink)}
+[data-theme="bubblegum"] .btn.brass:hover,[data-theme="bubblegum"] .btn.blood:hover{filter:none}
+[data-theme="bubblegum"] input[type=text],[data-theme="bubblegum"] input[type=number],[data-theme="bubblegum"] select{border-width:2px;border-color:var(--ink)}
+[data-theme="bubblegum"] .roster li{border:2px solid var(--ink);border-left-width:8px;border-radius:var(--r-sm);background:#fff}
+[data-theme="bubblegum"] .face{border-color:var(--ink);background:#fff}
+[data-theme="bubblegum"] .face.has{background:linear-gradient(180deg,#ffe3f2,#fff);box-shadow:0 5px 0 rgba(255,63,164,.35)}
+[data-theme="bubblegum"] .face.dead{background:linear-gradient(180deg,#ffe6da,#fff);border-color:var(--oxblood)}
+[data-theme="bubblegum"] .tally{border-width:2px;border-radius:var(--r-md)}
+[data-theme="bubblegum"] .reading{background:#fff;border-color:var(--ink);border-radius:var(--r-md)}
+[data-theme="bubblegum"] .ledger li{border-radius:var(--r-sm);background:#fff;border:2px solid rgba(58,42,77,.14)}
+[data-theme="bubblegum"] .ledger li.up{border-color:var(--brass);background:linear-gradient(90deg,#ffe3f2,#fff)}
+[data-theme="bubblegum"] .ledger li.up::before{border-radius:var(--r-sm) 0 0 var(--r-sm)}
+[data-theme="bubblegum"] .bar{height:6px;border-radius:999px}
+[data-theme="bubblegum"] .bar i{background:linear-gradient(90deg,#ffd84d,#ff3fa4)}
+[data-theme="bubblegum"] .log li{border-bottom:2px dotted rgba(58,42,77,.14)}
+[data-theme="bubblegum"] .stamp span{
+  border-width:6px;border-radius:24px;font-weight:800;
+  color:#fff;background:rgba(var(--stamp-rgb),.95);border-color:var(--ink);
+  text-shadow:0 3px 0 rgba(58,42,77,.3);box-shadow:0 10px 0 rgba(58,42,77,.22);
+  animation:boing 1.15s cubic-bezier(.2,1.6,.35,1) forwards;
+}
+@keyframes boing{
+  0%{opacity:0;transform:rotate(-13deg) scale(.2)}
+  18%{opacity:1;transform:rotate(-13deg) scale(1.22)}
+  30%{transform:rotate(-9deg) scale(.94)}
+  42%{transform:rotate(-13deg) scale(1.05)}
+  70%{opacity:1;transform:rotate(-13deg) scale(1)}
+  100%{opacity:0;transform:rotate(-13deg) scale(1.3)}
+}
+[data-theme="bubblegum"] .crown{border:3px solid var(--ink);background:linear-gradient(180deg,#fff5fa,#fff)}
+[data-theme="bubblegum"] .crown .nm{color:var(--brass-hi)}
+[data-theme="bubblegum"] kbd{background:#fff;border:2px solid var(--ink);color:var(--brass-hi);font-weight:700}
+[data-theme="bubblegum"] .dressing{background:#fff;border:2px solid var(--ink);border-radius:999px}
+[data-theme="bubblegum"] .swatch{border-radius:999px;border-color:var(--ink)}
+
+@media (max-width:520px){
+  .wrap{padding:14px 12px 48px}
+  .tagline{letter-spacing:.22em;text-indent:.22em}
+  .divider span{letter-spacing:.16em}
+  .panel{padding:16px 14px}
+  .tally{padding:12px 13px;gap:10px}
+  .credit{letter-spacing:.18em}
+  .dressing .lab{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  body::before,.hot,.masthead .bones svg{animation:none}
+  body.quake .wrap{animation:none}
+  .stamp span,
+  [data-theme="neon"] .stamp span,
+  [data-theme="broadsheet"] .stamp span,
+  [data-theme="bubblegum"] .stamp span{animation:stampin .9s steps(1) forwards}
+  .veil{animation:veil .2s linear forwards}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="bones" id="mastheadDice" aria-hidden="true"></div>
+    <h1 data-lex="title">Six Bones</h1>
+    <p class="tagline" data-lex="tagline">Saloon Ledger &amp; Farkle Scorekeeper</p>
+    <div class="divider"><span id="potLine">First to 10,000 takes the pot</span></div>
+  </header>
+
+  <nav class="toolbar" id="toolbar">
+    <div class="dressing" id="dressing" role="group" aria-label="Table dressing">
+      <span class="lab" data-lex="dressing">Dressing</span>
+      <button class="swatch" type="button" data-set="saloon" title="Saloon — a candlelit back room"><i></i><i></i><i></i></button>
+      <button class="swatch" type="button" data-set="neon" title="Neon — an arcade cabinet at 3am"><i></i><i></i><i></i></button>
+      <button class="swatch" type="button" data-set="broadsheet" title="Broadsheet — the morning paper"><i></i><i></i><i></i></button>
+      <button class="swatch" type="button" data-set="bubblegum" title="Bubblegum — a plastic toy in the sun"><i></i><i></i><i></i></button>
+    </div>
+    <button class="btn ghost" id="rulesBtn" data-lex="rulesBtn">Rules of the House</button>
+    <button class="btn ghost" id="undoBtn" data-lex="undo" hidden>Undo</button>
+    <button class="btn ghost" id="soundBtn">Sound: On</button>
+    <button class="btn ghost" id="newBtn" data-lex="newGame" hidden>New Game</button>
+  </nav>
+
+  <!-- ============ SETUP ============ -->
+  <section class="panel" id="setup">
+    <h2 data-lex="setupHead">Gather the Gamblers</h2>
+    <p class="sub" data-lex="setupSub">Two or more. Seats are dealt in the order you name them.</p>
+    <ul class="roster" id="roster"></ul>
+    <form class="row" id="addForm" autocomplete="off">
+      <input type="text" id="nameInput" class="grow" placeholder="Name of the gambler&hellip;" maxlength="18">
+      <button class="btn" type="submit" data-lex="addBtn">Deal In</button>
+    </form>
+    <div class="opts">
+      <label><span data-lex="potLabel">The Pot</span>
+        <select id="targetSel">
+          <option value="2500">2,500</option>
+          <option value="5000">5,000</option>
+          <option value="10000" selected>10,000</option>
+          <option value="20000">20,000</option>
+        </select>
+      </label>
+      <label><span data-lex="buyinLabel">Buy-in (first bank)</span>
+        <select id="thresholdSel">
+          <option value="0">None</option>
+          <option value="350">350</option>
+          <option value="500" selected>500</option>
+          <option value="1000">1,000</option>
+        </select>
+      </label>
+      <label><span data-lex="stakesLabel">High Stakes</span>
+        <select id="stakesSel">
+          <option value="0" selected>Off</option>
+          <option value="1">On</option>
+        </select>
+      </label>
+    </div>
+    <button class="btn brass" id="startBtn" style="width:100%;padding:15px">Open the Table</button>
+  </section>
+
+  <!-- ============ GAME ============ -->
+  <section id="game" hidden>
+    <div id="crownSlot"></div>
+    <div class="board">
+
+      <div class="panel" id="turnPanel">
+        <div class="nowup">
+          <div class="who" id="whoUp">&mdash;</div>
+          <div class="hand" id="handNo">Hand 1</div>
+        </div>
+
+        <div id="stakesSlot"></div>
+
+        <div class="tally">
+          <div>
+            <div class="lab" data-lex="tallyLab">On the table this turn</div>
+            <div class="amt" id="turnAmt">0</div>
+          </div>
+          <div class="dieleft">
+            <div class="lab" data-lex="liveLab">Bones live</div>
+            <div class="pips" id="livePips"></div>
+          </div>
+        </div>
+
+        <div class="padhead">
+          <h2 style="margin:0" data-lex="padHead">Set Aside</h2>
+          <button class="btn tiny" id="clearPad" data-lex="clearBtn">Clear</button>
+        </div>
+        <div class="pad" id="pad"></div>
+
+        <div class="reading" id="reading"></div>
+
+        <div class="actions">
+          <button class="btn" id="keepBtn" data-lex="keepBtn">Keep &amp; Reroll</button>
+          <button class="btn brass" id="bankBtn" data-lex="bankBtn">Cash In</button>
+          <button class="btn blood" id="bustBtn" data-lex="bustBtn">Farkle!</button>
+        </div>
+
+        <div class="manual">
+          <input type="number" id="manualIn" placeholder="0" step="50" min="0">
+          <button class="btn tiny" id="manualBtn" data-lex="manualBtn">Add by hand</button>
+          <span class="hint" data-lex="manualHint">&mdash; for the fast counters</span>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="panel">
+          <h2 data-lex="ledgerHead">The Ledger</h2>
+          <p class="sub" id="ledgerSub">Standings after the last hand.</p>
+          <ul class="ledger" id="ledger"></ul>
+        </div>
+        <div class="panel">
+          <h2 data-lex="logHead">Night's Doings</h2>
+          <ul class="log" id="log"></ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <p class="credit" data-lex="credit">Roll well · Quit early · The house remembers</p>
+</div>
+
+<!-- ============ RULES ============ -->
+<dialog id="rulesDlg">
+  <div class="dlg">
+    <h3 data-lex="rulesHead">Rules of the House</h3>
+    <p class="sub" data-lex="rulesSub">Scoring as this ledger counts it.</p>
+    <table class="rules">
+      <tr><td>Each single <b>1</b></td><td>100</td></tr>
+      <tr><td>Each single <b>5</b></td><td>50</td></tr>
+      <tr><td>Three 1&rsquo;s</td><td>1,000</td></tr>
+      <tr><td>Three of a kind (2&ndash;6)</td><td>face &times; 100</td></tr>
+      <tr><td>Four of a kind</td><td>1,000</td></tr>
+      <tr><td>Five of a kind</td><td>2,000</td></tr>
+      <tr><td>Six of a kind</td><td>3,000</td></tr>
+      <tr><td>Three pairs</td><td>1,500</td></tr>
+      <tr><td>Four of a kind + a pair</td><td>1,500</td></tr>
+      <tr><td>Two triplets</td><td>2,500</td></tr>
+      <tr><td>Straight 1&ndash;2&ndash;3&ndash;4&ndash;5&ndash;6</td><td>1,500</td></tr>
+      <tr id="stakesRow" hidden><td id="stakesRowLab">High Stakes first roll</td><td id="stakesRowPts">the pot</td></tr>
+    </table>
+    <p class="note" id="rulesNote"></p>
+    <p class="note" id="keysNote"></p>
+    <div class="foot"><button class="btn" id="closeRules" data-lex="closeRules">Back to the Table</button></div>
+  </div>
+</dialog>
+
+<script>
+(function(){
+"use strict";
+
+/* ================= dice art ================= */
+var PIPS = {
+  1:[[50,50]],
+  2:[[29,29],[71,71]],
+  3:[[29,29],[50,50],[71,71]],
+  4:[[29,29],[71,29],[29,71],[71,71]],
+  5:[[29,29],[71,29],[50,50],[29,71],[71,71]],
+  6:[[29,27],[71,27],[29,50],[71,50],[29,73],[71,73]]
+};
+// A pip is cut differently by each dressing: turned ivory, a lit pixel,
+// a printed dot, a candy bead. Colors come from CSS; only shape lives here.
+var PIP_ART = {
+  round: function(x,y){ return '<circle class="pip" cx="'+x+'" cy="'+y+'" r="8.5"/>'; },
+  block: function(x,y){ return '<rect class="pip" x="'+(x-8)+'" y="'+(y-8)+'" width="16" height="16" rx="1.5"/>'; },
+  ink:   function(x,y){ return '<circle class="pip" cx="'+x+'" cy="'+y+'" r="9.5"/>'; },
+  candy: function(x,y){
+    return '<circle class="pip" cx="'+x+'" cy="'+y+'" r="9.5"/>'+
+           '<circle class="pip-hi" cx="'+(x-3.2)+'" cy="'+(y-3.6)+'" r="2.6"/>';
+  }
+};
+var dieUid = 0;
+function dieSVG(face, cls){
+  var d = dressing();
+  var art = PIP_ART[d.pips] || PIP_ART.round;
+  var id = "bg" + (++dieUid);
+  var pips = PIPS[face].map(function(p){ return art(p[0], p[1]); }).join("");
+  return '<svg class="'+(cls||"")+'" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">'+
+    '<defs><linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1">'+
+    '<stop class="die-stop-a" offset="0"/><stop class="die-stop-b" offset="1"/></linearGradient></defs>'+
+    '<rect class="die-face" x="4" y="4" width="92" height="92" rx="'+d.rx+'" fill="url(#'+id+')"/>'+
+    '<rect class="die-inner" x="9" y="9" width="82" height="82" rx="'+Math.max(0, d.rx-4)+'"/>'+
+    pips+'</svg>';
+}
+
+/* ================= scoring ================= */
+var SINGLE = {1:100, 5:50};
+var WORDS = {3:"Three",4:"Four",5:"Five",6:"Six"};
+// High Stakes (optional) pays out `state.pot`, a progressive pot rather than a
+// fixed bonus: every cash-in feeds it, any farkle empties it, and the gambler
+// who scores on the leavings takes whatever has built up. No constant here —
+// the payout is whatever the table has put in since the last farkle.
+
+function setValue(face, k){
+  if(k < 3) return 0;
+  if(k === 3) return face === 1 ? 1000 : face * 100;
+  if(k === 4) return 1000;
+  if(k === 5) return 2000;
+  return 3000;
+}
+
+// counts: array[7], index 1..6
+function scoreCounts(counts){
+  var total = 0, f, k;
+  for(f=1; f<=6; f++) total += counts[f];
+  var res = { score:0, parts:[], dead:[], total:total };
+  if(total === 0) return res;
+
+  // --- greedy per-face (optimal under this rule set) ---
+  var gScore = 0, gParts = [], gDead = [];
+  for(f=1; f<=6; f++){
+    var n = counts[f];
+    if(!n) continue;
+    var single = SINGLE[f] || 0;
+    var best = 0, bestK = 0;
+    var ks = [0,3,4,5,6];
+    for(var i=0;i<ks.length;i++){
+      k = ks[i];
+      if(k > n) continue;
+      var v = setValue(f,k) + single * (n - k);
+      if(v > best){ best = v; bestK = k; }
+    }
+    if(best === 0){
+      for(var d=0; d<n; d++) gDead.push(f);
+      continue;
+    }
+    if(bestK >= 3) gParts.push({ label: WORDS[bestK] + " " + f + "'s", pts: setValue(f,bestK) });
+    var extras = n - bestK;
+    if(extras > 0 && single) gParts.push({ label: extras + " × single " + f, pts: single * extras });
+    gScore += best;
+  }
+  res.score = gScore; res.parts = gParts; res.dead = gDead;
+
+  // --- six-dice specials override if richer ---
+  if(total === 6){
+    var pairs = 0, trips = 0, quads = 0, run = true;
+    for(f=1; f<=6; f++){
+      if(counts[f] !== 1) run = false;
+      if(counts[f] === 2) pairs++;
+      if(counts[f] === 3) trips++;
+      if(counts[f] === 4) quads++;
+    }
+    var spec = null;
+    if(run) spec = { label:"Straight, 1 through 6", pts:1500 };
+    else if(trips === 2) spec = { label:"Two triplets", pts:2500 };
+    else if(pairs === 3) spec = { label:"Three pairs", pts:1500 };
+    else if(quads === 1 && pairs === 1) spec = { label:"Four of a kind + a pair", pts:1500 };
+    if(spec && spec.pts > gScore){
+      res.score = spec.pts; res.parts = [spec]; res.dead = [];
+    }
+  }
+  return res;
+}
+
+/* ================= sound ================= */
+var muted = false, actx = null;
+function ac(){
+  if(!actx){
+    var C = window.AudioContext || window.webkitAudioContext;
+    if(!C) return null;
+    actx = new C();
+  }
+  if(actx.state === "suspended") actx.resume();
+  return actx;
+}
+// Every cue is filtered through the dressing's voice: saloon rings soft,
+// neon buzzes an octave up, broadsheet clacks dry and short, bubblegum chimes.
+function voice(){
+  var v = dressing().voice;
+  return {
+    wave: v.wave, tune: v.tune || 1, gain: v.gain == null ? 1 : v.gain,
+    dur: v.dur || 1
+  };
+}
+function tone(freq, dur, type, vol, delay){
+  var a = ac(); if(!a || muted) return;
+  var v = voice();
+  var t = a.currentTime + (delay || 0);
+  var d = dur * v.dur;
+  var o = a.createOscillator(), g = a.createGain();
+  o.type = v.wave || type || "sine";
+  o.frequency.setValueAtTime(freq * v.tune, t);
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime((vol == null ? 0.05 : vol) * v.gain, t + 0.012);
+  g.gain.exponentialRampToValueAtTime(0.0008, t + d);
+  o.connect(g); g.connect(a.destination);
+  o.start(t); o.stop(t + d + 0.03);
+}
+function sweep(f1, f2, dur, vol){
+  var a = ac(); if(!a || muted) return;
+  var v = voice();
+  var t = a.currentTime;
+  var d = dur * v.dur;
+  var o = a.createOscillator(), g = a.createGain();
+  o.type = v.wave || "sawtooth";
+  o.frequency.setValueAtTime(f1 * v.tune, t);
+  o.frequency.exponentialRampToValueAtTime(f2 * v.tune, t + d);
+  g.gain.setValueAtTime((vol || 0.05) * v.gain, t);
+  g.gain.exponentialRampToValueAtTime(0.0008, t + d);
+  o.connect(g); g.connect(a.destination);
+  o.start(t); o.stop(t + d + 0.03);
+}
+var SFX = {
+  pick:  function(){ tone(680, 0.06, "triangle", 0.035); },
+  drop:  function(){ tone(340, 0.07, "triangle", 0.03); },
+  keep:  function(){ tone(520,0.09,"triangle",0.045); tone(780,0.11,"triangle",0.04,0.06); },
+  hot:   function(){ [440,554,659,880].forEach(function(f,i){ tone(f,0.16,"triangle",0.045,i*0.06); }); },
+  bank:  function(){ [392,523,659,784].forEach(function(f,i){ tone(f,0.4,"sine",0.05,i*0.075); }); },
+  bust:  function(){ sweep(220, 55, 0.55, 0.06); tone(98,0.5,"square",0.03,0.04); },
+  win:   function(){ [523,659,784,1047,1319].forEach(function(f,i){ tone(f,0.62,"sine",0.055,i*0.11); }); }
+};
+
+/* ================= state ================= */
+var LS = "sixbones.v1";
+var state = null;
+var roster = [];      // setup-only
+var undoStack = [];
+var pad = [0,0,0,0,0,0,0];   // index 1..6
+
+function freshState(players, target, threshold, highStakes){
+  return {
+    players: players.map(function(n, i){ return { id:i, name:n, score:0, onBoard:false }; }),
+    cur: 0,
+    round: 1,
+    turn: 0,
+    diceLeft: 6,
+    target: target,
+    threshold: threshold,
+    highStakes: highStakes,
+    carry: 0,          // dice the last gambler left on the table, 0 if none
+    pot: 0,            // progressive pot: fed by cash-ins, emptied by any farkle
+    stakes: false,     // false | "armed" | "won" — the gamble, this turn
+    won: 0,            // pot collected this turn, so it can't feed the pot again
+    hot: false,        // the last commit cleared the table (nothing left behind)
+    threw: false,      // this gambler has actually rolled something
+    finalIdx: null,
+    over: false,
+    winner: null,
+    log: []
+  };
+}
+function save(){
+  try{
+    localStorage.setItem(LS, JSON.stringify({ s:state, r:roster, m:muted, t:theme }));
+  }catch(e){}
+}
+function load(){
+  try{
+    var raw = localStorage.getItem(LS);
+    if(!raw) return;
+    var o = JSON.parse(raw);
+    if(o && typeof o.m === "boolean") muted = o.m;
+    if(o && typeof o.t === "string") theme = dressing(o.t).id;
+    if(o && Array.isArray(o.r)) roster = o.r;
+    if(o && o.s && o.s.players && o.s.players.length >= 2) state = o.s;
+    // A game saved before these fields existed reads as "no pot, nothing owed".
+    if(state){
+      ["carry","pot","won"].forEach(function(k){ if(typeof state[k] !== "number") state[k] = 0; });
+      if(state.stakes !== "armed" && state.stakes !== "won") state.stakes = false;
+    }
+  }catch(e){}
+}
+function snapshot(){
+  undoStack.push(JSON.stringify({ s:state, p:pad }));
+  if(undoStack.length > 60) undoStack.shift();
+}
+function undo(){
+  if(!undoStack.length) return;
+  var o = JSON.parse(undoStack.pop());
+  state = o.s; pad = o.p;
+  SFX.drop();
+  renderAll();
+  save();
+}
+
+/* ================= helpers ================= */
+var $ = function(id){ return document.getElementById(id); };
+function num(n){ return n.toLocaleString("en-US"); }
+function esc(s){
+  return String(s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
+function padTotal(){
+  var t = 0; for(var f=1; f<=6; f++) t += pad[f];
+  return t;
+}
+function clearPad(){ pad = [0,0,0,0,0,0,0]; }
+function stamp(text, gold){
+  var el = document.createElement("div");
+  el.className = "stamp" + (gold ? " gold" : "");
+  el.innerHTML = "<span>" + esc(text) + "</span>";
+  document.body.appendChild(el);
+  setTimeout(function(){ el.remove(); }, 1250);
+}
+function quake(){
+  document.body.classList.add("quake");
+  setTimeout(function(){ document.body.classList.remove("quake"); }, 520);
+}
+function addLog(kind, text){
+  state.log.unshift({ r: state.round, k: kind, t: text });
+  if(state.log.length > 120) state.log.pop();
+}
+
+/* ================= dressings =================
+   A dressing is a whole world, not a palette: its own dice art, its own
+   voice for the cues, and its own vocabulary. Colors, type, geometry and
+   texture live in the CSS block under [data-theme="..."]; everything the
+   script has to say out loud lives in `lex` below.
+   The base lexicon is saloon's — the others override what they rename. */
+
+var DRESSINGS = [
+  {
+    id:"saloon", name:"Saloon",
+    pips:"round", rx:18,
+    voice:{ wave:null, tune:1, gain:1, dur:1 },
+    lex:{
+      docTitle:"Six Bones — Saloon Ledger",
+      title:"Six Bones",
+      tagline:"Saloon Ledger &amp; Farkle Scorekeeper",
+      dressing:"Dressing",
+      rulesBtn:"Rules of the House", undo:"Undo", newGame:"New Game",
+      sound:function(on){ return "Sound: " + (on ? "On" : "Off"); },
+
+      setupHead:"Gather the Gamblers",
+      setupSub:"Two or more. Seats are dealt in the order you name them.",
+      namePh:"Name of the gambler…",
+      addBtn:"Deal In",
+      potLabel:"The Pot", buyinLabel:"Buy-in (first bank)",
+      pots:["quick hand","short night","the standard","till sunrise"],
+      noBuyin:"None — bank anything",
+      startBtn:"Open the Table", needMore:"Need at least two gamblers",
+      seat:"Seat", fold:"Fold",
+
+      potLine:function(n){ return "First past " + n + " takes the pot"; },
+      potLineIdle:"First to 10,000 takes the pot",
+      hand:function(n){ return "Hand " + n; },
+      isUp:function(nm){ return "<em>" + nm + "</em> is up"; },
+      lastTail:" &mdash; last hand",
+      closed:"Table closed",
+
+      tallyLab:"On the table this turn", liveLab:"Bones live",
+      padHead:"Set Aside", clearBtn:"Clear",
+      keepBtn:"Keep &amp; Reroll", bankBtn:"Cash In", bustBtn:"Farkle!",
+      manualBtn:"Add by hand", manualHint:"&mdash; for the fast counters",
+
+      readingEmpty:"Tap the bones you’re setting aside from this roll…",
+      deadLine:function(list){ return "Dead bones: " + list + " &mdash; can’t be set aside"; },
+      rollTotal:"This roll",
+      hotLine:"Hot dice — all six come back live",
+
+      ledgerHead:"The Ledger", logHead:"Night's Doings",
+      ledgerSub:"Standings, in seat order.",
+      ledgerSubLast:"Last hand — beat the leader or go home.",
+      ledgerSubOver:"Final standings.",
+      onBoard:"on the board",
+      needsOpen:function(n){ return "needs " + n + " to open"; },
+      setFinish:"set the finish",
+      logEmpty:"Nothing yet.",
+      crownLab:"Takes the pot",
+      crownSc:function(sc, r){ return sc + " points &mdash; hand " + r; },
+      credit:"Roll well · Quit early · The house remembers",
+
+      stampHot:"Hot Dice", stampBust:"Farkle", stampWin:"Winner",
+
+      logOpen:function(nm){ return "The table opens. " + nm + " rolls first."; },
+      logBank:function(nm, amt, tot){ return "<b>" + nm + "</b> cashed in " + amt + " &mdash; now at " + tot + "."; },
+      logShort:function(nm, n){ return "<b>" + nm + "</b> came up short of the " + n + " buy-in."; },
+      logBust:function(nm, lost){ return "<b>" + nm + "</b> farkled" + (lost ? " and dropped " + lost : "") + "."; },
+      logFinal:function(nm){ return "<b>" + nm + "</b> is past the pot. Everyone else gets one last hand."; },
+      logWin:function(nm, sc){ return "<b>" + nm + "</b> takes the pot with " + sc + "."; },
+
+      rulesHead:"Rules of the House", rulesSub:"Scoring as this ledger counts it.",
+      closeRules:"Back to the Table",
+      // --- high stakes: the progressive pot ---
+      dice:function(n){ return n + (n === 1 ? " bone" : " bones"); },
+      stakesLabel:"High Stakes",
+      stakesOff:"Off — a fresh six each turn", stakesOn:"On — the pot rides on the leavings",
+      potLab:"The pot", potStandsLab:"Still standing",
+      potIdle:"Fattens with every cash-in. Dies on a farkle, or on a gamble passed up.",
+      stakesOrElse:"Pass, and the pot dies with them.",
+      logPotPassed:function(who, amt){ return "<b>" + who + "</b> passed on the leavings. The " + amt + " pot dies with them."; },
+      stakesOffer:function(who, d){ return "<b>" + who + "</b> left <b>" + d + "</b> on the table."; },
+      stakesTake:"Take the Gamble",
+      stakesArmed:function(d){ return "High stakes — rolling <b>" + d + "</b>. Score with any of them and the pot is yours."; },
+      stakesWonTxt:function(amt){ return "The pot is yours — <b>" + amt + "</b> added to this turn."; },
+      stakesWonNil:"The pot was empty. Nothing to collect.",
+      logStakes:function(who, d){ return "<b>" + who + "</b> took the leavings — " + d + ", high stakes."; },
+      logStakesWon:function(who, amt){ return "<b>" + who + "</b> scored on the leavings and took the " + amt + " pot."; },
+      logPotDead:function(amt){ return "The " + amt + " pot dies with it."; },
+      stampStakes:"The Pot",
+      stakesRow:"High Stakes, first roll", stakesRowPts:"the pot",
+      stakesNote:
+        "<br><br><b>High stakes.</b> Every cash-in fattens a running pot. You may open your turn with " +
+        "the bones the last gambler left instead of a fresh six — score with any of them on that " +
+        "first roll and the pot joins your tally. Winning it doesn’t spend it: the pot stands, so the " +
+        "next gambler can take the same money again. Two things kill it, and both kill it for the " +
+        "whole table — a farkle, and a gambler who is offered the leavings and rolls a fresh six " +
+        "instead. Your winnings ride with the rest of your turn, so farkle later and they go too.",
+      keysNote:
+        "<b>Keys.</b> <kbd>1</kbd>&ndash;<kbd>6</kbd> set aside a die &middot; <kbd>Backspace</kbd> clear &middot; " +
+        "<kbd>Enter</kbd> keep &amp; reroll &middot; <kbd>B</kbd> cash in &middot; <kbd>F</kbd> farkle &middot; " +
+        "<kbd>U</kbd> undo &middot; <kbd>G</kbd> take the gamble &middot; <kbd>T</kbd> change the dressing",
+      rulesNote:
+        "<b>The turn.</b> Roll six bones. Set aside at least one scoring die, then either roll what’s left " +
+        "or cash in what you’ve gathered. Roll nothing that scores and you’ve <b>farkled</b> — " +
+        "the whole turn goes back to the house.<br><br>" +
+        "<b>Hot dice.</b> Score with all six and you may roll all six again, keeping the tally.<br><br>" +
+        "<b>The finish.</b> When a gambler cashes past the pot, every other player gets one last hand to beat them. " +
+        "Highest score at the end takes it."
+    }
+  },
+  {
+    id:"neon", name:"Neon",
+    pips:"block", rx:3,
+    voice:{ wave:"sawtooth", tune:1.5, gain:.55, dur:.8 },
+    lex:{
+      docTitle:"SIX//BONES — Score Terminal",
+      title:"Six//Bones",
+      tagline:"Cube Protocol · Score Terminal",
+      dressing:"Skin",
+      rulesBtn:"System Manual", undo:"Rollback", newGame:"Reboot",
+      sound:function(on){ return "Audio: " + (on ? "On" : "Off"); },
+
+      setupHead:"Register Runners",
+      setupSub:"Two or more. Slots assigned in order of entry.",
+      namePh:"Runner handle…",
+      addBtn:"Jack In",
+      potLabel:"Target Score", buyinLabel:"Minimum first upload",
+      pots:["sprint","short run","standard","endurance"],
+      noBuyin:"None — upload anything",
+      startBtn:"Boot the Table", needMore:"Two runners minimum",
+      seat:"Slot", fold:"Eject",
+
+      potLine:function(n){ return "Target " + n + " — first past it takes the grid"; },
+      potLineIdle:"Target 10,000 — first past it takes the grid",
+      hand:function(n){ return "Cycle " + n; },
+      isUp:function(nm){ return "<em>" + nm + "</em> has control"; },
+      lastTail:" &mdash; final cycle",
+      closed:"Session ended",
+
+      tallyLab:"Buffered this run", liveLab:"Cubes online",
+      padHead:"Lock In", clearBtn:"Flush",
+      keepBtn:"Lock &amp; Reroll", bankBtn:"Upload", bustBtn:"Crash!",
+      manualBtn:"Inject", manualHint:"&mdash; manual entry",
+
+      readingEmpty:"Select the cubes you’re locking from this roll…",
+      deadLine:function(list){ return "Dead cubes: " + list + " &mdash; cannot be locked"; },
+      rollTotal:"This roll",
+      hotLine:"Overdrive — all six cubes respawn",
+
+      ledgerHead:"Leaderboard", logHead:"System Log",
+      ledgerSub:"Standings, by slot.",
+      ledgerSubLast:"Final cycle — beat the leader or flatline.",
+      ledgerSubOver:"Final standings.",
+      onBoard:"uploaded",
+      needsOpen:function(n){ return "needs " + n + " to unlock"; },
+      setFinish:"triggered the endgame",
+      logEmpty:"Log empty.",
+      crownLab:"High score",
+      crownSc:function(sc, r){ return sc + " points &mdash; cycle " + r; },
+      credit:"Roll fast · Upload early · The grid remembers",
+
+      stampHot:"Overdrive", stampBust:"Crash", stampWin:"Champion",
+
+      logOpen:function(nm){ return "Table online. " + nm + " has control."; },
+      logBank:function(nm, amt, tot){ return "<b>" + nm + "</b> uploaded " + amt + " &mdash; total " + tot + "."; },
+      logShort:function(nm, n){ return "<b>" + nm + "</b> fell short of the " + n + " minimum. Buffer purged."; },
+      logBust:function(nm, lost){ return "<b>" + nm + "</b> crashed" + (lost ? " and lost " + lost : "") + "."; },
+      logFinal:function(nm){ return "<b>" + nm + "</b> passed the target. One cycle left for everyone else."; },
+      logWin:function(nm, sc){ return "<b>" + nm + "</b> takes the grid with " + sc + "."; },
+
+      rulesHead:"System Manual", rulesSub:"Scoring as this terminal computes it.",
+      closeRules:"Return to Terminal",
+      // --- high stakes: the progressive pot ---
+      dice:function(n){ return n + (n === 1 ? " cube" : " cubes"); },
+      stakesLabel:"Greed Protocol",
+      stakesOff:"Off — a fresh six each run", stakesOn:"On — salvage drains the cache",
+      potLab:"Cache", potStandsLab:"Still cached",
+      potIdle:"Grows with every upload. Purged by a crash, or by salvage refused.",
+      stakesOrElse:"Refuse, and the cache purges.",
+      logPotPassed:function(who, amt){ return "<b>" + who + "</b> refused the salvage. The " + amt + " cache purges."; },
+      stakesOffer:function(who, d){ return "<b>" + who + "</b> left <b>" + d + "</b> in the buffer."; },
+      stakesTake:"Salvage Them",
+      stakesArmed:function(d){ return "Greed protocol — rolling <b>" + d + "</b>. Score with any and the cache unlocks."; },
+      stakesWonTxt:function(amt){ return "Cache unlocked — <b>" + amt + "</b> added to this run."; },
+      stakesWonNil:"Cache was empty. Nothing to salvage.",
+      logStakes:function(who, d){ return "<b>" + who + "</b> salvaged " + d + " — greed protocol engaged."; },
+      logStakesWon:function(who, amt){ return "<b>" + who + "</b> scored on salvage and drained the " + amt + " cache."; },
+      logPotDead:function(amt){ return "The " + amt + " cache is purged."; },
+      stampStakes:"Cache",
+      stakesRow:"Greed protocol, first roll", stakesRowPts:"the cache",
+      stakesNote:
+        "<br><br><b>Greed protocol.</b> Every upload grows a shared cache. You may open your run with " +
+        "the cubes the last runner left instead of a fresh six — score with any of them on that first " +
+        "roll and the cache copies into your buffer. Draining it doesn’t clear it: the cache holds, so " +
+        "it can be taken again. Two things purge it, and both purge it gridwide — a crash, and a " +
+        "runner who is offered salvage and boots a fresh six instead. Your take rides with the rest of " +
+        "the run, so crash later and it purges too.",
+      keysNote:
+        "<b>Keys.</b> <kbd>1</kbd>&ndash;<kbd>6</kbd> lock a cube &middot; <kbd>Backspace</kbd> flush &middot; " +
+        "<kbd>Enter</kbd> lock &amp; reroll &middot; <kbd>B</kbd> upload &middot; <kbd>F</kbd> crash &middot; " +
+        "<kbd>U</kbd> rollback &middot; <kbd>G</kbd> salvage &middot; <kbd>T</kbd> change the skin",
+      rulesNote:
+        "<b>The run.</b> Roll six cubes. Lock at least one scoring cube, then reroll what’s left " +
+        "or upload what you’ve buffered. Roll nothing that scores and you <b>crash</b> — " +
+        "the buffer is purged.<br><br>" +
+        "<b>Overdrive.</b> Score with all six and all six respawn, buffer intact.<br><br>" +
+        "<b>Endgame.</b> When a runner uploads past the target, every other runner gets one last cycle. " +
+        "Highest score wins."
+    }
+  },
+  {
+    id:"broadsheet", name:"Broadsheet",
+    pips:"ink", rx:10,
+    voice:{ wave:"square", tune:.62, gain:.3, dur:.34 },
+    lex:{
+      docTitle:"The Daily Bones — Late Edition",
+      title:"The Daily Bones",
+      tagline:"Late Edition · Dice &amp; Fortune",
+      dressing:"Edition",
+      rulesBtn:"The Style Guide", undo:"Retraction", newGame:"New Edition",
+      sound:function(on){ return "Sound: " + (on ? "On" : "Off"); },
+
+      setupHead:"The Bylines",
+      setupSub:"Two or more. Columns run in the order you file them.",
+      namePh:"Name of the correspondent…",
+      addBtn:"Assign",
+      potLabel:"The Deadline", buyinLabel:"Minimum first filing",
+      pots:["a brief","an evening","the standard","a serial"],
+      noBuyin:"None — file anything",
+      startBtn:"Go to Press", needMore:"Two bylines required",
+      seat:"Desk", fold:"Spike",
+
+      potLine:function(n){ return "First past " + n + " makes the front page"; },
+      potLineIdle:"First past 10,000 makes the front page",
+      hand:function(n){ return "Edition " + n; },
+      isUp:function(nm){ return "<em>" + nm + "</em> is on deadline"; },
+      lastTail:" &mdash; final edition",
+      closed:"Presses stopped",
+
+      tallyLab:"Held in copy this turn", liveLab:"Dice in play",
+      padHead:"Set the Type", clearBtn:"Reset",
+      keepBtn:"Set &amp; Reroll", bankBtn:"File It", bustBtn:"Spiked!",
+      manualBtn:"Enter by hand", manualHint:"&mdash; for the quick subs",
+
+      readingEmpty:"Choose the dice you’re setting from this roll…",
+      deadLine:function(list){ return "Dead dice: " + list + " &mdash; can’t be set"; },
+      rollTotal:"This roll",
+      hotLine:"Hot type — all six dice reset",
+
+      ledgerHead:"The Standings", logHead:"The Wire",
+      ledgerSub:"Standings, in desk order.",
+      ledgerSubLast:"Final edition — beat the leader or fold.",
+      ledgerSubOver:"Final standings.",
+      onBoard:"in print",
+      needsOpen:function(n){ return "needs " + n + " to file"; },
+      setFinish:"called the deadline",
+      logEmpty:"The wire is quiet.",
+      crownLab:"The front page",
+      crownSc:function(sc, r){ return sc + " points &mdash; edition " + r; },
+      credit:"File on time · Check the numbers · The archive keeps score",
+
+      stampHot:"Hot Type", stampBust:"Spiked", stampWin:"Front Page",
+
+      logOpen:function(nm){ return "The presses start. " + nm + " files first."; },
+      logBank:function(nm, amt, tot){ return "<b>" + nm + "</b> filed " + amt + " &mdash; now at " + tot + "."; },
+      logShort:function(nm, n){ return "<b>" + nm + "</b> came up short of the " + n + " minimum. Story spiked."; },
+      logBust:function(nm, lost){ return "<b>" + nm + "</b> was spiked" + (lost ? " and lost " + lost : "") + "."; },
+      logFinal:function(nm){ return "<b>" + nm + "</b> is past the deadline. Everyone gets one last edition."; },
+      logWin:function(nm, sc){ return "<b>" + nm + "</b> takes the front page with " + sc + "."; },
+
+      rulesHead:"The Style Guide", rulesSub:"Scoring as this desk counts it.",
+      closeRules:"Back to the Desk",
+      // --- high stakes: the progressive pot ---
+      dice:function(n){ return n + (n === 1 ? " die" : " dice"); },
+      stakesLabel:"The Scoop",
+      stakesOff:"Off — six fresh dice each edition", stakesOn:"On — the scoop takes the fund",
+      potLab:"The fund", potStandsLab:"Still open",
+      potIdle:"Every filing pays in. A spike — or a scoop passed up — empties it.",
+      stakesOrElse:"Pass, and the fund is spiked.",
+      logPotPassed:function(who, amt){ return "<b>" + who + "</b> passed on the scoop. The " + amt + " fund is spiked."; },
+      stakesOffer:function(who, d){ return "<b>" + who + "</b> left <b>" + d + "</b> standing."; },
+      stakesTake:"Take the Scoop",
+      stakesArmed:function(d){ return "Chasing the scoop — <b>" + d + "</b>. Score with any and the fund is yours."; },
+      stakesWonTxt:function(amt){ return "The scoop landed — <b>" + amt + "</b> added to this turn."; },
+      stakesWonNil:"The fund was empty. Nothing to collect.",
+      logStakes:function(who, d){ return "<b>" + who + "</b> picked up " + d + " left standing — chasing the scoop."; },
+      logStakesWon:function(who, amt){ return "<b>" + who + "</b> got the scoop and took the " + amt + " fund."; },
+      logPotDead:function(amt){ return "The " + amt + " fund is spiked with it."; },
+      stampStakes:"Scoop",
+      stakesRow:"The scoop, first roll", stakesRowPts:"the fund",
+      stakesNote:
+        "<br><br><b>The scoop.</b> Every filing pays into a running fund. You may open your turn with " +
+        "the dice the last correspondent left standing instead of six fresh ones — score with any of " +
+        "them on that first roll and the fund is yours. Collecting it doesn’t close it: the fund " +
+        "stands, so it can be claimed again. Two things empty it, and both empty it for the whole " +
+        "desk — a spiked story, and a correspondent who is offered the standing dice and calls for " +
+        "six fresh ones instead. Your winnings run with the rest of the turn, so get spiked later and " +
+        "they go too.",
+      keysNote:
+        "<b>Keys.</b> <kbd>1</kbd>&ndash;<kbd>6</kbd> set a die &middot; <kbd>Backspace</kbd> reset &middot; " +
+        "<kbd>Enter</kbd> set &amp; reroll &middot; <kbd>B</kbd> file it &middot; <kbd>F</kbd> spike it &middot; " +
+        "<kbd>U</kbd> retract &middot; <kbd>G</kbd> take the scoop &middot; <kbd>T</kbd> change the edition",
+      rulesNote:
+        "<b>The turn.</b> Roll six dice. Set at least one scoring die, then either reroll what’s left " +
+        "or file what you’ve gathered. Roll nothing that scores and the story is <b>spiked</b> — " +
+        "the whole turn is lost.<br><br>" +
+        "<b>Hot type.</b> Score with all six and you may roll all six again, keeping the count.<br><br>" +
+        "<b>The deadline.</b> When a correspondent files past the deadline, everyone else gets one last edition. " +
+        "Highest score takes the front page."
+    }
+  },
+  {
+    id:"bubblegum", name:"Bubblegum",
+    pips:"candy", rx:26,
+    voice:{ wave:"triangle", tune:2, gain:1.05, dur:1.15 },
+    lex:{
+      docTitle:"Lucky Cubes! — Dice Scoreboard",
+      title:"Lucky Cubes!",
+      tagline:"Roll · Stack · Snack",
+      dressing:"Look",
+      rulesBtn:"How to Play", undo:"Oops, Undo", newGame:"Play Again",
+      sound:function(on){ return "Sound: " + (on ? "On!" : "Off"); },
+
+      setupHead:"Who’s Playing?",
+      setupSub:"Two or more! Turns go in the order you add them.",
+      namePh:"Player name…",
+      addBtn:"Add!",
+      potLabel:"Goal", buyinLabel:"First scoop must be",
+      pots:["quick one","short game","classic","marathon"],
+      noBuyin:"Anything goes!",
+      startBtn:"Let’s Roll!", needMore:"Add two players!",
+      seat:"Player", fold:"Remove",
+
+      potLine:function(n){ return "First to " + n + " wins!"; },
+      potLineIdle:"First to 10,000 wins!",
+      hand:function(n){ return "Round " + n; },
+      isUp:function(nm){ return "<em>" + nm + "</em>’s turn!"; },
+      lastTail:" &mdash; last round!",
+      closed:"All done!",
+
+      tallyLab:"In your pocket right now", liveLab:"Cubes left",
+      padHead:"Pick Your Cubes", clearBtn:"Undo All",
+      keepBtn:"Keep &amp; Roll!", bankBtn:"Scoop It Up", bustBtn:"Oh No!",
+      manualBtn:"Type it in", manualHint:"&mdash; if you counted already",
+
+      readingEmpty:"Tap the cubes you want to keep from this roll…",
+      deadLine:function(list){ return "These don’t score: " + list + " &mdash; put them back"; },
+      rollTotal:"This roll",
+      hotLine:"Sugar rush — all six cubes come back!",
+
+      ledgerHead:"Scores", logHead:"What Happened",
+      ledgerSub:"Everyone, in turn order.",
+      ledgerSubLast:"Last round — beat the leader!",
+      ledgerSubOver:"Final scores!",
+      onBoard:"in the bank",
+      needsOpen:function(n){ return "needs " + n + " to start"; },
+      setFinish:"started the countdown",
+      logEmpty:"Nothing yet!",
+      crownLab:"Winner!",
+      crownSc:function(sc, r){ return sc + " points &mdash; round " + r; },
+      credit:"Roll big · Scoop early · Snacks for the winner",
+
+      stampHot:"Sugar Rush!", stampBust:"Oh No!", stampWin:"You Win!",
+
+      logOpen:function(nm){ return "Game on! " + nm + " goes first."; },
+      logBank:function(nm, amt, tot){ return "<b>" + nm + "</b> scooped " + amt + " &mdash; now at " + tot + "!"; },
+      logShort:function(nm, n){ return "<b>" + nm + "</b> didn’t reach " + n + ", so nothing was banked."; },
+      logBust:function(nm, lost){ return "<b>" + nm + "</b> struck out" + (lost ? " and lost " + lost : "") + "."; },
+      logFinal:function(nm){ return "<b>" + nm + "</b> passed the goal! One last round for everyone."; },
+      logWin:function(nm, sc){ return "<b>" + nm + "</b> wins with " + sc + "!"; },
+
+      rulesHead:"How to Play", rulesSub:"Here’s how the points work.",
+      closeRules:"Back to the Game",
+      // --- high stakes: the progressive pot ---
+      dice:function(n){ return n + (n === 1 ? " cube" : " cubes"); },
+      stakesLabel:"Big Bonus",
+      stakesOff:"Off — six cubes every turn", stakesOn:"On — leftovers win the jar!",
+      potLab:"Candy jar", potStandsLab:"Still full!",
+      potIdle:"Every scoop fills the jar. A strike-out or a pass spills it!",
+      stakesOrElse:"Pass, and the jar spills!",
+      logPotPassed:function(who, amt){ return "<b>" + who + "</b> passed on the leftovers. The " + amt + " jar spills!"; },
+      stakesOffer:function(who, d){ return "<b>" + who + "</b> left <b>" + d + "</b> behind!"; },
+      stakesTake:"Grab Them!",
+      stakesArmed:function(d){ return "Big bonus — rolling <b>" + d + "</b>. Score with any and the jar is yours!"; },
+      stakesWonTxt:function(amt){ return "The jar is yours! <b>" + amt + "</b> added to your pocket."; },
+      stakesWonNil:"The jar was empty. Nothing to grab.",
+      logStakes:function(who, d){ return "<b>" + who + "</b> grabbed the " + d + " left behind!"; },
+      logStakesWon:function(who, amt){ return "<b>" + who + "</b> scored on the leftovers and won the " + amt + " jar!"; },
+      logPotDead:function(amt){ return "The " + amt + " jar spills everywhere!"; },
+      stampStakes:"Jackpot!",
+      stakesRow:"Leftover cubes, first roll", stakesRowPts:"the jar",
+      stakesNote:
+        "<br><br><b>Big bonus.</b> Every scoop fills the candy jar. You can start your turn with the " +
+        "cubes the last player left behind instead of six fresh ones — score with any of them on that " +
+        "first roll and the whole jar is yours. Taking it doesn’t empty it: the jar stays full, so it " +
+        "can be won again! Two things spill it, and both spill it for everybody — a strike-out, and a " +
+        "player who is offered the leftovers and grabs six fresh cubes instead. Your winnings sit with " +
+        "the rest of the turn, so strike out later and they spill too.",
+      keysNote:
+        "<b>Keys.</b> <kbd>1</kbd>&ndash;<kbd>6</kbd> keep a cube &middot; <kbd>Backspace</kbd> undo all &middot; " +
+        "<kbd>Enter</kbd> keep &amp; roll &middot; <kbd>B</kbd> scoop it up &middot; <kbd>F</kbd> oh no &middot; " +
+        "<kbd>U</kbd> undo &middot; <kbd>G</kbd> grab leftovers &middot; <kbd>T</kbd> change the look",
+      rulesNote:
+        "<b>Your turn.</b> Roll six cubes. Keep at least one that scores, then roll the rest " +
+        "or scoop up what you’ve got. Roll nothing that scores and you lose the whole turn.<br><br>" +
+        "<b>Sugar rush.</b> Score with all six and you get all six back, keeping your points.<br><br>" +
+        "<b>The finish.</b> When someone scoops past the goal, everyone else gets one last round. " +
+        "Highest score wins."
+    }
+  }
+];
+
+var theme = "saloon";
+var L = DRESSINGS[0].lex;
+
+function dressing(id){
+  var want = id || theme;
+  for(var i=0; i<DRESSINGS.length; i++){
+    if(DRESSINGS[i].id === want) return DRESSINGS[i];
+  }
+  return DRESSINGS[0];
+}
+function mergeLex(over){
+  var out = {}, k;
+  for(k in DRESSINGS[0].lex) out[k] = DRESSINGS[0].lex[k];
+  for(k in over) out[k] = over[k];
+  return out;
+}
+// Static copy is addressed by data-lex; everything else is rendered.
+function applyLexicon(){
+  var nodes = document.querySelectorAll("[data-lex]"), i;
+  for(i=0; i<nodes.length; i++){
+    var key = nodes[i].getAttribute("data-lex");
+    if(L[key] != null) nodes[i].innerHTML = L[key];
+  }
+  document.title = L.docTitle;
+  $("nameInput").placeholder = L.namePh;
+  $("keysNote").innerHTML = L.keysNote;
+  renderRules();
+  $("soundBtn").textContent = L.sound(!muted);
+
+  var pot = $("targetSel"), th = $("thresholdSel");
+  for(i=0; i<pot.options.length; i++){
+    pot.options[i].textContent = num(+pot.options[i].value) + " — " + L.pots[i];
+  }
+  for(i=0; i<th.options.length; i++){
+    var v = +th.options[i].value;
+    th.options[i].textContent = v ? num(v) : L.noBuyin;
+  }
+  var st = $("stakesSel");
+  st.options[0].textContent = L.stakesOff;
+  st.options[1].textContent = L.stakesOn;
+}
+function applyTheme(id, quiet){
+  theme = dressing(id).id;
+  L = mergeLex(dressing().lex);
+  document.documentElement.setAttribute("data-theme", theme);
+  var chips = document.querySelectorAll("[data-set]");
+  for(var i=0; i<chips.length; i++){
+    chips[i].setAttribute("aria-pressed", chips[i].getAttribute("data-set") === theme ? "true" : "false");
+  }
+  $("mastheadDice").innerHTML = [3,1,5,2,6,4].map(function(f){ return dieSVG(f); }).join("");
+  applyLexicon();
+  renderAll();
+  if(!quiet){
+    var v = document.createElement("div");
+    v.className = "veil";
+    document.body.appendChild(v);
+    setTimeout(function(){ v.remove(); }, 560);
+    SFX.keep();
+  }
+}
+$("dressing").addEventListener("click", function(e){
+  var b = e.target.closest("[data-set]");
+  if(!b) return;
+  var id = b.getAttribute("data-set");
+  if(id === theme) return;
+  applyTheme(id); save();
+});
+function cycleDressing(){
+  var i = 0;
+  DRESSINGS.forEach(function(d, n){ if(d.id === theme) i = n; });
+  applyTheme(DRESSINGS[(i + 1) % DRESSINGS.length].id); save();
+}
+
+/* ================= setup screen ================= */
+function renderRoster(){
+  var ul = $("roster");
+  ul.innerHTML = roster.map(function(n, i){
+    return '<li><span class="seat">' + L.seat + ' ' + (i+1) + '</span>' +
+           '<span class="nm">' + esc(n) + '</span>' +
+           '<button class="btn tiny" data-drop="' + i + '">' + L.fold + '</button></li>';
+  }).join("");
+  $("startBtn").disabled = roster.length < 2;
+  $("startBtn").innerHTML = roster.length < 2 ? L.needMore : L.startBtn;
+}
+$("addForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  var v = $("nameInput").value.trim();
+  if(!v) return;
+  if(roster.length >= 8) return;
+  roster.push(v);
+  $("nameInput").value = "";
+  SFX.pick();
+  renderRoster(); save();
+});
+$("roster").addEventListener("click", function(e){
+  var b = e.target.closest("[data-drop]");
+  if(!b) return;
+  roster.splice(+b.getAttribute("data-drop"), 1);
+  SFX.drop();
+  renderRoster(); save();
+});
+$("startBtn").addEventListener("click", function(){
+  if(roster.length < 2) return;
+  state = freshState(roster, +$("targetSel").value, +$("thresholdSel").value, $("stakesSel").value === "1");
+  undoStack = []; clearPad();
+  addLog("note", L.logOpen("<b>" + esc(state.players[0].name) + "</b>"));
+  SFX.bank();
+  renderAll(); save();
+});
+
+/* ================= game rendering ================= */
+function renderAll(){
+  var on = !!state;
+  $("setup").hidden = on;
+  $("game").hidden = !on;
+  $("newBtn").hidden = !on;
+  $("undoBtn").hidden = !on;
+  $("soundBtn").textContent = L.sound(!muted);
+  renderRules();
+  if(!on){ renderRoster(); $("potLine").innerHTML = L.potLineIdle; return; }
+
+  $("potLine").innerHTML = L.potLine(num(state.target));
+  $("undoBtn").disabled = undoStack.length === 0;
+  renderTurn();
+  renderStakes();
+  renderPad();
+  renderReading();
+  renderLedger();
+  renderLog();
+  renderCrown();
+}
+
+// The scoring table and the prose both carry the optional rule only when
+// the table is actually playing it.
+function renderRules(){
+  var on = !!(state && state.highStakes);
+  $("rulesNote").innerHTML = L.rulesNote + (on ? L.stakesNote : "");
+  $("stakesRowLab").innerHTML = L.stakesRow;
+  $("stakesRowPts").innerHTML = L.stakesRowPts;
+  $("stakesRow").hidden = !on;
+}
+
+function renderCrown(){
+  var slot = $("crownSlot");
+  if(!state.over){ slot.innerHTML = ""; return; }
+  var w = state.players[state.winner];
+  slot.innerHTML =
+    '<div class="crown">' +
+      '<div class="lab">' + L.crownLab + '</div>' +
+      '<div class="nm">' + esc(w.name) + '</div>' +
+      '<div class="sc">' + L.crownSc(num(w.score), state.round) + '</div>' +
+    '</div>';
+}
+
+function renderTurn(){
+  var p = state.players[state.cur];
+  $("handNo").innerHTML = L.hand(state.round);
+  if(state.over){
+    $("whoUp").innerHTML = "<em>" + L.closed + "</em>";
+  }else{
+    var tail = state.finalIdx !== null ? L.lastTail : "";
+    $("whoUp").innerHTML = L.isUp(esc(p.name)) + tail;
+  }
+  $("turnAmt").textContent = num(state.turn);
+  var pips = "";
+  for(var i=0; i<6; i++){
+    pips += dieSVG(((i * 2) % 6) + 1, i < state.diceLeft ? "" : "spent");
+  }
+  $("livePips").innerHTML = pips;
+
+  var dis = state.over;
+  $("keepBtn").disabled = dis;
+  $("bankBtn").disabled = dis;
+  $("bustBtn").disabled = dis;
+  $("manualBtn").disabled = dis;
+  $("clearPad").disabled = dis;
+}
+
+// The pot is always on show while the variant is running — a progressive pot
+// you can't watch grow isn't worth gambling on.
+// Pad edits change what the stakes banner should say — an offer closes the
+// moment dice are set aside, and reopens if the pad is cleared — so the three
+// handlers that touch the pad repaint all of it together.
+function renderPadArea(){ renderPad(); renderReading(); renderStakes(); }
+
+function renderStakes(){
+  var el = $("stakesSlot");
+  if(!state.highStakes || state.over){ el.innerHTML = ""; return; }
+  // The box always shows the live pot — collecting it doesn't take it off the
+  // table, so the label says so rather than implying the money has moved.
+  var pot = state.pot || 0, kind, txt, lab = L.potLab, btn = "";
+
+  if(state.stakes === "won"){
+    kind = "won";
+    txt = state.won > 0 ? L.stakesWonTxt(num(state.won)) : L.stakesWonNil;
+    if(state.won > 0) lab = L.potStandsLab;
+  }else if(offerOpen()){
+    kind = "offer";
+    // Passing costs the table the pot, so say so while there's a pot to lose.
+    txt = L.stakesOffer(esc(prevName()), L.dice(state.carry)) +
+          (pot > 0 ? ' <b class="warn">' + L.stakesOrElse + '</b>' : "");
+    btn = '<button class="btn brass tiny" id="stakesBtn">' + L.stakesTake + '</button>';
+  }else if(state.stakes === "armed"){
+    kind = "armed";
+    txt = L.stakesArmed(L.dice(state.diceLeft));
+  }else{
+    kind = "idle";
+    txt = L.potIdle;
+  }
+
+  el.innerHTML = '<div class="stakes ' + kind + (pot > 0 ? "" : " empty") + '">' +
+      '<span class="txt">' + txt + '</span>' +
+      '<span class="potbox"><span class="lab">' + lab + '</span>' +
+      '<span class="amt">' + num(pot) + '</span></span>' +
+      btn +
+    '</div>';
+}
+
+function renderPad(){
+  var html = "";
+  var r = scoreCounts(pad);
+  for(var f=1; f<=6; f++){
+    var n = pad[f];
+    var isDead = r.dead.indexOf(f) !== -1;
+    html += '<div class="face' + (n ? " has" : "") + (isDead ? " dead" : "") + '" data-face="' + f + '">' +
+              '<button class="minus" data-minus="' + f + '" title="Remove one">&minus;</button>' +
+              dieSVG(f, "die") +
+              '<div class="ct">' + n + '</div>' +
+            '</div>';
+  }
+  $("pad").innerHTML = html;
+}
+
+function renderReading(){
+  var el = $("reading");
+  var used = padTotal();
+  if(used === 0){
+    el.innerHTML = '<p class="empty">' + L.readingEmpty + '</p>';
+    return;
+  }
+  var r = scoreCounts(pad);
+  var rows = r.parts.map(function(p){
+    return '<div class="combo"><span>' + esc(p.label) + '</span><b>' + num(p.pts) + '</b></div>';
+  }).join("");
+  if(r.dead.length){
+    rows += '<div class="combo bad"><span>' + L.deadLine(r.dead.join(", ")) + '</span><b>0</b></div>';
+  }
+  rows += '<div class="combo total"><span>' + L.rollTotal + '</span><b>' + num(r.score) + '</b></div>';
+  if(used === state.diceLeft && r.dead.length === 0 && r.score > 0){
+    rows += '<div class="hot">' + L.hotLine + '</div>';
+  }
+  el.innerHTML = rows;
+}
+
+function renderLedger(){
+  var best = -1;
+  state.players.forEach(function(p){ if(p.score > best) best = p.score; });
+  $("ledger").innerHTML = state.players.map(function(p, i){
+    var pct = Math.min(100, Math.round(p.score / state.target * 100));
+    var isUp = !state.over && i === state.cur;
+    var isLead = p.score === best && best > 0;
+    var badge = p.onBoard
+      ? (state.finalIdx === i ? L.setFinish : L.onBoard)
+      : L.needsOpen(num(state.threshold));
+    return '<li class="' + (isUp ? "up " : "") + (isLead ? "leader" : "") + '">' +
+             '<span class="mark">' + (isLead ? "★" : (isUp ? "▸" : "·")) + '</span>' +
+             '<span class="nm">' + esc(p.name) + '<small>' + badge + '</small></span>' +
+             '<span class="sc">' + num(p.score) + '</span>' +
+             '<span class="bar"><i style="width:' + pct + '%"></i></span>' +
+           '</li>';
+  }).join("");
+  $("ledgerSub").innerHTML = state.over
+    ? L.ledgerSubOver
+    : (state.finalIdx !== null ? L.ledgerSubLast : L.ledgerSub);
+}
+
+function renderLog(){
+  var el = $("log");
+  if(!state.log.length){ el.innerHTML = '<li class="empty">' + L.logEmpty + '</li>'; return; }
+  el.innerHTML = state.log.map(function(e){
+    return '<li class="k-' + e.k + '"><span class="rnd">' + L.hand(e.r) + '</span>' +
+           '<span class="txt">' + e.t + '</span></li>';
+  }).join("");
+}
+
+/* ================= turn actions ================= */
+function commitPad(silent){
+  var used = padTotal();
+  if(used === 0) return false;
+  var r = scoreCounts(pad);
+  if(r.dead.length || r.score === 0) return false;
+  state.turn += r.score;
+  state.diceLeft -= used;
+  if(state.carry > 0) passStakes();   // scored off a fresh six with leavings on offer
+  state.carry = 0;              // the leavings are spent, taken or not
+  state.threw = true;
+  clearPad();
+  var hot = state.diceLeft <= 0;
+  // scored on the first roll of the leavings — collect whatever the pot holds
+  var paid = state.stakes === "armed" ? payStakes() : 0;
+  if(hot){
+    state.diceLeft = 6;
+    state.hot = true;
+    if(!silent){ SFX.hot(); stamp(L.stampHot, true); }
+    return "hot";
+  }
+  state.hot = false;
+  if(!silent){
+    if(paid > 0){ SFX.bank(); stamp(L.stampStakes, true); }
+    else SFX.keep();
+  }
+  return true;
+}
+
+/* --- High Stakes -------------------------------------------------------
+   The gamble: open the turn with what the last player left instead of a
+   fresh six. Score on that first roll and you collect `state.pot`, the
+   progressive pot every cash-in has fed since the last farkle. The winnings
+   fold into the turn total, so a later farkle takes them back with the rest —
+   and a pot emptied by the farkle you're inheriting from pays nothing. */
+
+function offerOpen(){
+  return !!state && !state.over && !!state.highStakes &&
+         state.carry > 0 && state.stakes === false &&
+         state.turn === 0 && padTotal() === 0;
+}
+function leftBehind(){
+  // What the departing gambler leaves on the table. Hot dice means all six
+  // were set aside — the table is bare and the next player starts fresh.
+  return (state.hot || !state.threw) ? 0 : state.diceLeft;
+}
+function prevName(){
+  var n = state.players.length;
+  return state.players[(state.cur + n - 1) % n].name;
+}
+function takeStakes(){
+  if(!offerOpen()) return;
+  snapshot();
+  state.diceLeft = state.carry;
+  state.carry = 0;
+  state.stakes = "armed";
+  addLog("note", L.logStakes(esc(state.players[state.cur].name), L.dice(state.diceLeft)));
+  SFX.pick();
+  renderAll(); save();
+}
+// Collect the pot — a copy of it. Winning does NOT spend the pot: it stands
+// until a farkle kills it, so the next gambler can win the same money again.
+// An empty pot still resolves the gamble, it just pays nothing, which is the
+// whole risk of taking the leavings from a player who just farkled.
+// Turning the leavings down kills the pot exactly as a farkle does — the
+// gamble is refused, so the money on it goes. Only fires when leavings were
+// actually on offer: an empty table (hot dice) is no one's decision.
+function passStakes(){
+  if(!state.highStakes || !(state.pot > 0)) return;
+  addLog("bust", L.logPotPassed(esc(state.players[state.cur].name), num(state.pot)));
+  state.pot = 0;
+}
+
+function payStakes(){
+  var take = state.pot || 0;
+  state.stakes = "won";
+  state.won = take;
+  if(take > 0){
+    state.turn += take;
+    addLog("bank", L.logStakesWon(esc(state.players[state.cur].name), num(take)));
+  }
+  return take;
+}
+$("stakesSlot").addEventListener("click", function(e){
+  if(e.target.closest("#stakesBtn")) takeStakes();
+});
+
+$("pad").addEventListener("click", function(e){
+  if(state.over) return;
+  var m = e.target.closest("[data-minus]");
+  if(m){
+    var mf = +m.getAttribute("data-minus");
+    if(pad[mf] > 0){ snapshot(); pad[mf]--; SFX.drop(); renderPadArea(); save(); }
+    return;
+  }
+  var cell = e.target.closest("[data-face]");
+  if(!cell) return;
+  addDie(+cell.getAttribute("data-face"));
+});
+
+function addDie(f){
+  if(state.over) return;
+  if(padTotal() >= state.diceLeft) return;
+  snapshot();
+  pad[f]++;
+  SFX.pick();
+  renderPadArea(); save();
+}
+
+$("clearPad").addEventListener("click", function(){
+  if(!padTotal()) return;
+  snapshot(); clearPad(); SFX.drop();
+  renderPadArea(); save();
+});
+
+$("keepBtn").addEventListener("click", function(){
+  if(state.over) return;
+  var used = padTotal();
+  if(used === 0){ flash($("reading")); return; }
+  var r = scoreCounts(pad);
+  if(r.dead.length || r.score === 0){ flash($("reading")); return; }
+  snapshot();
+  commitPad();
+  renderAll(); save();
+});
+
+function flash(el){
+  el.style.transition = "none";
+  el.style.borderColor = "var(--oxblood-hi)";
+  setTimeout(function(){
+    el.style.transition = "border-color .6s ease";
+    el.style.borderColor = "";
+  }, 90);
+  SFX.drop();
+}
+
+$("manualBtn").addEventListener("click", function(){
+  var v = parseInt($("manualIn").value, 10);
+  if(!v || v < 0 || state.over) return;
+  snapshot();
+  state.turn += v;
+  if(state.carry > 0) passStakes();
+  state.carry = 0;
+  // `threw` is left alone on purpose: a hand-entered score tells us nothing
+  // about how many dice are still on the table, so a turn scored only this
+  // way leaves nothing behind rather than a guess.
+  if(state.stakes === "armed") payStakes();   // counted by hand, still a score
+  $("manualIn").value = "";
+  SFX.keep();
+  renderAll(); save();
+});
+$("manualIn").addEventListener("keydown", function(e){
+  if(e.key === "Enter"){ e.preventDefault(); $("manualBtn").click(); }
+});
+
+$("bankBtn").addEventListener("click", function(){
+  if(state.over) return;
+  snapshot();
+  commitPad(true);            // fold in a valid pending selection
+  var p = state.players[state.cur];
+  var amt = state.turn;
+  if(amt === 0){ undoStack.pop(); flash($("reading")); return; }
+  if(!p.onBoard && amt < state.threshold){
+    undoStack.pop();
+    addLog("note", L.logShort(esc(p.name), num(state.threshold)));
+    quake(); SFX.bust();
+    state.carry = leftBehind();
+    state.turn = 0; state.diceLeft = 6; clearPad();
+    nextPlayer();
+    renderAll(); save();
+    return;
+  }
+  p.score += amt;
+  p.onBoard = true;
+  // Dice points feed the pot; a collected pot doesn't pay itself back in.
+  state.pot += Math.max(0, amt - (state.won || 0));
+  addLog("bank", L.logBank(esc(p.name), num(amt), num(p.score)));
+  SFX.bank(); stamp(num(amt), true);
+  if(p.score >= state.target && state.finalIdx === null){
+    state.finalIdx = state.cur;
+    addLog("note", L.logFinal(esc(p.name)));
+  }
+  state.carry = leftBehind();
+  state.turn = 0; state.diceLeft = 6; clearPad();
+  nextPlayer();
+  renderAll(); save();
+});
+
+$("bustBtn").addEventListener("click", function(){
+  if(state.over) return;
+  snapshot();
+  var p = state.players[state.cur];
+  var lost = state.turn + scoreCounts(pad).score;
+  addLog("bust", L.logBust(esc(p.name), lost ? num(lost) : 0));
+  if(state.highStakes && state.pot > 0){
+    addLog("bust", L.logPotDead(num(state.pot)));
+    state.pot = 0;              // a farkle empties the pot for everyone
+  }
+  state.carry = state.diceLeft;   // they rolled these and got nothing; all still on the table
+  state.turn = 0; state.diceLeft = 6; clearPad();
+  quake(); SFX.bust(); stamp(L.stampBust);
+  nextPlayer();
+  renderAll(); save();
+});
+
+function nextPlayer(){
+  state.stakes = false; state.won = 0; state.hot = false; state.threw = false;
+  var next = (state.cur + 1) % state.players.length;
+  if(state.finalIdx !== null && next === state.finalIdx){
+    finish();
+    return;
+  }
+  if(next === 0) state.round++;
+  state.cur = next;
+}
+
+function finish(){
+  state.over = true;
+  var bi = 0;
+  state.players.forEach(function(p, i){ if(p.score > state.players[bi].score) bi = i; });
+  state.winner = bi;
+  addLog("bank", L.logWin(esc(state.players[bi].name), num(state.players[bi].score)));
+  setTimeout(function(){ SFX.win(); stamp(L.stampWin, true); }, 260);
+}
+
+/* ================= toolbar ================= */
+$("newBtn").addEventListener("click", function(){
+  state = null; undoStack = []; clearPad();
+  renderAll(); save();
+});
+$("undoBtn").addEventListener("click", undo);
+$("soundBtn").addEventListener("click", function(){
+  muted = !muted;
+  $("soundBtn").textContent = L.sound(!muted);
+  if(!muted) SFX.pick();
+  save();
+});
+$("rulesBtn").addEventListener("click", function(){ $("rulesDlg").showModal(); });
+$("closeRules").addEventListener("click", function(){ $("rulesDlg").close(); });
+$("rulesDlg").addEventListener("click", function(e){
+  if(e.target === this) this.close();
+});
+
+/* ================= keyboard ================= */
+document.addEventListener("keydown", function(e){
+  var t = e.target.tagName;
+  if(t === "INPUT" || t === "SELECT" || t === "TEXTAREA") return;
+  if($("rulesDlg").open) return;
+  if(e.key === "t" || e.key === "T"){ e.preventDefault(); cycleDressing(); return; }
+  if(!state || state.over){
+    if(e.key === "u" || e.key === "U"){ e.preventDefault(); undo(); }
+    return;
+  }
+  if(e.key >= "1" && e.key <= "6"){ e.preventDefault(); addDie(+e.key); return; }
+  switch(e.key){
+    case "Backspace": e.preventDefault(); $("clearPad").click(); break;
+    case "Enter":     e.preventDefault(); $("keepBtn").click(); break;
+    case "b": case "B": e.preventDefault(); $("bankBtn").click(); break;
+    case "f": case "F": e.preventDefault(); $("bustBtn").click(); break;
+    case "u": case "U": e.preventDefault(); undo(); break;
+    case "g": case "G": e.preventDefault(); takeStakes(); break;
+  }
+});
+
+/* ================= boot ================= */
+load();
+applyTheme(theme, true);   // paints the dressing, then renders through it
+
+})();
+</script>
+</body>
+</html>
