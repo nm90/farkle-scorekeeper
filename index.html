@@ -1388,8 +1388,11 @@ var DRESSINGS = [
       logStakesOff:function(amt){ return "The house calls off high stakes." +
         (amt ? " The " + amt + " pot goes back behind the bar." : ""); },
       potLab:"The pot", potStandsLab:"Still standing",
-      potIdle:"Fattens with every cash-in. Dies on a farkle, or on a gamble passed up.",
+      potIdle:"Fattens with every cash-in. Dies on a farkle, on a gamble passed up, or on a table left bare.",
       stakesOrElse:"Pass, and the pot dies with them.",
+      potClear:"Clear the Pot", potClearTitle:"Empty the pot by hand — a house call",
+      logPotCleared:function(amt){ return "The house clears the " + amt + " pot."; },
+      logPotBare:function(amt){ return "Nothing left on the table. The " + amt + " pot dies with it."; },
       logPotPassed:function(who, amt){ return "<b>" + who + "</b> passed on the leavings. The " + amt + " pot dies with them."; },
       stakesOffer:function(who, d){ return "<b>" + who + "</b> left <b>" + d + "</b> on the table."; },
       stakesTake:"Take the Gamble",
@@ -1405,9 +1408,10 @@ var DRESSINGS = [
         "<br><br><b>High stakes.</b> Every cash-in fattens a running pot. You may open your turn with " +
         "the bones the last gambler left instead of a fresh six — score with any of them on that " +
         "first roll and the pot joins your tally. Winning it doesn’t spend it: the pot stands, so the " +
-        "next gambler can take the same money again. Two things kill it, and both kill it for the " +
-        "whole table — a farkle, and a gambler who is offered the leavings and rolls a fresh six " +
-        "instead. Your winnings ride with the rest of your turn, so farkle later and they go too.",
+        "next gambler can take the same money again. Three things kill it, and each kills it for the " +
+        "whole table — a farkle, a gambler who is offered the leavings and rolls a fresh six " +
+        "instead, and a cash-in that leaves the table bare, since there is nothing left to gamble " +
+        "on. Your winnings ride with the rest of your turn, so farkle later and they go too.",
       keysNote:
         "<b>Keys.</b> <kbd>1</kbd>&ndash;<kbd>6</kbd> set aside a die &middot; <kbd>Backspace</kbd> clear &middot; " +
         "<kbd>Enter</kbd> keep &amp; reroll &middot; <kbd>B</kbd> cash in &middot; <kbd>F</kbd> farkle &middot; " +
@@ -1494,8 +1498,11 @@ var DRESSINGS = [
       logStakesOff:function(amt){ return "Greed protocol disengaged." +
         (amt ? " The " + amt + " cache is dumped." : ""); },
       potLab:"Cache", potStandsLab:"Still cached",
-      potIdle:"Grows with every upload. Purged by a crash, or by salvage refused.",
+      potIdle:"Grows with every upload. Purged by a crash, by salvage refused, or by an empty buffer.",
       stakesOrElse:"Refuse, and the cache purges.",
+      potClear:"Flush Cache", potClearTitle:"Purge the cache by hand — manual override",
+      logPotCleared:function(amt){ return "Manual flush. The " + amt + " cache is gone."; },
+      logPotBare:function(amt){ return "Buffer left empty. The " + amt + " cache purges."; },
       logPotPassed:function(who, amt){ return "<b>" + who + "</b> refused the salvage. The " + amt + " cache purges."; },
       stakesOffer:function(who, d){ return "<b>" + who + "</b> left <b>" + d + "</b> in the buffer."; },
       stakesTake:"Salvage Them",
@@ -1511,8 +1518,9 @@ var DRESSINGS = [
         "<br><br><b>Greed protocol.</b> Every upload grows a shared cache. You may open your run with " +
         "the cubes the last runner left instead of a fresh six — score with any of them on that first " +
         "roll and the cache copies into your buffer. Draining it doesn’t clear it: the cache holds, so " +
-        "it can be taken again. Two things purge it, and both purge it gridwide — a crash, and a " +
-        "runner who is offered salvage and boots a fresh six instead. Your take rides with the rest of " +
+        "it can be taken again. Three things purge it, and each purges it gridwide — a crash, a " +
+        "runner who is offered salvage and boots a fresh six instead, and an upload that leaves the " +
+        "buffer empty, since there is nothing left to salvage. Your take rides with the rest of " +
         "the run, so crash later and it purges too.",
       keysNote:
         "<b>Keys.</b> <kbd>1</kbd>&ndash;<kbd>6</kbd> lock a cube &middot; <kbd>Backspace</kbd> flush &middot; " +
@@ -1600,8 +1608,11 @@ var DRESSINGS = [
       logStakesOff:function(amt){ return "The desk closes the fund." +
         (amt ? " The " + amt + " on it returns to petty cash." : ""); },
       potLab:"The fund", potStandsLab:"Still open",
-      potIdle:"Every filing pays in. A spike — or a scoop passed up — empties it.",
+      potIdle:"Every filing pays in. A spike, a scoop passed up, or a bare table empties it.",
       stakesOrElse:"Pass, and the fund is spiked.",
+      potClear:"Close the Fund", potClearTitle:"Empty the fund by hand — the desk's call",
+      logPotCleared:function(amt){ return "The desk closes out the " + amt + " fund."; },
+      logPotBare:function(amt){ return "No dice left standing. The " + amt + " fund is spiked."; },
       logPotPassed:function(who, amt){ return "<b>" + who + "</b> passed on the scoop. The " + amt + " fund is spiked."; },
       stakesOffer:function(who, d){ return "<b>" + who + "</b> left <b>" + d + "</b> standing."; },
       stakesTake:"Take the Scoop",
@@ -1617,9 +1628,10 @@ var DRESSINGS = [
         "<br><br><b>The scoop.</b> Every filing pays into a running fund. You may open your turn with " +
         "the dice the last correspondent left standing instead of six fresh ones — score with any of " +
         "them on that first roll and the fund is yours. Collecting it doesn’t close it: the fund " +
-        "stands, so it can be claimed again. Two things empty it, and both empty it for the whole " +
-        "desk — a spiked story, and a correspondent who is offered the standing dice and calls for " +
-        "six fresh ones instead. Your winnings run with the rest of the turn, so get spiked later and " +
+        "stands, so it can be claimed again. Three things empty it, and each empties it for the whole " +
+        "desk — a spiked story, a correspondent who is offered the standing dice and calls for " +
+        "six fresh ones instead, and a filing that leaves no dice standing, since there is no scoop " +
+        "left to chase. Your winnings run with the rest of the turn, so get spiked later and " +
         "they go too.",
       keysNote:
         "<b>Keys.</b> <kbd>1</kbd>&ndash;<kbd>6</kbd> set a die &middot; <kbd>Backspace</kbd> reset &middot; " +
@@ -1707,8 +1719,11 @@ var DRESSINGS = [
       logStakesOff:function(amt){ return "Big bonus is off." +
         (amt ? " The " + amt + " jar goes back on the shelf." : ""); },
       potLab:"Candy jar", potStandsLab:"Still full!",
-      potIdle:"Every scoop fills the jar. A strike-out or a pass spills it!",
+      potIdle:"Every scoop fills the jar. A strike-out, a pass, or no leftovers spills it!",
       stakesOrElse:"Pass, and the jar spills!",
+      potClear:"Dump the Jar!", potClearTitle:"Empty the candy jar by hand",
+      logPotCleared:function(amt){ return "Somebody dumped the " + amt + " jar!"; },
+      logPotBare:function(amt){ return "No leftovers! The " + amt + " jar spills!"; },
       logPotPassed:function(who, amt){ return "<b>" + who + "</b> passed on the leftovers. The " + amt + " jar spills!"; },
       stakesOffer:function(who, d){ return "<b>" + who + "</b> left <b>" + d + "</b> behind!"; },
       stakesTake:"Grab Them!",
@@ -1724,8 +1739,9 @@ var DRESSINGS = [
         "<br><br><b>Big bonus.</b> Every scoop fills the candy jar. You can start your turn with the " +
         "cubes the last player left behind instead of six fresh ones — score with any of them on that " +
         "first roll and the whole jar is yours. Taking it doesn’t empty it: the jar stays full, so it " +
-        "can be won again! Two things spill it, and both spill it for everybody — a strike-out, and a " +
-        "player who is offered the leftovers and grabs six fresh cubes instead. Your winnings sit with " +
+        "can be won again! Three things spill it, and each spills it for everybody — a strike-out, a " +
+        "player who is offered the leftovers and grabs six fresh cubes instead, and a scoop that " +
+        "leaves nothing behind, since there are no leftovers to grab. Your winnings sit with " +
         "the rest of the turn, so strike out later and they spill too.",
       keysNote:
         "<b>Keys.</b> <kbd>1</kbd>&ndash;<kbd>6</kbd> keep a cube &middot; <kbd>Backspace</kbd> undo all &middot; " +
@@ -1965,6 +1981,13 @@ function renderStakes(){
     kind = "idle";
     txt = L.potIdle;
   }
+  // The pot can also be emptied by hand — a house call, not a game move.
+  // Refused mid-gamble for the same reason the toolbar latch is locked: those
+  // dice were rolled short on the promise of this money.
+  if(pot > 0 && state.stakes !== "armed"){
+    btn += '<button class="btn tiny ghost" id="potClearBtn" title="' + L.potClearTitle + '">' +
+           L.potClear + '</button>';
+  }
 
   el.innerHTML = '<div class="stakes ' + kind + (pot > 0 ? "" : " empty") + '">' +
       '<span class="txt">' + txt + '</span>' +
@@ -2147,8 +2170,21 @@ function payStakes(){
   }
   return take;
 }
+// Emptying the pot by hand: a house call for a table that wants to start the
+// money over without dropping the rule. Snapshotted, so Undo puts it back.
+function clearPot(){
+  if(!state || state.over || !state.highStakes) return;
+  if(state.stakes === "armed" || !(state.pot > 0)) return;
+  snapshot();
+  addLog("note", L.logPotCleared(num(state.pot)));
+  state.pot = 0;
+  SFX.drop();
+  renderAll(); save();
+}
+
 $("stakesSlot").addEventListener("click", function(e){
   if(e.target.closest("#stakesBtn")) takeStakes();
+  else if(e.target.closest("#potClearBtn")) clearPot();
 });
 
 $("pad").addEventListener("click", function(e){
@@ -2247,6 +2283,13 @@ $("bankBtn").addEventListener("click", function(){
     addLog("note", L.logFinal(esc(p.name)));
   }
   state.carry = leftBehind();
+  // Cashing in on a bare table kills the pot for everyone. Nobody can be
+  // offered leavings that aren't there, so the gamble can never be taken and
+  // the money has nowhere to go — the same death a passed gamble deals it.
+  if(state.highStakes && state.carry === 0 && state.pot > 0){
+    addLog("bust", L.logPotBare(num(state.pot)));
+    state.pot = 0;
+  }
   state.turn = 0; state.diceLeft = 6; clearPad();
   nextPlayer();
   renderAll(); save();

@@ -87,7 +87,8 @@ state = {
   threshold,  // buy-in required for a player's first bank
   highStakes, // is this table playing the High Stakes variant?
   carry,      // dice the last gambler left on the table, 0 if none
-  pot,        // progressive pot: fed by cash-ins, killed by a farkle or a passed gamble
+  pot,        // progressive pot: fed by cash-ins, killed by a farkle, a passed gamble,
+              // a cash-in that leaves the table bare, or the manual clear
   stakes,     // false | "armed" | "won" — the gamble, this turn only
   won,        // pot collected this turn, so it can't feed the pot again
   hot,        // the last commit cleared the table (so nothing is left behind)
@@ -181,11 +182,17 @@ six. Score with **any** of them on that first roll and you collect `state.pot` �
 not a fixed bonus.
 
 **The pot economy.** `state.pot` is the running total of dice points banked since the pot last died.
-Every cash-in feeds it, and **two things kill it, both for the whole table**:
+Every cash-in feeds it, and **three things kill it, each for the whole table**:
 
 1. **A farkle** (`bustBtn` → `logPotDead`).
 2. **A passed gamble** (`passStakes()` → `logPotPassed`) — a player who is offered the leavings and
    scores off a fresh six instead. Refusing the gamble costs everyone the pot.
+3. **A cash-in that leaves the table bare** (`bankBtn`, `leftBehind() === 0` → `logPotBare`) — hot
+   dice, or a turn scored only by hand. Nobody can be offered leavings that aren't there, so the
+   gamble can never be taken and the money has nowhere to go. The death is charged *after* the
+   cash-in has fed the pot, so the log names the full figure that dies.
+
+A fourth exit is the manual clear — see "Clearing the pot by hand" below.
 
 So the pot is fragile by design: it only survives a turn where the previous player left dice *and*
 this player took them. It is worth most when the table is running hot, and worth nothing right after
@@ -206,8 +213,9 @@ the variant, not an oversight.
 - **An empty pot still resolves the gamble.** `payStakes()` returns 0, marks `stakes` as `"won"`, and
   logs and stamps nothing — the banner says the pot was empty. Don't add a floor or a seed; paying
   nothing after a farkle is the chosen design.
-- **A short buy-in is not a farkle** and does not kill the pot. Nothing was banked, so it simply
-  doesn't grow. (Careful when testing this: if that player was *offered* leavings, their first commit
+- **A short buy-in is not a farkle** and does not kill the pot — not even on a bare table. The
+  bare-table death lives on the successful cash-in path only, past the buy-in rejection's early
+  return. Nothing was banked, so the pot simply doesn't grow. (Careful when testing this: if that player was *offered* leavings, their first commit
   passes on the gamble and kills the pot before the buy-in is ever checked. Isolate the case with a
   previous turn that ended on hot dice, so nothing was on offer.)
 - **A pass only counts when there was something to pass on.** `passStakes()` is called from
@@ -236,8 +244,23 @@ the variant, not an oversight.
   adds the `empty` class, which greys the whole banner so a dead offer reads as a dead offer. `renderRules()` reveals the `#stakesRow` scoring row and appends `L.stakesNote` to the
   dialog — only while a game is actually playing the variant.
 - **Per-dressing pot names**: the pot / the cache / the fund / the candy jar (`potLab`,
-  `potStandsLab`, `potIdle`, `stakesOrElse`, `logPotDead`, `logPotPassed`, and friends). The idle line doubles as the rule's inline explanation, so
-  keep it accurate in all four when the economy changes.
+  `potStandsLab`, `potIdle`, `stakesOrElse`, `logPotDead`, `logPotPassed`, `logPotBare`,
+  `potClear`, `potClearTitle`, `logPotCleared`, and friends). The idle line doubles as the rule's inline explanation, so
+  keep it accurate in all four when the economy changes — as does `stakesNote`, which enumerates the
+  three deaths in the rules dialog.
+
+### Clearing the pot by hand
+
+`#potClearBtn` — a `.btn.tiny.ghost` painted into the stakes banner by `renderStakes()` whenever
+`pot > 0`, wired through the `#stakesSlot` click delegate to `clearPot()`. It is a house call, not a
+game move: it empties `state.pot`, logs `logPotCleared(amt)` as a `note`, and touches nothing else —
+`carry`, the offer and the turn all stand, so a table can zero the money mid-offer and go on playing.
+
+- **Snapshotted**, so Undo puts the money back (unlike a dressing change).
+- **Refused while a gamble is armed**, the same promise `renderStakesToggle()` keeps: the button
+  isn't rendered at all in that state, and `clearPot()` bails on it too.
+- **Hidden on an empty pot** — there is nothing to clear, and the greyed `empty` banner already says
+  so.
 
 ### The mid-game toggle
 
@@ -312,7 +335,10 @@ plus 28 for passing on the gamble — the pot dying on the first commit, survivi
 surviving a bare table, undo, and the per-dressing warning; plus 67 for the mid-game toggle — the
 silent accrual not becoming the pot, both log lines, undo, the offer opening on real leavings, the
 latch refusing clicks and <kbd>H</kbd> mid-gamble, <kbd>H</kbd> ignored in a field, hidden on the
-setup screen and after the game ends, and all four voices):
+setup screen and after the game ends, and all four voices; plus 61 for the bare-table death and the
+manual clear — the pot dying on a hot-dice cash-in and surviving one that leaves dice, undo on both,
+the clear button absent while armed and on an empty pot, the clear leaving the offer standing, and
+each voice's own death line, button label and three-deaths rules note):
 
 ```bash
 python3 -m http.server 8731 &                      # serve the project
