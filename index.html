@@ -1111,6 +1111,84 @@ kbd{
   border-color:rgba(255,215,94,.6);
 }
 
+/* ============================================================
+   COLOR BLIND MODE — html[data-cb], toggled from the toolbar
+   or <kbd>C</kbd>. Orthogonal to the dressing and outside the
+   undo stack, like the dressing itself. Each world keeps its
+   furniture but re-points its semantic "bad" reds to a hue its
+   accent and its "good" green can't be mistaken for, and every
+   color-only signal gains a second channel: dead faces go
+   dashed and take an ✕, log lines are marked ✓ / ✕.
+   ============================================================ */
+:root[data-theme="saloon"][data-cb]{
+  --oxblood:#2e6db4;
+  --oxblood-hi:#6aa5e3;
+  --oxblood-rgb:46,109,180;
+  --stamp-rgb:106,165,227;
+}
+[data-theme="saloon"][data-cb] .btn.blood{
+  background:linear-gradient(180deg,#6aa5e3,#2e6db4 60%,#1d4d85);
+  color:#eaf4ff;border-color:#17406f;
+  box-shadow:0 6px 16px rgba(46,109,180,.32), inset 0 1px 0 rgba(190,220,250,.28);
+}
+:root[data-theme="neon"][data-cb]{
+  --oxblood:#ff9e00;
+  --oxblood-hi:#ffc65c;
+  --oxblood-rgb:255,158,0;
+  --stamp-rgb:255,158,0;
+  --hot:#ffb300;
+  --hot-rgb:255,179,0;
+}
+[data-theme="neon"][data-cb] .btn.blood{
+  background:linear-gradient(180deg,#ffc65c,#e08900);color:#1b1000;border-color:#ffd98f;
+  box-shadow:0 0 22px rgba(255,158,0,.45), inset 0 1px 0 rgba(255,255,255,.4);text-shadow:none;
+}
+:root[data-theme="broadsheet"][data-cb]{
+  --oxblood:#1155a8;
+  --oxblood-hi:#0d63c6;
+  --oxblood-rgb:17,85,168;
+  --stamp-rgb:17,85,168;
+  --hot:#1155a8;
+  --hot-rgb:17,85,168;
+}
+[data-theme="broadsheet"][data-cb] .btn.blood{border-color:#0c3f7d}
+[data-theme="broadsheet"][data-cb] .btn.blood:hover{background:#0c3f7d}
+:root[data-theme="bubblegum"][data-cb]{
+  --oxblood:#4d7cf3;
+  --oxblood-hi:#2d5ce0;
+  --oxblood-rgb:77,124,243;
+  --stamp-rgb:77,124,243;
+}
+[data-theme="bubblegum"][data-cb] .btn.blood{background:linear-gradient(180deg,#8fb0ff,#4d7cf3)}
+[data-theme="bubblegum"][data-cb] .face.dead{background:linear-gradient(180deg,#e3ebff,#fff)}
+:root[data-theme="caye"][data-cb]{
+  --oxblood:#2456c9;
+  --oxblood-hi:#3a6fd8;
+  --oxblood-rgb:36,86,201;
+  --stamp-rgb:36,86,201;
+}
+[data-theme="caye"][data-cb] .btn.blood{background:linear-gradient(180deg,#5c8ae6,#2456c9);border-color:#1a3f96}
+/* independence keeps --oxblood itself: the flag's red bands are furniture,
+   not information — only the semantic reds move to sky blue */
+:root[data-theme="independence"][data-cb]{
+  --oxblood-hi:#7cc0ff;
+  --oxblood-rgb:63,162,255;
+  --stamp-rgb:124,192,255;
+}
+[data-theme="independence"][data-cb] .btn.blood{
+  background:linear-gradient(180deg,#7cc0ff,#2e7cd6);color:#04182e;border-color:#17548f;
+}
+/* the second channel: shape and mark, so color is never the only signal */
+[data-cb] .face.dead{border-style:dashed;border-width:2px}
+[data-cb] .face.dead::after{
+  content:"\2715";position:absolute;top:4px;left:6px;font-size:13px;font-weight:700;
+  color:var(--oxblood-hi);pointer-events:none;
+}
+[data-cb] .combo.bad span::before{content:"\2715\a0"}
+[data-cb] .stakes .warn::before{content:"\26A0\FE0E\a0"}
+[data-cb] .log li.k-bank .txt::before{content:"\2713\a0";color:var(--felt-hi);font-weight:700}
+[data-cb] .log li.k-bust .txt::before{content:"\2715\a0";color:var(--oxblood-hi);font-weight:700}
+
 @media (max-width:520px){
   .wrap{padding:14px 12px 48px}
   .tagline{letter-spacing:.22em;text-indent:.22em}
@@ -1151,6 +1229,7 @@ kbd{
     <button class="btn ghost" id="rulesBtn" data-lex="rulesBtn">Beach Rules</button>
     <button class="btn ghost" id="undoBtn" data-lex="undo" hidden>Take It Back</button>
     <button class="btn ghost" id="soundBtn">Sound: On</button>
+    <button class="btn ghost" id="cbBtn" aria-pressed="false">Color Blind: Off</button>
     <button class="btn ghost" id="stakesToggle" aria-pressed="false" hidden>Beachcombing: Off</button>
     <button class="btn ghost" id="newBtn" data-lex="newGame" hidden>New Tide</button>
   </nav>
@@ -1485,7 +1564,7 @@ function freshState(players, target, threshold, highStakes){
 }
 function save(){
   try{
-    localStorage.setItem(LS, JSON.stringify({ s:state, r:roster, m:muted, t:theme }));
+    localStorage.setItem(LS, JSON.stringify({ s:state, r:roster, m:muted, t:theme, c:cbMode }));
   }catch(e){}
 }
 function load(){
@@ -1494,6 +1573,7 @@ function load(){
     if(!raw) return;
     var o = JSON.parse(raw);
     if(o && typeof o.m === "boolean") muted = o.m;
+    if(o && typeof o.c === "boolean") cbMode = o.c;
     if(o && typeof o.t === "string") theme = dressing(o.t).id;
     if(o && Array.isArray(o.r)) roster = o.r;
     if(o && o.s && o.s.players && o.s.players.length >= 2) state = o.s;
@@ -1565,6 +1645,7 @@ var DRESSINGS = [
       dressing:"Dressing",
       rulesBtn:"Rules of the House", undo:"Undo", newGame:"New Game",
       sound:function(on){ return "Sound: " + (on ? "On" : "Off"); },
+      cbToggle:function(on){ return "Color Blind: " + (on ? "On" : "Off"); },
 
       setupHead:"Gather the Gamblers",
       setupSub:"Two or more. Seats are dealt in the order you name them.",
@@ -1654,7 +1735,7 @@ var DRESSINGS = [
         "<b>Keys.</b> <kbd>1</kbd>&ndash;<kbd>6</kbd> set aside a die &middot; <kbd>Backspace</kbd> clear &middot; " +
         "<kbd>Enter</kbd> keep &amp; reroll &middot; <kbd>B</kbd> cash in &middot; <kbd>F</kbd> farkle &middot; " +
         "<kbd>U</kbd> undo &middot; <kbd>G</kbd> take the gamble &middot; <kbd>H</kbd> high stakes on/off &middot; " +
-        "<kbd>T</kbd> change the dressing",
+        "<kbd>T</kbd> change the dressing &middot; <kbd>C</kbd> color blind mode",
       rulesNote:
         "<b>The turn.</b> Roll six bones. Set aside at least one scoring die, then either roll what’s left " +
         "or cash in what you’ve gathered. Roll nothing that scores and you’ve <b>farkled</b> — " +
@@ -1675,6 +1756,7 @@ var DRESSINGS = [
       dressing:"Skin",
       rulesBtn:"System Manual", undo:"Rollback", newGame:"Reboot",
       sound:function(on){ return "Audio: " + (on ? "On" : "Off"); },
+      cbToggle:function(on){ return "Colorblind: " + (on ? "On" : "Off"); },
 
       setupHead:"Register Runners",
       setupSub:"Two or more. Slots assigned in order of entry.",
@@ -1764,7 +1846,7 @@ var DRESSINGS = [
         "<b>Keys.</b> <kbd>1</kbd>&ndash;<kbd>6</kbd> lock a cube &middot; <kbd>Backspace</kbd> flush &middot; " +
         "<kbd>Enter</kbd> lock &amp; reroll &middot; <kbd>B</kbd> upload &middot; <kbd>F</kbd> crash &middot; " +
         "<kbd>U</kbd> rollback &middot; <kbd>G</kbd> salvage &middot; <kbd>H</kbd> greed protocol on/off &middot; " +
-        "<kbd>T</kbd> change the skin",
+        "<kbd>T</kbd> change the skin &middot; <kbd>C</kbd> colorblind mode",
       rulesNote:
         "<b>The run.</b> Roll six cubes. Lock at least one scoring cube, then reroll what’s left " +
         "or upload what you’ve buffered. Roll nothing that scores and you <b>crash</b> — " +
@@ -1785,6 +1867,7 @@ var DRESSINGS = [
       dressing:"Edition",
       rulesBtn:"The Style Guide", undo:"Retraction", newGame:"New Edition",
       sound:function(on){ return "Sound: " + (on ? "On" : "Off"); },
+      cbToggle:function(on){ return "Color Blind: " + (on ? "On" : "Off"); },
 
       setupHead:"The Bylines",
       setupSub:"Two or more. Columns run in the order you file them.",
@@ -1875,7 +1958,7 @@ var DRESSINGS = [
         "<b>Keys.</b> <kbd>1</kbd>&ndash;<kbd>6</kbd> set a die &middot; <kbd>Backspace</kbd> reset &middot; " +
         "<kbd>Enter</kbd> set &amp; reroll &middot; <kbd>B</kbd> file it &middot; <kbd>F</kbd> spike it &middot; " +
         "<kbd>U</kbd> retract &middot; <kbd>G</kbd> take the scoop &middot; <kbd>H</kbd> the scoop on/off &middot; " +
-        "<kbd>T</kbd> change the edition",
+        "<kbd>T</kbd> change the edition &middot; <kbd>C</kbd> color blind mode",
       rulesNote:
         "<b>The turn.</b> Roll six dice. Set at least one scoring die, then either reroll what’s left " +
         "or file what you’ve gathered. Roll nothing that scores and the story is <b>spiked</b> — " +
@@ -1896,6 +1979,7 @@ var DRESSINGS = [
       dressing:"Look",
       rulesBtn:"How to Play", undo:"Oops, Undo", newGame:"Play Again",
       sound:function(on){ return "Sound: " + (on ? "On!" : "Off"); },
+      cbToggle:function(on){ return "Color Blind: " + (on ? "On!" : "Off"); },
 
       setupHead:"Who’s Playing?",
       setupSub:"Two or more! Turns go in the order you add them.",
@@ -1985,7 +2069,7 @@ var DRESSINGS = [
         "<b>Keys.</b> <kbd>1</kbd>&ndash;<kbd>6</kbd> keep a cube &middot; <kbd>Backspace</kbd> undo all &middot; " +
         "<kbd>Enter</kbd> keep &amp; roll &middot; <kbd>B</kbd> scoop it up &middot; <kbd>F</kbd> oh no &middot; " +
         "<kbd>U</kbd> undo &middot; <kbd>G</kbd> grab leftovers &middot; <kbd>H</kbd> big bonus on/off &middot; " +
-        "<kbd>T</kbd> change the look",
+        "<kbd>T</kbd> change the look &middot; <kbd>C</kbd> color blind mode",
       rulesNote:
         "<b>Your turn.</b> Roll six cubes. Keep at least one that scores, then roll the rest " +
         "or scoop up what you’ve got. Roll nothing that scores and you lose the whole turn.<br><br>" +
@@ -2005,6 +2089,7 @@ var DRESSINGS = [
       dressing:"Shade",
       rulesBtn:"Beach Rules", undo:"Take It Back", newGame:"New Tide",
       sound:function(on){ return "Sound: " + (on ? "On" : "Off"); },
+      cbToggle:function(on){ return "Color Blind: " + (on ? "On" : "Off"); },
 
       setupHead:"Who’s on the Sand?",
       setupSub:"Two or more. Chairs go in the order you name them.",
@@ -2095,7 +2180,7 @@ var DRESSINGS = [
         "<b>Keys.</b> <kbd>1</kbd>&ndash;<kbd>6</kbd> keep a shell &middot; <kbd>Backspace</kbd> toss back &middot; " +
         "<kbd>Enter</kbd> keep &amp; roll &middot; <kbd>B</kbd> haul it in &middot; <kbd>F</kbd> wipeout &middot; " +
         "<kbd>U</kbd> take it back &middot; <kbd>G</kbd> take the driftwood &middot; <kbd>H</kbd> beachcombing on/off &middot; " +
-        "<kbd>T</kbd> change the shade",
+        "<kbd>T</kbd> change the shade &middot; <kbd>C</kbd> color blind mode",
       rulesNote:
         "<b>Your tide.</b> Roll six shells. Keep at least one that scores, then roll what’s left " +
         "or haul in what you’ve gathered. Roll nothing that scores and you’ve <b>wiped out</b> — " +
@@ -2116,6 +2201,7 @@ var DRESSINGS = [
       dressing:"Colors",
       rulesBtn:"The Charter", undo:"Recall", newGame:"New Ceremony",
       sound:function(on){ return "Sound: " + (on ? "On" : "Off"); },
+      cbToggle:function(on){ return "Color Blind: " + (on ? "On" : "Off"); },
 
       setupHead:"Call the Delegation",
       setupSub:"Two or more. Delegates take the floor in the order you name them.",
@@ -2206,7 +2292,7 @@ var DRESSINGS = [
         "<b>Keys.</b> <kbd>1</kbd>&ndash;<kbd>6</kbd> set aside a stone &middot; <kbd>Backspace</kbd> take back &middot; " +
         "<kbd>Enter</kbd> keep &amp; roll &middot; <kbd>B</kbd> hoist it &middot; <kbd>F</kbd> rained out &middot; " +
         "<kbd>U</kbd> recall &middot; <kbd>G</kbd> take the handover &middot; <kbd>H</kbd> the handover on/off &middot; " +
-        "<kbd>T</kbd> change the colors",
+        "<kbd>T</kbd> change the colors &middot; <kbd>C</kbd> color blind mode",
       rulesNote:
         "<b>The parade.</b> Roll six stones. Set aside at least one scoring stone, then either roll what’s " +
         "left or hoist what you’ve carried. Roll nothing that scores and you are <b>rained out</b> — " +
@@ -2219,6 +2305,7 @@ var DRESSINGS = [
 ];
 
 var theme = "caye";          // the default dressing; a saved choice wins over it at boot
+var cbMode = false;          // color blind mode — a house setting like sound, outside state and undo
 var L = DRESSINGS[0].lex;    // saloon's is the base lexicon, rebuilt for `theme` by applyTheme
 
 function dressing(id){
@@ -2246,6 +2333,7 @@ function applyLexicon(){
   $("keysNote").innerHTML = L.keysNote;
   renderRules();
   $("soundBtn").textContent = L.sound(!muted);
+  applyCB();
 
   var pot = $("targetSel"), th = $("thresholdSel");
   for(i=0; i<pot.options.length; i++){
@@ -2275,6 +2363,22 @@ function applyTheme(id, quiet){
     setTimeout(function(){ v.remove(); }, 560);
     SFX.keep();
   }
+}
+// Color blind mode: html[data-cb] re-points each dressing's semantic reds and
+// adds non-color marks (see the CSS block). A house setting like sound — outside
+// state and outside the undo stack, so Undo never flips someone's eyesight back.
+function applyCB(){
+  if(cbMode) document.documentElement.setAttribute("data-cb", "");
+  else document.documentElement.removeAttribute("data-cb");
+  var b = $("cbBtn");
+  b.textContent = L.cbToggle(cbMode);
+  b.setAttribute("aria-pressed", cbMode ? "true" : "false");
+}
+function toggleCB(){
+  cbMode = !cbMode;
+  applyCB();
+  SFX.pick();
+  save();
 }
 // The picker is built from DRESSINGS, so a new world needs no markup of its own.
 function buildPicker(){
@@ -2806,6 +2910,7 @@ $("soundBtn").addEventListener("click", function(){
   if(!muted) SFX.pick();
   save();
 });
+$("cbBtn").addEventListener("click", toggleCB);
 $("stakesToggle").addEventListener("click", toggleStakes);
 $("rulesBtn").addEventListener("click", function(){ $("rulesDlg").showModal(); });
 $("closeRules").addEventListener("click", function(){ $("rulesDlg").close(); });
@@ -2819,6 +2924,7 @@ document.addEventListener("keydown", function(e){
   if(t === "INPUT" || t === "SELECT" || t === "TEXTAREA") return;
   if($("rulesDlg").open) return;
   if(e.key === "t" || e.key === "T"){ e.preventDefault(); cycleDressing(); return; }
+  if(e.key === "c" || e.key === "C"){ e.preventDefault(); toggleCB(); return; }
   if(!state || state.over){
     if(e.key === "u" || e.key === "U"){ e.preventDefault(); undo(); }
     return;

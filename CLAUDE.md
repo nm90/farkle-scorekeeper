@@ -30,9 +30,9 @@ cost of clarity about the actual score. Numbers stay numbers everywhere.
 | Lines (approx) | What |
 | --- | --- |
 | `<style>` ~9–470 | Base CSS. Ordered by region, with `/* ---------- name ---------- */` banners. |
-| `<style>` ~479–1130 | The five non-default dressings, one `/* ===== DRESSING n ===== */` block each. |
+| `<style>` ~479–1130 | The five non-default dressings, one `/* ===== DRESSING n ===== */` block each, then the `/* ===== COLOR BLIND MODE ===== */` block (see "Color blind mode"). |
 | `<header class="masthead">` | Title, tagline, and `#potLine` (target score, rewritten at render). |
-| `<nav class="toolbar">` | `#dressingSel` (the dressing dropdown) + Rules / Undo / Sound / High Stakes / New Game. `#undoBtn`, `#stakesToggle` and `#newBtn` are hidden until a game exists. |
+| `<nav class="toolbar">` | `#dressingSel` (the dressing dropdown) + Rules / Undo / Sound / Color Blind / High Stakes / New Game. `#undoBtn`, `#stakesToggle` and `#newBtn` are hidden until a game exists; `#cbBtn` never hides. |
 | `<section id="setup">` | Roster builder + pot/buy-in selects. Visible when `state === null`. |
 | `<section id="game">` | `#crownSlot` (winner banner) + `.board` — a 2-col grid: turn panel left, ledger + log right. Collapses to 1 col under 880px. |
 | `<dialog id="rulesDlg">` | Scoring table and key bindings. Update this whenever scoring changes. |
@@ -112,7 +112,8 @@ Three things live **outside** `state`:
   `state` and outside the undo stack: changing costume is not a game move, and Undo must not
   put the old one back.
 
-The localStorage blob is `{s: state, r: roster, m: muted, t: theme}`.
+The localStorage blob is `{s: state, r: roster, m: muted, t: theme, c: cbMode}` — `cbMode` is the
+color blind mode flag, a house setting like sound (see "Color blind mode").
 
 `undoStack` holds `JSON.stringify({s: state, p: pad})` snapshots, capped at 60. **Call
 `snapshot()` before any mutation** so Undo stays honest. If a handler snapshots and then bails out
@@ -164,6 +165,30 @@ Two ways a string reaches the page:
 
 Log entries store the text they were written with, so a game switched mid-play keeps its old lines
 in the old voice. That is intentional: the log is a record, not a view.
+
+## Color blind mode
+
+`html[data-cb]` — toggled from the toolbar (`#cbBtn`, always visible) or <kbd>C</kbd> (handled
+before the no-state bail-out, like <kbd>T</kbd>), persisted as `c` in the localStorage blob, and
+deliberately outside `state` and the undo stack for the same reason the dressing is: how the table
+reads is not a game move, and Undo must not flip it back. `applyCB()` owns the attribute and the
+latch button; `applyLexicon()` calls it, so the label follows the dressing.
+
+The CSS is one banner block after the dressings, in two halves:
+
+- **Per-theme token overrides** (`:root[data-theme="…"][data-cb]`) move each world's semantic
+  "bad" reds — `--oxblood(-hi/-rgb)`, `--stamp-rgb`, and `--hot` where it was red — to a hue that
+  world's accent and its "good" green can't be mistaken for: blue in the warm rooms (saloon,
+  broadsheet, bubblegum, caye), amber in neon (whose accent is cyan), sky blue in independence.
+  Independence keeps `--oxblood` itself untouched: the flag's red bands are furniture, not
+  information. Each block also repaints `.btn.blood` where the theme's rule hardcodes red hexes.
+- **`[data-cb]` mark rules** give every color-only signal a second channel: dead pad faces go
+  dashed and take an ✕, log lines are marked ✓ (`k-bank`) / ✕ (`k-bust`), the dead-dice reading
+  row gets an ✕ and the stakes warning a ⚠.
+
+A new red/green signal must get both halves: a token value in **every** theme's CB block and a
+non-color mark. The latch label is per-dressing copy — `cbToggle(on)` in every lexicon, built like
+`sound(on)` — and <kbd>C</kbd> is listed in every `keysNote`.
 
 ## Scoring (`scoreCounts`)
 
