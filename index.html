@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="caye">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="color-scheme" content="dark">
-<title>Six Bones — Saloon Ledger</title>
+<meta name="color-scheme" content="light">
+<title>Six Shells — Caye Tally</title>
 <style>
 /* ============================================================
    SIX BONES · a farkle ledger
@@ -1138,34 +1138,34 @@ kbd{
 
   <header class="masthead">
     <div class="bones" id="mastheadDice" aria-hidden="true"></div>
-    <h1 data-lex="title">Six Bones</h1>
-    <p class="tagline" data-lex="tagline">Saloon Ledger &amp; Farkle Scorekeeper</p>
-    <div class="divider"><span id="potLine">First to 10,000 takes the pot</span></div>
+    <h1 data-lex="title">Six Shells</h1>
+    <p class="tagline" data-lex="tagline">Caye Tally &middot; Dice in the Shade</p>
+    <div class="divider"><span id="potLine">First to 10,000 takes the catch</span></div>
   </header>
 
   <nav class="toolbar" id="toolbar">
     <div class="dressing" id="dressing">
-      <label class="lab" for="dressingSel" data-lex="dressing">Dressing</label>
+      <label class="lab" for="dressingSel" data-lex="dressing">Shade</label>
       <select id="dressingSel"></select>
     </div>
-    <button class="btn ghost" id="rulesBtn" data-lex="rulesBtn">Rules of the House</button>
-    <button class="btn ghost" id="undoBtn" data-lex="undo" hidden>Undo</button>
+    <button class="btn ghost" id="rulesBtn" data-lex="rulesBtn">Beach Rules</button>
+    <button class="btn ghost" id="undoBtn" data-lex="undo" hidden>Take It Back</button>
     <button class="btn ghost" id="soundBtn">Sound: On</button>
-    <button class="btn ghost" id="stakesToggle" aria-pressed="false" hidden>High Stakes: Off</button>
-    <button class="btn ghost" id="newBtn" data-lex="newGame" hidden>New Game</button>
+    <button class="btn ghost" id="stakesToggle" aria-pressed="false" hidden>Beachcombing: Off</button>
+    <button class="btn ghost" id="newBtn" data-lex="newGame" hidden>New Tide</button>
   </nav>
 
   <!-- ============ SETUP ============ -->
   <section class="panel" id="setup">
-    <h2 data-lex="setupHead">Gather the Gamblers</h2>
-    <p class="sub" data-lex="setupSub">Two or more. Seats are dealt in the order you name them.</p>
+    <h2 data-lex="setupHead">Who’s on the Sand?</h2>
+    <p class="sub" data-lex="setupSub">Two or more. Chairs go in the order you name them.</p>
     <ul class="roster" id="roster"></ul>
     <form class="row" id="addForm" autocomplete="off">
-      <input type="text" id="nameInput" class="grow" placeholder="Name of the gambler&hellip;" maxlength="18">
-      <button class="btn" type="submit" data-lex="addBtn">Deal In</button>
+      <input type="text" id="nameInput" class="grow" placeholder="Name of the beachcomber&hellip;" maxlength="18">
+      <button class="btn" type="submit" data-lex="addBtn">Pull Up a Chair</button>
     </form>
     <div class="opts">
-      <label><span data-lex="potLabel">The Pot</span>
+      <label><span data-lex="potLabel">The Catch</span>
         <select id="targetSel">
           <option value="2500">2,500</option>
           <option value="5000">5,000</option>
@@ -1173,7 +1173,7 @@ kbd{
           <option value="20000">20,000</option>
         </select>
       </label>
-      <label><span data-lex="buyinLabel">Buy-in (first bank)</span>
+      <label><span data-lex="buyinLabel">First haul must clear</span>
         <select id="thresholdSel">
           <option value="0">None</option>
           <option value="350">350</option>
@@ -1181,14 +1181,14 @@ kbd{
           <option value="1000">1,000</option>
         </select>
       </label>
-      <label><span data-lex="stakesLabel">High Stakes</span>
+      <label><span data-lex="stakesLabel">Beachcombing</span>
         <select id="stakesSel">
           <option value="0" selected>Off</option>
           <option value="1">On</option>
         </select>
       </label>
     </div>
-    <button class="btn brass" id="startBtn" style="width:100%;padding:15px">Open the Table</button>
+    <button class="btn brass" id="startBtn" style="width:100%;padding:15px">Set Out the Shells</button>
   </section>
 
   <!-- ============ GAME ============ -->
@@ -1199,51 +1199,51 @@ kbd{
       <div class="panel" id="turnPanel">
         <div class="nowup">
           <div class="who" id="whoUp">&mdash;</div>
-          <div class="hand" id="handNo">Hand 1</div>
+          <div class="hand" id="handNo">Tide 1</div>
         </div>
 
         <div id="stakesSlot"></div>
 
         <div class="tally">
           <div>
-            <div class="lab" data-lex="tallyLab">On the table this turn</div>
+            <div class="lab" data-lex="tallyLab">Gathered this tide</div>
             <div class="amt" id="turnAmt">0</div>
           </div>
           <div class="dieleft">
-            <div class="lab" data-lex="liveLab">Bones live</div>
+            <div class="lab" data-lex="liveLab">Shells live</div>
             <div class="pips" id="livePips"></div>
           </div>
         </div>
 
         <div class="padhead">
           <h2 style="margin:0" data-lex="padHead">Set Aside</h2>
-          <button class="btn tiny" id="clearPad" data-lex="clearBtn">Clear</button>
+          <button class="btn tiny" id="clearPad" data-lex="clearBtn">Toss Back</button>
         </div>
         <div class="pad" id="pad"></div>
 
         <div class="reading" id="reading"></div>
 
         <div class="actions">
-          <button class="btn" id="keepBtn" data-lex="keepBtn">Keep &amp; Reroll</button>
-          <button class="btn brass" id="bankBtn" data-lex="bankBtn">Cash In</button>
-          <button class="btn blood" id="bustBtn" data-lex="bustBtn">Farkle!</button>
+          <button class="btn" id="keepBtn" data-lex="keepBtn">Keep &amp; Roll</button>
+          <button class="btn brass" id="bankBtn" data-lex="bankBtn">Haul It In</button>
+          <button class="btn blood" id="bustBtn" data-lex="bustBtn">Wipeout!</button>
         </div>
 
         <div class="manual">
           <input type="number" id="manualIn" placeholder="0" step="50" min="0">
           <button class="btn tiny" id="manualBtn" data-lex="manualBtn">Add by hand</button>
-          <span class="hint" data-lex="manualHint">&mdash; for the fast counters</span>
+          <span class="hint" data-lex="manualHint">&mdash; for the quick counters</span>
         </div>
       </div>
 
       <div class="stack">
         <div class="panel">
-          <h2 data-lex="ledgerHead">The Ledger</h2>
+          <h2 data-lex="ledgerHead">The Tally</h2>
           <p class="sub" id="ledgerSub">Standings after the last hand.</p>
           <ul class="ledger" id="ledger"></ul>
         </div>
         <div class="panel">
-          <h2 data-lex="logHead">Night's Doings</h2>
+          <h2 data-lex="logHead">The Day’s Drift</h2>
           <ul class="log" id="log"></ul>
         </div>
       </div>
@@ -1251,14 +1251,14 @@ kbd{
     </div>
   </section>
 
-  <p class="credit" data-lex="credit">Roll well · Quit early · The house remembers</p>
+  <p class="credit" data-lex="credit">Roll easy · Haul early · The sea keeps score</p>
 </div>
 
 <!-- ============ RULES ============ -->
 <dialog id="rulesDlg">
   <div class="dlg">
-    <h3 data-lex="rulesHead">Rules of the House</h3>
-    <p class="sub" data-lex="rulesSub">Scoring as this ledger counts it.</p>
+    <h3 data-lex="rulesHead">Beach Rules</h3>
+    <p class="sub" data-lex="rulesSub">Scoring as this bar counts it.</p>
     <table class="rules">
       <tr><td>Each single <b>1</b></td><td>100</td></tr>
       <tr><td>Each single <b>5</b></td><td>50</td></tr>
@@ -1271,11 +1271,11 @@ kbd{
       <tr><td>Four of a kind + a pair</td><td>1,500</td></tr>
       <tr><td>Two triplets</td><td>2,500</td></tr>
       <tr><td>Straight 1&ndash;2&ndash;3&ndash;4&ndash;5&ndash;6</td><td>1,500</td></tr>
-      <tr id="stakesRow" hidden><td id="stakesRowLab">High Stakes first roll</td><td id="stakesRowPts">the pot</td></tr>
+      <tr id="stakesRow" hidden><td id="stakesRowLab">Beachcombing, first roll</td><td id="stakesRowPts">the pool</td></tr>
     </table>
     <p class="note" id="rulesNote"></p>
     <p class="note" id="keysNote"></p>
-    <div class="foot"><button class="btn" id="closeRules" data-lex="closeRules">Back to the Table</button></div>
+    <div class="foot"><button class="btn" id="closeRules" data-lex="closeRules">Back to the Sand</button></div>
   </div>
 </dialog>
 
@@ -2218,8 +2218,8 @@ var DRESSINGS = [
   }
 ];
 
-var theme = "saloon";
-var L = DRESSINGS[0].lex;
+var theme = "caye";          // the default dressing; a saved choice wins over it at boot
+var L = DRESSINGS[0].lex;    // saloon's is the base lexicon, rebuilt for `theme` by applyTheme
 
 function dressing(id){
   var want = id || theme;

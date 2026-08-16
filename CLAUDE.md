@@ -10,11 +10,11 @@ the dice art, the sound of the cues, and every word of flavor copy:
 
 | id | world | round | dice | banking | players |
 | --- | --- | --- | --- | --- | --- |
-| `saloon` (default) | candlelit back room; brass, oxblood, parchment | hand | bones | cashing in | gamblers |
+| `saloon` | candlelit back room; brass, oxblood, parchment | hand | bones | cashing in | gamblers |
 | `neon` | arcade cabinet at 3am; mono, scanlines, glow | cycle | cubes | uploading | runners |
 | `broadsheet` | morning paper; letterpress on newsprint, no glow | edition | dice | filing | correspondents |
 | `bubblegum` | plastic toy in the sun; rounded, chunky, bouncing | round | cubes | scooping | players |
-| `caye` | beach bar on a Belize caye at noon; turquoise, sand, sea glass | tide | shells | hauling in | beachcombers |
+| `caye` (default) | beach bar on a Belize caye at noon; turquoise, sand, sea glass | tide | shells | hauling in | beachcombers |
 | `independence` | Belize, the twenty-first of September; royal blue under red bands, gold lettering | parade | stones | hoisting | celebrants |
 
 The High Stakes variant is renamed too: the gamble is *the leavings* / *greed protocol* / *the
@@ -134,6 +134,12 @@ There is no reactive layer, and adding one would be a bigger change than most fe
   voice,  // { wave, tune, gain, dur } — applied to every SFX cue
   lex }   // every user-visible string, see below
 ```
+
+`caye` is the default: `var theme = "caye"`, and the static markup is written in its voice —
+`data-theme="caye"` on `<html>`, its `<title>`, and every `[data-lex]` element carrying its copy —
+so the page doesn't flash the saloon before the script runs. A saved choice still wins at boot.
+Changing the default means moving all of that, but **not** the order of `DRESSINGS`: saloon's `lex`
+stays at index 0 as the base every other lexicon merges over.
 
 The picker is a single `<select id="dressingSel">`, filled once by `buildPicker()` from
 `DRESSINGS` — a new world needs no markup of its own, only a new entry in the array. `applyTheme`
