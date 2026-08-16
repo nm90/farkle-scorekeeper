@@ -220,41 +220,21 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 
 /* ---------- dressing picker ---------- */
 .dressing{
-  display:flex;align-items:center;gap:6px;padding:5px 8px;
+  display:flex;align-items:center;gap:8px;padding:4px 6px 4px 10px;
   border:var(--border-w) solid var(--rule);border-radius:var(--r-sm);background:var(--field-bg);
 }
 .dressing .lab{
   font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--parch-3);
-  margin-right:2px;font-style:normal;
+  font-style:normal;
 }
-.swatch{
-  position:relative;width:32px;height:22px;padding:0;overflow:hidden;
-  border:1px solid var(--rule);border-radius:var(--r-sm);background:none;display:flex;
-  transition:transform .14s var(--ease), box-shadow .18s ease, border-color .18s ease, opacity .18s ease;
-  opacity:.62;
+/* the picker is a plain select, dressed down to sit in the toolbar */
+#dressingSel{
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  padding:6px 30px 6px 8px;background-color:transparent;background-position:right 9px center;
+  border-color:transparent;color:var(--parch);
 }
-.swatch i{flex:1}
-.swatch:hover{transform:translateY(-2px);opacity:1}
-.swatch[aria-pressed="true"]{opacity:1;border-color:var(--brass);box-shadow:0 0 0 2px var(--focus)}
-/* each chip wears its own dressing, whatever the page is wearing */
-.swatch[data-set="saloon"] i:nth-child(1){background:#1b1310}
-.swatch[data-set="saloon"] i:nth-child(2){background:#d4a53a}
-.swatch[data-set="saloon"] i:nth-child(3){background:#9a2f27}
-.swatch[data-set="neon"] i:nth-child(1){background:#04060f}
-.swatch[data-set="neon"] i:nth-child(2){background:#00e9ff}
-.swatch[data-set="neon"] i:nth-child(3){background:#ff1f7a}
-.swatch[data-set="broadsheet"] i:nth-child(1){background:#efece1}
-.swatch[data-set="broadsheet"] i:nth-child(2){background:#17150f}
-.swatch[data-set="broadsheet"] i:nth-child(3){background:#b3241c}
-.swatch[data-set="bubblegum"] i:nth-child(1){background:#ff3fa4}
-.swatch[data-set="bubblegum"] i:nth-child(2){background:#5eead4}
-.swatch[data-set="bubblegum"] i:nth-child(3){background:#ffd84d}
-.swatch[data-set="caye"] i:nth-child(1){background:#39b3bf}
-.swatch[data-set="caye"] i:nth-child(2){background:#f6e3bd}
-.swatch[data-set="caye"] i:nth-child(3){background:#e2553a}
-.swatch[data-set="independence"] i:nth-child(1){background:#05306a}
-.swatch[data-set="independence"] i:nth-child(2){background:#ce1126}
-.swatch[data-set="independence"] i:nth-child(3){background:#e8b100}
+#dressingSel:hover{border-color:var(--rule)}
+#dressingSel:focus{border-color:var(--brass)}
 /* the room dims for a beat when the dressing changes */
 .veil{position:fixed;inset:0;z-index:98;pointer-events:none;background:var(--ink);animation:veil .5s ease forwards}
 @keyframes veil{0%{opacity:.85}100%{opacity:0}}
@@ -746,7 +726,7 @@ kbd{
 [data-theme="broadsheet"] .crown{border:3px double var(--ink);background:#fffdf5}
 [data-theme="broadsheet"] .crown .nm{color:var(--ink);text-shadow:none}
 [data-theme="broadsheet"] kbd{background:#fffdf5;border:1px solid var(--ink);color:var(--ink);font-weight:700}
-[data-theme="broadsheet"] .swatch,[data-theme="broadsheet"] .dressing{border-color:rgba(23,21,15,.35)}
+[data-theme="broadsheet"] .dressing{border-color:rgba(23,21,15,.35)}
 
 /* ============================================================
    DRESSING 4 · BUBBLEGUM — a plastic toy on a sunny table.
@@ -886,7 +866,6 @@ kbd{
 [data-theme="bubblegum"] .crown .nm{color:var(--brass-hi)}
 [data-theme="bubblegum"] kbd{background:#fff;border:2px solid var(--ink);color:var(--brass-hi);font-weight:700}
 [data-theme="bubblegum"] .dressing{background:#fff;border:2px solid var(--ink);border-radius:999px}
-[data-theme="bubblegum"] .swatch{border-radius:999px;border-color:var(--ink)}
 
 /* ============================================================
    DRESSING 5 · CAYE — a beach bar on a Belize caye at noon.
@@ -948,7 +927,7 @@ kbd{
   --h1-size:clamp(34px,8.4vw,70px);
   --h1-track:.07em;
   --h1-weight:700;
-  --h1-grad:linear-gradient(180deg,#3fd0d6 0%,#0f8f9e 48%,#0b5f7a 100%);
+  --h1-grad:linear-gradient(180deg,#22b6c2 0%,#0c8090 48%,#0a5670 100%);
   --h1-shadow:0 2px 0 rgba(255,255,255,.9);
   --h1-filter:drop-shadow(0 6px 12px rgba(11,95,122,.18));
   --label-track:.24em;
@@ -1165,14 +1144,9 @@ kbd{
   </header>
 
   <nav class="toolbar" id="toolbar">
-    <div class="dressing" id="dressing" role="group" aria-label="Table dressing">
-      <span class="lab" data-lex="dressing">Dressing</span>
-      <button class="swatch" type="button" data-set="saloon" title="Saloon — a candlelit back room"><i></i><i></i><i></i></button>
-      <button class="swatch" type="button" data-set="neon" title="Neon — an arcade cabinet at 3am"><i></i><i></i><i></i></button>
-      <button class="swatch" type="button" data-set="broadsheet" title="Broadsheet — the morning paper"><i></i><i></i><i></i></button>
-      <button class="swatch" type="button" data-set="bubblegum" title="Bubblegum — a plastic toy in the sun"><i></i><i></i><i></i></button>
-      <button class="swatch" type="button" data-set="caye" title="Caye — a Belize beach bar at noon"><i></i><i></i><i></i></button>
-      <button class="swatch" type="button" data-set="independence" title="Independence — Belize, the twenty-first of September"><i></i><i></i><i></i></button>
+    <div class="dressing" id="dressing">
+      <label class="lab" for="dressingSel" data-lex="dressing">Dressing</label>
+      <select id="dressingSel"></select>
     </div>
     <button class="btn ghost" id="rulesBtn" data-lex="rulesBtn">Rules of the House</button>
     <button class="btn ghost" id="undoBtn" data-lex="undo" hidden>Undo</button>
@@ -1581,7 +1555,7 @@ function addLog(kind, text){
 
 var DRESSINGS = [
   {
-    id:"saloon", name:"Saloon",
+    id:"saloon", name:"Saloon", blurb:"a candlelit back room",
     pips:"round", rx:18,
     voice:{ wave:null, tune:1, gain:1, dur:1 },
     lex:{
@@ -1691,7 +1665,7 @@ var DRESSINGS = [
     }
   },
   {
-    id:"neon", name:"Neon",
+    id:"neon", name:"Neon", blurb:"an arcade cabinet at 3am",
     pips:"block", rx:3,
     voice:{ wave:"sawtooth", tune:1.5, gain:.55, dur:.8 },
     lex:{
@@ -1801,7 +1775,7 @@ var DRESSINGS = [
     }
   },
   {
-    id:"broadsheet", name:"Broadsheet",
+    id:"broadsheet", name:"Broadsheet", blurb:"the morning paper",
     pips:"ink", rx:10,
     voice:{ wave:"square", tune:.62, gain:.3, dur:.34 },
     lex:{
@@ -1912,7 +1886,7 @@ var DRESSINGS = [
     }
   },
   {
-    id:"bubblegum", name:"Bubblegum",
+    id:"bubblegum", name:"Bubblegum", blurb:"a plastic toy in the sun",
     pips:"candy", rx:26,
     voice:{ wave:"triangle", tune:2, gain:1.05, dur:1.15 },
     lex:{
@@ -2021,7 +1995,7 @@ var DRESSINGS = [
     }
   },
   {
-    id:"caye", name:"Caye",
+    id:"caye", name:"Caye", blurb:"a Belize beach bar at noon",
     pips:"seaglass", rx:22,
     voice:{ wave:"sine", tune:1.18, gain:.95, dur:1.3 },
     lex:{
@@ -2132,7 +2106,7 @@ var DRESSINGS = [
     }
   },
   {
-    id:"independence", name:"Independence",
+    id:"independence", name:"Independence", blurb:"Belize, the twenty-first of September",
     pips:"carved", rx:6,
     voice:{ wave:"square", tune:.8, gain:.42, dur:.75 },
     lex:{
@@ -2289,10 +2263,8 @@ function applyTheme(id, quiet){
   theme = dressing(id).id;
   L = mergeLex(dressing().lex);
   document.documentElement.setAttribute("data-theme", theme);
-  var chips = document.querySelectorAll("[data-set]");
-  for(var i=0; i<chips.length; i++){
-    chips[i].setAttribute("aria-pressed", chips[i].getAttribute("data-set") === theme ? "true" : "false");
-  }
+  $("dressingSel").value = theme;
+  $("dressingSel").title = dressing().name + " — " + dressing().blurb;
   $("mastheadDice").innerHTML = [3,1,5,2,6,4].map(function(f){ return dieSVG(f); }).join("");
   applyLexicon();
   renderAll();
@@ -2304,12 +2276,16 @@ function applyTheme(id, quiet){
     SFX.keep();
   }
 }
-$("dressing").addEventListener("click", function(e){
-  var b = e.target.closest("[data-set]");
-  if(!b) return;
-  var id = b.getAttribute("data-set");
-  if(id === theme) return;
-  applyTheme(id); save();
+// The picker is built from DRESSINGS, so a new world needs no markup of its own.
+function buildPicker(){
+  $("dressingSel").innerHTML = DRESSINGS.map(function(d){
+    return '<option value="' + d.id + '" title="' + d.blurb + '">' + d.name + '</option>';
+  }).join("");
+}
+buildPicker();
+$("dressingSel").addEventListener("change", function(){
+  if(this.value === theme) return;
+  applyTheme(this.value); save();
 });
 function cycleDressing(){
   var i = 0;

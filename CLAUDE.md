@@ -32,7 +32,7 @@ cost of clarity about the actual score. Numbers stay numbers everywhere.
 | `<style>` ~9–470 | Base CSS. Ordered by region, with `/* ---------- name ---------- */` banners. |
 | `<style>` ~479–1130 | The five non-default dressings, one `/* ===== DRESSING n ===== */` block each. |
 | `<header class="masthead">` | Title, tagline, and `#potLine` (target score, rewritten at render). |
-| `<nav class="toolbar">` | `#dressing` swatches + Rules / Undo / Sound / High Stakes / New Game. `#undoBtn`, `#stakesToggle` and `#newBtn` are hidden until a game exists. |
+| `<nav class="toolbar">` | `#dressingSel` (the dressing dropdown) + Rules / Undo / Sound / High Stakes / New Game. `#undoBtn`, `#stakesToggle` and `#newBtn` are hidden until a game exists. |
 | `<section id="setup">` | Roster builder + pot/buy-in selects. Visible when `state === null`. |
 | `<section id="game">` | `#crownSlot` (winner banner) + `.board` — a 2-col grid: turn panel left, ledger + log right. Collapses to 1 col under 880px. |
 | `<dialog id="rulesDlg">` | Scoring table and key bindings. Update this whenever scoring changes. |
@@ -68,8 +68,9 @@ Each is introduced by a `/* ===== name ===== */` banner.
   in try/catch because file:// and sandboxed frames can throw), `snapshot()`/`undo()`.
 - **helpers** — `$`, `num` (thousands separators), `esc` (**always** escape player names — they go
   into `innerHTML`), `padTotal`, `stamp`, `quake`, `addLog`.
-- **dressings** — the `DRESSINGS` array (id, name, `pips`, `rx`, `voice`, `lex`), `dressing(id)`,
-  `applyTheme(id, quiet)`, `applyLexicon()`, and the swatch/`T` handlers. See "Dressings" below.
+- **dressings** — the `DRESSINGS` array (id, name, `blurb`, `pips`, `rx`, `voice`, `lex`),
+  `dressing(id)`, `applyTheme(id, quiet)`, `applyLexicon()`, `buildPicker()`, and the
+  dropdown/`T` handlers. See "Dressings" below.
 - **setup screen** — roster add/remove, `#startBtn` builds the state.
 - **game rendering** — `renderAll()` fans out to `renderTurn / renderPad / renderReading /
   renderLedger / renderLog / renderCrown`.
@@ -127,11 +128,16 @@ There is no reactive layer, and adding one would be a bigger change than most fe
 
 ```js
 { id, name,
+  blurb,  // one line of English chrome — the option's tooltip in the picker
   pips,   // key into PIP_ART — how this world cuts a pip
   rx,     // die corner radius; the inner rule uses rx - 4
   voice,  // { wave, tune, gain, dur } — applied to every SFX cue
   lex }   // every user-visible string, see below
 ```
+
+The picker is a single `<select id="dressingSel">`, filled once by `buildPicker()` from
+`DRESSINGS` — a new world needs no markup of its own, only a new entry in the array. `applyTheme`
+writes the live id back to the select, so <kbd>T</kbd> and the dropdown never disagree.
 
 `applyTheme(id, quiet)` sets `data-theme` on `<html>` (all CSS hangs off that), rebuilds `L`,
 redraws the masthead dice, runs `applyLexicon()`, then `renderAll()`. Pass `quiet` at boot to skip
@@ -361,7 +367,7 @@ google-chrome --headless --disable-gpu --virtual-time-budget=4000 --dump-dom htt
 banner out of `index.html` and `eval` it in Node.
 
 A harness can drive the picker directly:
-`document.querySelector('[data-set="neon"]').dispatchEvent(new MouseEvent("click",{bubbles:true}))`.
+`var s=document.getElementById("dressingSel"); s.value="neon"; s.dispatchEvent(new Event("change",{bubbles:true}))`.
 Remove any lingering `.veil`/`.stamp` overlays before screenshotting.
 
 Screenshots for visual checks — take one per dressing; a change that only looks right in the saloon
