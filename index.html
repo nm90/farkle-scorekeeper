@@ -249,6 +249,12 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 .swatch[data-set="bubblegum"] i:nth-child(1){background:#ff3fa4}
 .swatch[data-set="bubblegum"] i:nth-child(2){background:#5eead4}
 .swatch[data-set="bubblegum"] i:nth-child(3){background:#ffd84d}
+.swatch[data-set="caye"] i:nth-child(1){background:#39b3bf}
+.swatch[data-set="caye"] i:nth-child(2){background:#f6e3bd}
+.swatch[data-set="caye"] i:nth-child(3){background:#e2553a}
+.swatch[data-set="independence"] i:nth-child(1){background:#05306a}
+.swatch[data-set="independence"] i:nth-child(2){background:#ce1126}
+.swatch[data-set="independence"] i:nth-child(3){background:#e8b100}
 /* the room dims for a beat when the dressing changes */
 .veil{position:fixed;inset:0;z-index:98;pointer-events:none;background:var(--ink);animation:veil .5s ease forwards}
 @keyframes veil{0%{opacity:.85}100%{opacity:0}}
@@ -882,6 +888,250 @@ kbd{
 [data-theme="bubblegum"] .dressing{background:#fff;border:2px solid var(--ink);border-radius:999px}
 [data-theme="bubblegum"] .swatch{border-radius:999px;border-color:var(--ink)}
 
+/* ============================================================
+   DRESSING 5 · CAYE — a beach bar on a Belize caye at noon.
+   Turquoise water, bleached sand, sea glass, everything drifting.
+   ============================================================ */
+:root[data-theme="caye"]{
+  color-scheme:light;
+  --ink:#08343f;
+  --wood:#fdf1dd;
+  --wood-2:#fffaf0;
+  --parch:#123c46;
+  --parch-2:#2c5d63;
+  --parch-3:#6f8f92;
+  --brass:#0f8f9e;
+  --brass-hi:#0b6f7c;
+  --brass-lo:#0a5a66;
+  --oxblood:#e2553a;
+  --oxblood-hi:#f4795b;
+  --felt:#2f8f5b;
+  --felt-hi:#24734a;
+  --smoke:rgba(18,60,70,.72);
+  --hot:#f4a300;
+  --hot-rgb:244,163,0;
+  --brass-rgb:15,143,158;
+  --brass-hi-rgb:11,111,124;
+  --oxblood-rgb:226,85,58;
+  --felt-rgb:47,143,91;
+  --tint-rgb:15,143,158;
+  --stamp-rgb:226,85,58;
+  --stamp-gold-rgb:15,143,158;
+
+  --rule:rgba(15,143,158,.4);
+  --shadow:0 14px 30px rgba(10,70,80,.16);
+  --sheen:rgba(255,255,255,.85);
+  --tint:rgba(15,143,158,.06);
+  --tint-2:rgba(15,143,158,.03);
+  --tint-deep:rgba(10,60,70,.06);
+  --panel-bg:linear-gradient(180deg,#fffaf0,#fdf1dd);
+  --panel-inner:rgba(15,143,158,.24);
+  --panel-inner-inset:6px;
+  --backdrop:rgba(8,52,63,.6);
+  --field-bg:rgba(255,255,255,.72);
+  --opt-bg:#fffaf0;
+  --placeholder:rgba(111,143,146,.85);
+  --faint:rgba(111,143,146,.7);
+  --focus:rgba(15,143,158,.18);
+  --btn-bg:linear-gradient(180deg,#ffffff,#fdf1dd);
+  --btn-hover:linear-gradient(180deg,#ffffff,#e8f7f6);
+  --tally-bg:linear-gradient(180deg,rgba(47,143,91,.16),rgba(47,143,91,.04));
+  --tally-border:rgba(47,143,91,.42);
+  --tally-lab:#24734a;
+  --tally-amt:#123c46;
+  --tally-glow:none;
+
+  --r-sm:8px;
+  --r-md:16px;
+  --serif:"Avenir Next",Avenir,"Segoe UI",system-ui,-apple-system,"Trebuchet MS",sans-serif;
+  --display:var(--serif);
+  --h1-size:clamp(34px,8.4vw,70px);
+  --h1-track:.07em;
+  --h1-weight:700;
+  --h1-grad:linear-gradient(180deg,#3fd0d6 0%,#0f8f9e 48%,#0b5f7a 100%);
+  --h1-shadow:0 2px 0 rgba(255,255,255,.9);
+  --h1-filter:drop-shadow(0 6px 12px rgba(11,95,122,.18));
+  --label-track:.24em;
+
+  --body-bg:
+    radial-gradient(1100px 620px at 50% -14%, #cdf3f6 0%, transparent 64%),
+    radial-gradient(820px 520px at 88% 108%, #f7e6c2 0%, transparent 60%),
+    linear-gradient(178deg,#e9f9f8 0%,#d5f0ee 46%,#f7ecd8 100%);
+  --grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='.6'/></svg>");
+  --grain-op:.12;
+  --grain-blend:multiply;
+  --glow:radial-gradient(ellipse at center, rgba(255,214,120,.45), rgba(255,190,90,.14) 44%, transparent 72%);
+  --glow-anim:drift 16s ease-in-out infinite;
+  --glow-top:-26vh;
+  --glow-h:78vh;
+
+  --die-a:#ffffff;
+  --die-b:#d9f2ef;
+  --die-edge:#0f8f9e;
+  --die-edge-w:2.5;
+  --die-sheen:rgba(255,255,255,.9);
+  --pip:#0b5f6b;
+  --die-shadow:drop-shadow(0 6px 8px rgba(11,95,122,.22));
+  --die-hover:translateY(-3px) rotate(3deg);
+  --caret:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%230f8f9e' stroke-width='2' stroke-linecap='round'/></svg>");
+}
+@keyframes sway{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-4px) rotate(5deg)}}
+[data-theme="caye"] .masthead .bones svg{animation:sway 4.6s ease-in-out infinite;opacity:.95}
+[data-theme="caye"] .masthead .bones svg:nth-child(2n){animation-delay:.5s}
+[data-theme="caye"] .masthead .bones svg:nth-child(3n){animation-delay:1s}
+[data-theme="caye"] .tagline{letter-spacing:.3em;text-indent:.3em;color:var(--parch-2)}
+[data-theme="caye"] .sub{font-style:italic;color:var(--parch-3)}
+[data-theme="caye"] .panel::before{border-style:dotted;border-color:rgba(15,143,158,.3)}
+[data-theme="caye"] .btn{
+  background:#fff;border-color:rgba(15,143,158,.45);box-shadow:0 2px 0 rgba(11,95,122,.14);
+}
+[data-theme="caye"] .btn:hover{background:#eafaf9;transform:translateY(-1px);box-shadow:0 4px 0 rgba(11,95,122,.14)}
+[data-theme="caye"] .btn:active{transform:translateY(1px);box-shadow:0 1px 0 rgba(11,95,122,.14)}
+[data-theme="caye"] .btn.brass{
+  background:linear-gradient(180deg,#3fd0d6,#0f8f9e);color:#03303a;border-color:#0b6f7c;text-shadow:none;
+}
+[data-theme="caye"] .btn.blood{background:linear-gradient(180deg,#f4795b,#e2553a);color:#fff;border-color:#b93f28}
+[data-theme="caye"] .btn.brass:hover,[data-theme="caye"] .btn.blood:hover{filter:brightness(1.06)}
+[data-theme="caye"] .roster li{background:#fff;border-left-width:6px}
+[data-theme="caye"] .face{background:rgba(255,255,255,.7)}
+[data-theme="caye"] .face.has{box-shadow:0 4px 0 rgba(15,143,158,.28)}
+[data-theme="caye"] .reading{background:rgba(255,255,255,.72)}
+[data-theme="caye"] .ledger li{background:rgba(255,255,255,.6)}
+[data-theme="caye"] .bar i{background:linear-gradient(90deg,#f4a300,#0f8f9e)}
+[data-theme="caye"] .stamp span{
+  border-width:5px;border-radius:14px;text-shadow:none;background:rgba(255,255,255,.7);
+  box-shadow:0 12px 30px rgba(11,95,122,.25);
+  animation:washin 1.15s cubic-bezier(.2,.9,.3,1) forwards;
+}
+@keyframes washin{
+  0%{opacity:0;transform:rotate(-9deg) scale(1.5) translateX(16vw)}
+  24%{opacity:1;transform:rotate(-8deg) scale(1) translateX(0)}
+  70%{opacity:1;transform:rotate(-8deg) scale(1) translateX(0)}
+  100%{opacity:0;transform:rotate(-8deg) scale(1.03) translateX(-12vw)}
+}
+[data-theme="caye"] .crown{background:linear-gradient(180deg,rgba(255,214,120,.3),rgba(255,255,255,.65))}
+
+/* ============================================================
+   DRESSING 6 · INDEPENDENCE — Belize, the twenty-first of September.
+   Royal blue under red bands, gold on the lettering, a night of flags.
+   ============================================================ */
+:root[data-theme="independence"]{
+  color-scheme:dark;
+  --ink:#00152e;
+  --wood:#04244d;
+  --wood-2:#073063;
+  --parch:#f2f6ff;
+  --parch-2:#c3d4ee;
+  --parch-3:#8fa9cc;
+  --brass:#e8b100;
+  --brass-hi:#ffd75e;
+  --brass-lo:#a37a00;
+  --oxblood:#ce1126;
+  --oxblood-hi:#ef2b3d;
+  --felt:#0f7a3d;
+  --felt-hi:#2fae66;
+  --smoke:rgba(232,240,255,.62);
+  --hot:#ffd75e;
+  --hot-rgb:255,215,94;
+  --brass-rgb:232,177,0;
+  --brass-hi-rgb:255,215,94;
+  --oxblood-rgb:206,17,38;
+  --felt-rgb:15,122,61;
+  --tint-rgb:255,255,255;
+  --stamp-rgb:206,17,38;
+  --stamp-gold-rgb:255,215,94;
+
+  --rule:rgba(255,255,255,.3);
+  --shadow:0 18px 40px rgba(0,12,32,.6);
+  --sheen:rgba(255,255,255,.16);
+  --tint:rgba(255,255,255,.06);
+  --tint-2:rgba(255,255,255,.02);
+  --tint-deep:rgba(0,0,0,.24);
+  --panel-bg:
+    linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.012)),
+    linear-gradient(180deg,var(--wood-2),var(--wood));
+  --panel-inner:rgba(232,177,0,.3);
+  --panel-inner-inset:5px;
+  --backdrop:rgba(0,18,40,.8);
+  --field-bg:rgba(0,20,45,.5);
+  --opt-bg:#04244d;
+  --placeholder:rgba(143,169,204,.7);
+  --faint:rgba(143,169,204,.5);
+  --focus:rgba(232,177,0,.2);
+  --tally-bg:linear-gradient(180deg,rgba(15,122,61,.38),rgba(15,122,61,.12));
+  --tally-border:rgba(47,174,102,.45);
+  --tally-lab:#7fd6a2;
+  --tally-amt:#eafff1;
+  --tally-glow:0 2px 12px rgba(47,174,102,.45);
+
+  --r-sm:3px;
+  --r-md:5px;
+  --serif:Optima,"Gill Sans","Gill Sans MT",Candara,"Segoe UI",system-ui,sans-serif;
+  --display:Copperplate,"Copperplate Gothic Light","Gill Sans MT",Optima,Georgia,serif;
+  --h1-size:clamp(28px,6.6vw,60px);
+  --h1-track:.16em;
+  --h1-weight:700;
+  --h1-grad:linear-gradient(180deg,#ffffff 0%,#ffd75e 52%,#e8b100 100%);
+  --h1-shadow:0 3px 0 rgba(0,0,0,.35);
+  --h1-filter:drop-shadow(0 4px 14px rgba(0,0,0,.5));
+  --label-track:.3em;
+
+  --body-bg:
+    radial-gradient(920px 520px at 50% -10%, rgba(232,177,0,.2), transparent 62%),
+    radial-gradient(720px 480px at 8% 106%, rgba(206,17,38,.2), transparent 60%),
+    linear-gradient(178deg,#073063 0%,#00152e 100%);
+  --grain:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 6px),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.04) 0 1px, transparent 1px 6px);
+  --grain-op:.4;
+  --grain-blend:screen;
+  --glow:radial-gradient(ellipse at center, rgba(255,215,94,.2), rgba(206,17,38,.08) 46%, transparent 72%);
+  --glow-anim:hum 6.5s ease-in-out infinite;
+
+  --die-a:#ffffff;
+  --die-b:#e4ebf8;
+  --die-edge:#ce1126;
+  --die-edge-w:3;
+  --die-sheen:rgba(0,63,135,.3);
+  --pip:#00317a;
+  --die-shadow:drop-shadow(0 4px 8px rgba(0,10,30,.6));
+  --die-hover:translateY(-3px) rotate(-3deg);
+  --caret:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%23e8b100' stroke-width='1.8'/></svg>");
+}
+/* the flag's two red bands, top and bottom of every panel */
+[data-theme="independence"] .panel{border-top:5px solid var(--oxblood);border-bottom:5px solid var(--oxblood)}
+[data-theme="independence"] .tagline{letter-spacing:.34em;text-indent:.34em;color:var(--parch-2)}
+[data-theme="independence"] .divider span{font-weight:600;opacity:.95}
+[data-theme="independence"] h2{font-family:var(--display);letter-spacing:.24em;text-indent:.24em}
+[data-theme="independence"] .btn{border-color:rgba(255,255,255,.36)}
+[data-theme="independence"] .btn:hover{border-color:var(--brass)}
+[data-theme="independence"] .btn.brass{
+  background:linear-gradient(180deg,#ffd75e,#e8b100);color:#0d2340;border-color:#a37a00;
+}
+[data-theme="independence"] .btn.blood{
+  background:linear-gradient(180deg,#ef2b3d,#ce1126);color:#fff5f2;border-color:#8f0c1a;
+}
+[data-theme="independence"] .roster li{border-left-width:5px;border-left-color:var(--oxblood)}
+[data-theme="independence"] .face.has{box-shadow:0 0 0 1px var(--brass), 0 6px 16px rgba(0,10,30,.45)}
+[data-theme="independence"] .reading{background:rgba(0,20,45,.35)}
+[data-theme="independence"] .bar i{background:linear-gradient(90deg,#ce1126,#e8b100)}
+[data-theme="independence"] .stamp span{
+  border-width:6px;border-radius:2px;letter-spacing:.14em;
+  animation:hoist 1.2s cubic-bezier(.2,1.2,.3,1) forwards;
+}
+@keyframes hoist{
+  0%{opacity:0;transform:rotate(-4deg) scale(1.1) translateY(26vh)}
+  26%{opacity:1;transform:rotate(-4deg) scale(1) translateY(0)}
+  40%{transform:rotate(-2deg) scale(1) translateY(-1.6vh)}
+  54%{transform:rotate(-4deg) scale(1) translateY(0)}
+  74%{opacity:1;transform:rotate(-4deg) scale(1) translateY(0)}
+  100%{opacity:0;transform:rotate(-4deg) scale(1.05)}
+}
+[data-theme="independence"] .crown{
+  background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.04));
+  border-color:rgba(255,215,94,.6);
+}
+
 @media (max-width:520px){
   .wrap{padding:14px 12px 48px}
   .tagline{letter-spacing:.22em;text-indent:.22em}
@@ -897,7 +1147,9 @@ kbd{
   .stamp span,
   [data-theme="neon"] .stamp span,
   [data-theme="broadsheet"] .stamp span,
-  [data-theme="bubblegum"] .stamp span{animation:stampin .9s steps(1) forwards}
+  [data-theme="bubblegum"] .stamp span,
+  [data-theme="caye"] .stamp span,
+  [data-theme="independence"] .stamp span{animation:stampin .9s steps(1) forwards}
   .veil{animation:veil .2s linear forwards}
 }
 </style>
@@ -919,6 +1171,8 @@ kbd{
       <button class="swatch" type="button" data-set="neon" title="Neon — an arcade cabinet at 3am"><i></i><i></i><i></i></button>
       <button class="swatch" type="button" data-set="broadsheet" title="Broadsheet — the morning paper"><i></i><i></i><i></i></button>
       <button class="swatch" type="button" data-set="bubblegum" title="Bubblegum — a plastic toy in the sun"><i></i><i></i><i></i></button>
+      <button class="swatch" type="button" data-set="caye" title="Caye — a Belize beach bar at noon"><i></i><i></i><i></i></button>
+      <button class="swatch" type="button" data-set="independence" title="Independence — Belize, the twenty-first of September"><i></i><i></i><i></i></button>
     </div>
     <button class="btn ghost" id="rulesBtn" data-lex="rulesBtn">Rules of the House</button>
     <button class="btn ghost" id="undoBtn" data-lex="undo" hidden>Undo</button>
@@ -1073,6 +1327,16 @@ var PIP_ART = {
   candy: function(x,y){
     return '<circle class="pip" cx="'+x+'" cy="'+y+'" r="9.5"/>'+
            '<circle class="pip-hi" cx="'+(x-3.2)+'" cy="'+(y-3.6)+'" r="2.6"/>';
+  },
+  // sea glass: a tumbled bead, corners worn round by the surf
+  seaglass: function(x,y){
+    return '<rect class="pip" x="'+(x-8.5)+'" y="'+(y-8.5)+'" width="17" height="17" rx="6"/>'+
+           '<circle class="pip-hi" cx="'+(x-3)+'" cy="'+(y-3.4)+'" r="2.1"/>';
+  },
+  // carved: a lozenge cut into the face, like a mahogany inlay
+  carved: function(x,y){
+    return '<rect class="pip" x="'+(x-7.6)+'" y="'+(y-7.6)+'" width="15.2" height="15.2" rx="2" ' +
+           'transform="rotate(45 '+x+' '+y+')"/>';
   }
 };
 var dieUid = 0;
@@ -1754,6 +2018,228 @@ var DRESSINGS = [
         "<b>Sugar rush.</b> Score with all six and you get all six back, keeping your points.<br><br>" +
         "<b>The finish.</b> When someone scoops past the goal, everyone else gets one last round. " +
         "Highest score wins."
+    }
+  },
+  {
+    id:"caye", name:"Caye",
+    pips:"seaglass", rx:22,
+    voice:{ wave:"sine", tune:1.18, gain:.95, dur:1.3 },
+    lex:{
+      docTitle:"Six Shells — Caye Tally",
+      title:"Six Shells",
+      tagline:"Caye Tally &middot; Dice in the Shade",
+      dressing:"Shade",
+      rulesBtn:"Beach Rules", undo:"Take It Back", newGame:"New Tide",
+      sound:function(on){ return "Sound: " + (on ? "On" : "Off"); },
+
+      setupHead:"Who’s on the Sand?",
+      setupSub:"Two or more. Chairs go in the order you name them.",
+      namePh:"Name of the beachcomber…",
+      addBtn:"Pull Up a Chair",
+      potLabel:"The Catch", buyinLabel:"First haul must clear",
+      pots:["a quick dip","an afternoon","the standard","till sundown"],
+      noBuyin:"None — haul anything",
+      startBtn:"Set Out the Shells", needMore:"Need at least two beachcombers",
+      seat:"Chair", fold:"Cast Off",
+
+      potLine:function(n){ return "First past " + n + " takes the catch"; },
+      potLineIdle:"First to 10,000 takes the catch",
+      hand:function(n){ return "Tide " + n; },
+      isUp:function(nm){ return "<em>" + nm + "</em> is up"; },
+      lastTail:" &mdash; last tide",
+      closed:"Bar closed",
+
+      tallyLab:"Gathered this tide", liveLab:"Shells live",
+      padHead:"Set Aside", clearBtn:"Toss Back",
+      keepBtn:"Keep &amp; Roll", bankBtn:"Haul It In", bustBtn:"Wipeout!",
+      manualBtn:"Add by hand", manualHint:"&mdash; for the quick counters",
+
+      readingEmpty:"Tap the shells you’re keeping from this roll…",
+      deadLine:function(list){ return "Dead shells: " + list + " &mdash; can’t be kept"; },
+      rollTotal:"This roll",
+      hotLine:"Full tide — all six shells wash back",
+
+      ledgerHead:"The Tally", logHead:"The Day’s Drift",
+      ledgerSub:"Standings, in chair order.",
+      ledgerSubLast:"Last tide — beat the leader or pack up.",
+      ledgerSubOver:"Final standings.",
+      onBoard:"in the basket",
+      needsOpen:function(n){ return "needs " + n + " to open"; },
+      setFinish:"called last tide",
+      logEmpty:"Quiet so far.",
+      crownLab:"Takes the catch",
+      crownSc:function(sc, r){ return sc + " points &mdash; tide " + r; },
+      credit:"Roll easy · Haul early · The sea keeps score",
+
+      stampHot:"Full Tide", stampBust:"Wipeout", stampWin:"Winner",
+
+      logOpen:function(nm){ return "Shells out on the table. " + nm + " rolls first."; },
+      logBank:function(nm, amt, tot){ return "<b>" + nm + "</b> hauled in " + amt + " &mdash; now at " + tot + "."; },
+      logShort:function(nm, n){ return "<b>" + nm + "</b> came up short of the " + n + " minimum."; },
+      logBust:function(nm, lost){ return "<b>" + nm + "</b> wiped out" + (lost ? " and lost " + lost : "") + "."; },
+      logFinal:function(nm){ return "<b>" + nm + "</b> is past the catch. Everyone else gets one last tide."; },
+      logWin:function(nm, sc){ return "<b>" + nm + "</b> takes the catch with " + sc + "."; },
+
+      rulesHead:"Beach Rules", rulesSub:"Scoring as this bar counts it.",
+      closeRules:"Back to the Sand",
+      // --- high stakes: the progressive pot ---
+      dice:function(n){ return n + (n === 1 ? " shell" : " shells"); },
+      stakesLabel:"Beachcombing",
+      stakesOff:"Off — six fresh shells each tide", stakesOn:"On — the driftwood takes the pool",
+      stakesToggle:function(on){ return "Beachcombing: " + (on ? "On" : "Off"); },
+      stakesLocked:"Somebody’s already out beachcombing.",
+      logStakesOn:"Beachcombing is on. The tide pool starts dry.",
+      logStakesOff:function(amt){ return "Beachcombing is off." +
+        (amt ? " The " + amt + " in the pool runs back to sea." : ""); },
+      potLab:"The tide pool", potStandsLab:"Still full",
+      potIdle:"Every haul fills it. A wipeout, driftwood passed up, or a bare beach drains it.",
+      stakesOrElse:"Pass, and the pool drains.",
+      potClear:"Drain the Pool", potClearTitle:"Empty the tide pool by hand — the bar’s call",
+      logPotCleared:function(amt){ return "The bar drains the " + amt + " pool."; },
+      logPotBare:function(amt){ return "Nothing left on the sand. The " + amt + " pool drains with it."; },
+      logPotPassed:function(who, amt){ return "<b>" + who + "</b> passed on the driftwood. The " + amt + " pool drains."; },
+      stakesOffer:function(who, d){ return "<b>" + who + "</b> left <b>" + d + "</b> in the shallows."; },
+      stakesTake:"Take the Driftwood",
+      stakesArmed:function(d){ return "Beachcombing — rolling <b>" + d + "</b>. Score with any of them and the pool is yours."; },
+      stakesWonTxt:function(amt){ return "The pool is yours — <b>" + amt + "</b> added to this tide."; },
+      stakesWonNil:"The pool was dry. Nothing to gather.",
+      logStakes:function(who, d){ return "<b>" + who + "</b> took the driftwood — " + d + ", beachcombing."; },
+      logStakesWon:function(who, amt){ return "<b>" + who + "</b> scored on the driftwood and took the " + amt + " pool."; },
+      logPotDead:function(amt){ return "The " + amt + " pool drains with it."; },
+      stampStakes:"The Pool",
+      stakesRow:"Beachcombing, first roll", stakesRowPts:"the pool",
+      stakesNote:
+        "<br><br><b>Beachcombing.</b> Every haul fills a tide pool that everyone plays for. You may open " +
+        "your tide with the shells the last beachcomber left in the shallows instead of six fresh ones — " +
+        "score with any of them on that first roll and the pool is added to your tide. Taking it doesn’t " +
+        "dry it: the pool stands, so the next beachcomber can take the same water again. Three things " +
+        "drain it, and each drains it for the whole beach — a wipeout, a beachcomber who is offered the " +
+        "driftwood and reaches for six fresh shells instead, and a haul that leaves the sand bare, since " +
+        "there is nothing left to comb. What you gather rides with the rest of your tide, so wipe out " +
+        "later and it goes back to the sea too.",
+      keysNote:
+        "<b>Keys.</b> <kbd>1</kbd>&ndash;<kbd>6</kbd> keep a shell &middot; <kbd>Backspace</kbd> toss back &middot; " +
+        "<kbd>Enter</kbd> keep &amp; roll &middot; <kbd>B</kbd> haul it in &middot; <kbd>F</kbd> wipeout &middot; " +
+        "<kbd>U</kbd> take it back &middot; <kbd>G</kbd> take the driftwood &middot; <kbd>H</kbd> beachcombing on/off &middot; " +
+        "<kbd>T</kbd> change the shade",
+      rulesNote:
+        "<b>Your tide.</b> Roll six shells. Keep at least one that scores, then roll what’s left " +
+        "or haul in what you’ve gathered. Roll nothing that scores and you’ve <b>wiped out</b> — " +
+        "the whole tide goes back to the sea.<br><br>" +
+        "<b>Full tide.</b> Score with all six and all six wash back, your count intact.<br><br>" +
+        "<b>The finish.</b> When a beachcomber hauls past the catch, everyone else gets one last tide. " +
+        "Highest score takes it."
+    }
+  },
+  {
+    id:"independence", name:"Independence",
+    pips:"carved", rx:6,
+    voice:{ wave:"square", tune:.8, gain:.42, dur:.75 },
+    lex:{
+      docTitle:"Six Stones — The Twenty-First of September",
+      title:"Six Stones",
+      tagline:"Independence Ledger &middot; Twenty-First of September",
+      dressing:"Colors",
+      rulesBtn:"The Charter", undo:"Recall", newGame:"New Ceremony",
+      sound:function(on){ return "Sound: " + (on ? "On" : "Off"); },
+
+      setupHead:"Call the Delegation",
+      setupSub:"Two or more. Delegates take the floor in the order you name them.",
+      namePh:"Name of the celebrant…",
+      addBtn:"Enter the Roll",
+      potLabel:"The Prize", buyinLabel:"First hoist must clear",
+      pots:["a short parade","an evening","the standard","till the fireworks"],
+      noBuyin:"None — hoist anything",
+      startBtn:"Raise the Colors", needMore:"Two celebrants at least",
+      seat:"Delegate", fold:"Stand Down",
+
+      potLine:function(n){ return "First past " + n + " takes the prize"; },
+      potLineIdle:"First to 10,000 takes the prize",
+      hand:function(n){ return "Parade " + n; },
+      isUp:function(nm){ return "<em>" + nm + "</em> holds the floor"; },
+      lastTail:" &mdash; final parade",
+      closed:"Ceremony closed",
+
+      tallyLab:"Carried this parade", liveLab:"Stones live",
+      padHead:"Set Aside", clearBtn:"Take Back",
+      keepBtn:"Keep &amp; Roll", bankBtn:"Hoist It", bustBtn:"Rained Out!",
+      manualBtn:"Enter by hand", manualHint:"&mdash; for the quick counters",
+
+      readingEmpty:"Tap the stones you’re setting aside from this roll…",
+      deadLine:function(list){ return "Dead stones: " + list + " &mdash; can’t be set aside"; },
+      rollTotal:"This roll",
+      hotLine:"Fireworks — all six stones come back",
+
+      ledgerHead:"The Standing", logHead:"The Proceedings",
+      ledgerSub:"Standings, in order of the roll.",
+      ledgerSubLast:"Final parade — pass the leader or stand down.",
+      ledgerSubOver:"Final standings.",
+      onBoard:"on the roll",
+      needsOpen:function(n){ return "needs " + n + " to open"; },
+      setFinish:"called the finish",
+      logEmpty:"Nothing on the record yet.",
+      crownLab:"Takes the prize",
+      crownSc:function(sc, r){ return sc + " points &mdash; parade " + r; },
+      credit:"Roll well · Hoist early · The record stands",
+
+      stampHot:"Fireworks", stampBust:"Rained Out", stampWin:"Champion",
+
+      logOpen:function(nm){ return "The colors go up. " + nm + " rolls first."; },
+      logBank:function(nm, amt, tot){ return "<b>" + nm + "</b> hoisted " + amt + " &mdash; now at " + tot + "."; },
+      logShort:function(nm, n){ return "<b>" + nm + "</b> fell short of the " + n + " minimum."; },
+      logBust:function(nm, lost){ return "<b>" + nm + "</b> was rained out" + (lost ? " and lost " + lost : "") + "."; },
+      logFinal:function(nm){ return "<b>" + nm + "</b> is past the prize. One last parade for everyone else."; },
+      logWin:function(nm, sc){ return "<b>" + nm + "</b> takes the prize with " + sc + "."; },
+
+      rulesHead:"The Charter", rulesSub:"Scoring as this record counts it.",
+      closeRules:"Back to the Ceremony",
+      // --- high stakes: the progressive pot ---
+      dice:function(n){ return n + (n === 1 ? " stone" : " stones"); },
+      stakesLabel:"The Handover",
+      stakesOff:"Off — six fresh stones each parade", stakesOn:"On — the handover carries the treasury",
+      stakesToggle:function(on){ return "The Handover: " + (on ? "On" : "Off"); },
+      stakesLocked:"A handover is already under way.",
+      logStakesOn:"The house opens the treasury. It starts at nothing.",
+      logStakesOff:function(amt){ return "The house closes the treasury." +
+        (amt ? " The " + amt + " on it goes back to the ledger." : ""); },
+      potLab:"The treasury", potStandsLab:"Still standing",
+      potIdle:"Every hoist pays in. A rain-out, a handover refused, or a table left bare empties it.",
+      stakesOrElse:"Refuse, and the treasury empties.",
+      potClear:"Empty the Treasury", potClearTitle:"Empty the treasury by hand — the house’s call",
+      logPotCleared:function(amt){ return "The house empties the " + amt + " treasury."; },
+      logPotBare:function(amt){ return "No stones left standing. The " + amt + " treasury empties with them."; },
+      logPotPassed:function(who, amt){ return "<b>" + who + "</b> refused the handover. The " + amt + " treasury empties."; },
+      stakesOffer:function(who, d){ return "<b>" + who + "</b> left <b>" + d + "</b> standing."; },
+      stakesTake:"Take the Handover",
+      stakesArmed:function(d){ return "The handover — rolling <b>" + d + "</b>. Score with any of them and the treasury is yours."; },
+      stakesWonTxt:function(amt){ return "The treasury is yours — <b>" + amt + "</b> added to this parade."; },
+      stakesWonNil:"The treasury was empty. Nothing to carry.",
+      logStakes:function(who, d){ return "<b>" + who + "</b> accepted the handover — " + d + ", and the treasury rides on it."; },
+      logStakesWon:function(who, amt){ return "<b>" + who + "</b> scored on the handover and carried the " + amt + " treasury."; },
+      logPotDead:function(amt){ return "The " + amt + " treasury empties with it."; },
+      stampStakes:"The Treasury",
+      stakesRow:"The handover, first roll", stakesRowPts:"the treasury",
+      stakesNote:
+        "<br><br><b>The handover.</b> Every hoist pays into a standing treasury. You may open your parade " +
+        "with the stones the last celebrant left standing instead of six fresh ones — score with any of " +
+        "them on that first roll and the treasury joins your tally. Carrying it doesn’t spend it: the " +
+        "treasury stands, so the next celebrant can carry the same money again. Three things empty it, " +
+        "and each empties it for the whole table — a rain-out, a celebrant who is offered the handover " +
+        "and calls for six fresh stones instead, and a hoist that leaves the table bare, since there is " +
+        "nothing left to hand over. What you carry rides with the rest of your parade, so get rained out " +
+        "later and it goes too.",
+      keysNote:
+        "<b>Keys.</b> <kbd>1</kbd>&ndash;<kbd>6</kbd> set aside a stone &middot; <kbd>Backspace</kbd> take back &middot; " +
+        "<kbd>Enter</kbd> keep &amp; roll &middot; <kbd>B</kbd> hoist it &middot; <kbd>F</kbd> rained out &middot; " +
+        "<kbd>U</kbd> recall &middot; <kbd>G</kbd> take the handover &middot; <kbd>H</kbd> the handover on/off &middot; " +
+        "<kbd>T</kbd> change the colors",
+      rulesNote:
+        "<b>The parade.</b> Roll six stones. Set aside at least one scoring stone, then either roll what’s " +
+        "left or hoist what you’ve carried. Roll nothing that scores and you are <b>rained out</b> — " +
+        "the whole parade is lost.<br><br>" +
+        "<b>Fireworks.</b> Score with all six and you may roll all six again, keeping the tally.<br><br>" +
+        "<b>The finish.</b> When a celebrant hoists past the prize, every other delegate gets one last " +
+        "parade to pass them. Highest score takes it."
     }
   }
 ];

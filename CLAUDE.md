@@ -4,7 +4,7 @@ A **single static file**: `index.html`. No build step, no dependencies, no netwo
 external assets. Open it in a browser and it runs. Keep it that way — any new feature must ship
 inside this one file (SVG inline, sounds synthesized, styles in the `<style>` block).
 
-The app wears one of four **dressings** (themes), switched from the toolbar or with <kbd>T</kbd>.
+The app wears one of six **dressings** (themes), switched from the toolbar or with <kbd>T</kbd>.
 A dressing is a whole world, not a palette — it changes colors, type, geometry, texture, motion,
 the dice art, the sound of the cues, and every word of flavor copy:
 
@@ -14,10 +14,13 @@ the dice art, the sound of the cues, and every word of flavor copy:
 | `neon` | arcade cabinet at 3am; mono, scanlines, glow | cycle | cubes | uploading | runners |
 | `broadsheet` | morning paper; letterpress on newsprint, no glow | edition | dice | filing | correspondents |
 | `bubblegum` | plastic toy in the sun; rounded, chunky, bouncing | round | cubes | scooping | players |
+| `caye` | beach bar on a Belize caye at noon; turquoise, sand, sea glass | tide | shells | hauling in | beachcombers |
+| `independence` | Belize, the twenty-first of September; royal blue under red bands, gold lettering | parade | stones | hoisting | celebrants |
 
 The High Stakes variant is renamed too: the gamble is *the leavings* / *greed protocol* / *the
-scoop* / *leftovers*, and its pot is *the pot* / *the cache* / *the fund* / *the candy jar*. Each
-lexicon carries a `dice(n)` helper for its own singular and plural.
+scoop* / *leftovers* / *the driftwood* / *the handover*, and its pot is *the pot* / *the cache* /
+*the fund* / *the candy jar* / *the tide pool* / *the treasury*. Each lexicon carries a `dice(n)`
+helper for its own singular and plural.
 
 New copy goes in the lexicon of **every** dressing, in that dressing's register — but never at the
 cost of clarity about the actual score. Numbers stay numbers everywhere.
@@ -27,7 +30,7 @@ cost of clarity about the actual score. Numbers stay numbers everywhere.
 | Lines (approx) | What |
 | --- | --- |
 | `<style>` ~9–470 | Base CSS. Ordered by region, with `/* ---------- name ---------- */` banners. |
-| `<style>` ~473–865 | The three non-default dressings, one `/* ===== DRESSING n ===== */` block each. |
+| `<style>` ~479–1130 | The five non-default dressings, one `/* ===== DRESSING n ===== */` block each. |
 | `<header class="masthead">` | Title, tagline, and `#potLine` (target score, rewritten at render). |
 | `<nav class="toolbar">` | `#dressing` swatches + Rules / Undo / Sound / High Stakes / New Game. `#undoBtn`, `#stakesToggle` and `#newBtn` are hidden until a game exists. |
 | `<section id="setup">` | Roster builder + pot/buy-in selects. Visible when `state === null`. |
@@ -51,7 +54,7 @@ letterpress shadows, bouncy easing). Keep that split: if a change can be a token
 Each is introduced by a `/* ===== name ===== */` banner.
 
 - **dice art** — `PIPS` (pip coordinates per face), `PIP_ART` (one pip-drawing function per
-  dressing: `round`/`block`/`ink`/`candy`), and `dieSVG(face, cls)`, which returns an inline SVG
+  dressing: `round`/`block`/`ink`/`candy`/`seaglass`/`carved`), and `dieSVG(face, cls)`, which returns an inline SVG
   string. Every die on the page comes from this one function. Colors come from CSS classes
   (`.die-face`, `.die-inner`, `.pip`, `.pip-hi`, and the gradient's `.die-stop-a/b`) — only *shape*
   lives in the JS. Gradient ids are uniquified with `dieUid`; don't reintroduce shared ids.
@@ -120,7 +123,7 @@ There is no reactive layer, and adding one would be a bigger change than most fe
 
 ## Dressings
 
-`DRESSINGS` is an array of four worlds:
+`DRESSINGS` is an array of six worlds:
 
 ```js
 { id, name,
@@ -136,7 +139,7 @@ the veil wipe and the cue. It does **not** save — callers do, matching the res
 
 The lexicon: saloon's `lex` is the base, and `mergeLex()` shallow-merges another dressing over it,
 so a new key only has to be added to saloon to have a working (if saloon-flavored) fallback
-everywhere. **Add it to all four anyway** — a saloon phrase leaking into the newspaper is the whole
+everywhere. **Add it to all six anyway** — a saloon phrase leaking into the newspaper is the whole
 bug class this design exists to prevent.
 
 Two ways a string reaches the page:
@@ -243,10 +246,11 @@ the variant, not an oversight.
   to `potStandsLab` ("Still standing") so it's obvious the money is still on the table. A pot of 0
   adds the `empty` class, which greys the whole banner so a dead offer reads as a dead offer. `renderRules()` reveals the `#stakesRow` scoring row and appends `L.stakesNote` to the
   dialog — only while a game is actually playing the variant.
-- **Per-dressing pot names**: the pot / the cache / the fund / the candy jar (`potLab`,
+- **Per-dressing pot names**: the pot / the cache / the fund / the candy jar / the tide pool / the
+  treasury (`potLab`,
   `potStandsLab`, `potIdle`, `stakesOrElse`, `logPotDead`, `logPotPassed`, `logPotBare`,
   `potClear`, `potClearTitle`, `logPotCleared`, and friends). The idle line doubles as the rule's inline explanation, so
-  keep it accurate in all four when the economy changes — as does `stakesNote`, which enumerates the
+  keep it accurate in all six when the economy changes — as does `stakesNote`, which enumerates the
   three deaths in the rules dialog.
 
 ### Clearing the pot by hand
@@ -310,7 +314,7 @@ per-turn flags `stakes`/`hot`/`threw`.
   are set aside and reopens when the pad is cleared — so skipping it leaves a live "Take the Gamble"
   button on screen that `offerOpen()` will refuse.
 - Keyboard handlers bail out when focus is in an input or the dialog is open. New shortcuts go in
-  the same `switch`, and must be added to `keysNote` in **all four** lexicons — the key list in the
+  the same `switch`, and must be added to `keysNote` in **all six** lexicons — the key list in the
   rules dialog is per-dressing copy, not static markup.
 - `T` (cycle dressing) is handled *before* the `!state || state.over` bail-out, so you can change
   costume from the setup screen and after the game ends.
@@ -338,7 +342,11 @@ latch refusing clicks and <kbd>H</kbd> mid-gamble, <kbd>H</kbd> ignored in a fie
 setup screen and after the game ends, and all four voices; plus 61 for the bare-table death and the
 manual clear — the pot dying on a hot-dice cash-in and surviving one that leaves dice, undo on both,
 the clear button absent while armed and on an empty pot, the clear leaving the offer standing, and
-each voice's own death line, button label and three-deaths rules note):
+each voice's own death line, button label and three-deaths rules note; plus 137 for the two Belize
+dressings — the picker, the setup screen, the pip art of each, a full turn and a full pot economy in
+both voices, singular/plural, <kbd>T</kbd> cycling all six and wrapping, the log keeping its old
+voice across a costume change, the keys note, the mid-game latch, and no "undefined" anywhere on the
+page in any dressing):
 
 ```bash
 python3 -m http.server 8731 &                      # serve the project
