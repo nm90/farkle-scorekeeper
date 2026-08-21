@@ -11,8 +11,12 @@ No build step, no dependencies, no accounts, no external services — three file
 
 ## Run it
 
-Serve the folder over http(s) — any static host works (GitHub Pages, `python3 -m http.server`).
-`file://` won't work because browsers block `fetch` and service workers there.
+Pushes to `main` deploy automatically to GitHub Pages
+(`.github/workflows/pages.yml` at the repo root), where this app is served at
+`https://nm90.github.io/farkle-scorekeeper/bible-reader/`.
+
+To run locally, serve the folder over http(s) — `file://` won't work because
+browsers block `fetch` and service workers there.
 
 ```bash
 cd bible-reader
