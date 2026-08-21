@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Bible Reader — voice search &amp; read aloud</title>
+<style>
+  :root {
+    --bg: #faf7f0;
+    --panel: #ffffff;
+    --ink: #2b2620;
+    --ink-soft: #6b6257;
+    --accent: #8a5a2b;
+    --accent-soft: rgba(138, 90, 43, .12);
+    --hl: #fff3c4;
+    --hl-ink: #5c4a00;
+    --line: #e5ddd0;
+    --danger: #a33;
+    --serif: Georgia, "Times New Roman", serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16130f;
+      --panel: #201c16;
+      --ink: #e8e0d2;
+      --ink-soft: #a3988a;
+      --accent: #d9a05b;
+      --accent-soft: rgba(217, 160, 91, .16);
+      --hl: #3a3010;
+      --hl-ink: #f0d98a;
+      --line: #352e24;
+      --danger: #e07a7a;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.5;
+  }
+  header {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: 1.2rem 1rem .4rem;
+    text-align: center;
+  }
+  header h1 {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    margin: 0;
+    letter-spacing: .02em;
+  }
+  header p { margin: .15rem 0 0; color: var(--ink-soft); font-size: .8rem; }
+
+  .controls {
+    max-width: 46rem;
+    margin: .8rem auto 0;
+    padding: 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    align-items: center;
+    justify-content: center;
+  }
+  select, input[type=search], button {
+    font: inherit;
+    color: var(--ink);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: .5rem;
+    padding: .45rem .6rem;
+  }
+  select:focus-visible, input:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+  button { cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+  button:disabled { opacity: .45; cursor: default; }
+  button.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .navrow { display: flex; gap: .5rem; align-items: center; }
+  #chapterSel { min-width: 4.5rem; }
+
+  .searchrow {
+    max-width: 46rem;
+    margin: .6rem auto 0;
+    padding: 0 1rem;
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+    justify-content: center;
+  }
+  #searchBox { flex: 1; max-width: 24rem; }
+  #micBtn {
+    width: 3rem; height: 3rem;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    line-height: 1;
+    flex: none;
+    position: relative;
+  }
+  #micBtn.listening {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: #fff;
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(200, 60, 60, .45); }
+    50% { box-shadow: 0 0 0 12px rgba(200, 60, 60, 0); }
+  }
+  #status {
+    max-width: 46rem;
+    margin: .4rem auto 0;
+    padding: 0 1rem;
+    text-align: center;
+    font-size: .85rem;
+    color: var(--ink-soft);
+    min-height: 1.3em;
+  }
+  #status.err { color: var(--danger); }
+
+  .voicebar {
+    max-width: 46rem;
+    margin: .5rem auto 0;
+    padding: 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem .8rem;
+    align-items: center;
+    justify-content: center;
+    font-size: .85rem;
+    color: var(--ink-soft);
+  }
+  .voicebar label { display: flex; align-items: center; gap: .35rem; }
+  .voicebar select { max-width: 13rem; font-size: .85rem; padding: .3rem .4rem; }
+  .voicebar input[type=range] { width: 7rem; accent-color: var(--accent); }
+
+  main {
+    max-width: 46rem;
+    margin: 1rem auto 3rem;
+    padding: 0 1rem;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: .8rem;
+    padding: 1.2rem 1.4rem 1.6rem;
+  }
+  h2.chapterhead {
+    font-family: var(--serif);
+    text-align: center;
+    font-weight: normal;
+    font-size: 1.35rem;
+    margin: .2rem 0 1rem;
+  }
+  .verse {
+    font-family: var(--serif);
+    font-size: 1.06rem;
+    line-height: 1.75;
+    margin: 0 0 .55em;
+    padding: .15em .4em;
+    border-radius: .4rem;
+    cursor: pointer;
+  }
+  .verse:hover { background: var(--accent-soft); }
+  .verse .vn {
+    font-family: var(--sans);
+    font-size: .68em;
+    color: var(--accent);
+    vertical-align: super;
+    margin-right: .45em;
+    user-select: none;
+  }
+  .verse i { opacity: .85; }
+  .verse.reading { background: var(--hl); color: var(--hl-ink); }
+  .verse.target { background: var(--accent-soft); outline: 1px solid var(--accent); }
+  mark { background: var(--hl); color: var(--hl-ink); border-radius: .2em; padding: 0 .1em; }
+
+  .results h2 {
+    font-family: var(--serif);
+    font-weight: normal;
+    font-size: 1.2rem;
+    margin: .2rem 0 .8rem;
+  }
+  .hit {
+    padding: .5rem .4rem;
+    border-top: 1px solid var(--line);
+    cursor: pointer;
+  }
+  .hit:hover { background: var(--accent-soft); }
+  .hit .ref { font-weight: 600; color: var(--accent); font-size: .85rem; }
+  .hit .txt { font-family: var(--serif); }
+  .backlink { margin-bottom: .8rem; }
+
+  #loading { text-align: center; padding: 3rem 1rem; color: var(--ink-soft); }
+  .bar {
+    width: 14rem; height: .5rem;
+    margin: .8rem auto 0;
+    background: var(--line);
+    border-radius: .25rem;
+    overflow: hidden;
+  }
+  .bar > div { height: 100%; width: 0; background: var(--accent); transition: width .2s; }
+
+  footer {
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: .75rem;
+    padding: 0 1rem 2rem;
+  }
+  .hidden { display: none !important; }
+  @media (max-width: 520px) {
+    .panel { padding: 1rem .8rem 1.2rem; }
+    .verse { font-size: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Bible Reader</h1>
+  <p id="transLine">King James Version · works offline once loaded</p>
+</header>
+
+<div id="loading">
+  <p id="loadMsg">Loading scripture…</p>
+  <div class="bar"><div id="loadBar"></div></div>
+</div>
+
+<div id="app" class="hidden">
+  <div class="controls">
+    <div class="navrow">
+      <button id="prevBtn" title="Previous chapter (←)">‹</button>
+      <select id="bookSel" aria-label="Book"></select>
+      <select id="chapterSel" aria-label="Chapter"></select>
+      <button id="nextBtn" title="Next chapter (→)">›</button>
+    </div>
+    <button id="readBtn" class="primary" title="Read this chapter aloud (R)">▶ Read aloud</button>
+    <button id="stopBtn" class="hidden" title="Stop reading (R)">■ Stop</button>
+  </div>
+
+  <div class="searchrow">
+    <button id="micBtn" title="Voice search (V) — say a reference like “John 3 16” or any phrase">🎤</button>
+    <input id="searchBox" type="search"
+           placeholder="John 3:16 — or search any phrase…"
+           aria-label="Search reference or phrase">
+    <button id="goBtn">Go</button>
+  </div>
+  <div id="status" role="status" aria-live="polite"></div>
+
+  <div class="voicebar">
+    <label><input type="checkbox" id="autoRead" checked> read results aloud</label>
+    <label>voice <select id="voiceSel"></select></label>
+    <label>speed <input type="range" id="rate" min="0.6" max="1.6" step="0.1" value="1">
+      <span id="rateVal">1.0×</span></label>
+  </div>
+
+  <main>
+    <div id="reader" class="panel"></div>
+    <div id="results" class="panel results hidden"></div>
+  </main>
+</div>
+
+<footer>
+  King James Version (public domain). Voice features use your browser’s speech
+  recognition and synthesis — no data leaves the page otherwise.
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ===== tiny helpers ===== */
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  };
+  // KJV translator-supplied words arrive wrapped in {braces}; render them as italics.
+  var verseHTML = function (t) {
+    return esc(t).replace(/\{(.*?)\}/g, "<i>$1</i>");
+  };
+  var plain = function (t) { return t.replace(/[{}]/g, ""); };
+
+  /* ===== state ===== */
+  var BIBLE = null;          // {translation, books:[{name, chapters:[[verse,…],…]},…]}
+  var flat = [];             // [{b,c,v,low}] lowercase index for phrase search
+  var cur = { b: 42, c: 2 }; // 0-based book/chapter (default John 3)
+  var reading = null;        // {b,c,i} while speaking, else null
+  var recog = null, listening = false;
+  var settings = { rate: 1, voice: "", autoRead: true };
+
+  var store = {
+    get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  };
+
+  /* ===== data: fetch once, cache in IndexedDB ===== */
+  var DB_NAME = "bible-reader", DB_STORE = "data", DATA_KEY = "kjv";
+
+  function openDB() {
+    return new Promise(function (res, rej) {
+      var rq = indexedDB.open(DB_NAME, 1);
+      rq.onupgradeneeded = function () { rq.result.createObjectStore(DB_STORE); };
+      rq.onsuccess = function () { res(rq.result); };
+      rq.onerror = function () { rej(rq.error); };
+    });
+  }
+  function dbGet(db, key) {
+    return new Promise(function (res, rej) {
+      var rq = db.transaction(DB_STORE).objectStore(DB_STORE).get(key);
+      rq.onsuccess = function () { res(rq.result); };
+      rq.onerror = function () { rej(rq.error); };
+    });
+  }
+  function dbPut(db, key, val) {
+    return new Promise(function (res, rej) {
+      var tx = db.transaction(DB_STORE, "readwrite");
+      tx.objectStore(DB_STORE).put(val, key);
+      tx.oncomplete = res;
+      tx.onerror = function () { rej(tx.error); };
+    });
+  }
+
+  function fetchBible() {
+    return fetch("kjv.json").then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      var total = +r.headers.get("Content-Length") || 4252970;
+      if (!r.body || !r.body.getReader) return r.json();
+      var reader = r.body.getReader(), chunks = [], got = 0;
+      return (function pump() {
+        return reader.read().then(function (step) {
+          if (step.done) {
+            var blob = new Blob(chunks);
+            return blob.text().then(JSON.parse);
+          }
+          chunks.push(step.value);
+          got += step.value.length;
+          $("loadBar").style.width = Math.min(100, got / total * 100) + "%";
+          return pump();
+        });
+      })();
+    });
+  }
+
+  function loadBible() {
+    var db;
+    return openDB().then(function (d) {
+      db = d;
+      return dbGet(db, DATA_KEY);
+    }).catch(function () { return null; })
+      .then(function (cached) {
+        if (cached && cached.books && cached.books.length === 66) {
+          $("loadMsg").textContent = "Loaded from local cache.";
+          return cached;
+        }
+        $("loadMsg").textContent = "Downloading scripture (one time — cached after this)…";
+        return fetchBible().then(function (data) {
+          if (db) dbPut(db, DATA_KEY, data).catch(function () {});
+          return data;
+        });
+      });
+  }
+
+  /* ===== book aliases & reference parsing ===== */
+  var ALIASES = {
+    0:  ["genesis", "gen"],
+    1:  ["exodus", "ex", "exo"],
+    2:  ["leviticus", "lev"],
+    3:  ["numbers", "num"],
+    4:  ["deuteronomy", "deut"],
+    5:  ["joshua", "josh"],
+    6:  ["judges", "judg"],
+    7:  ["ruth"],
+    8:  ["1 samuel", "1 sam"],
+    9:  ["2 samuel", "2 sam"],
+    10: ["1 kings"],
+    11: ["2 kings"],
+    12: ["1 chronicles", "1 chron"],
+    13: ["2 chronicles", "2 chron"],
+    14: ["ezra"],
+    15: ["nehemiah", "neh"],
+    16: ["esther"],
+    17: ["job"],
+    18: ["psalms", "psalm", "psa", "ps"],
+    19: ["proverbs", "proverb", "prov"],
+    20: ["ecclesiastes", "eccl"],
+    21: ["song of solomon", "song of songs", "songs", "solomon"],
+    22: ["isaiah", "isa"],
+    23: ["jeremiah", "jer"],
+    24: ["lamentations", "lam"],
+    25: ["ezekiel", "ezek"],
+    26: ["daniel", "dan"],
+    27: ["hosea", "hos"],
+    28: ["joel"],
+    29: ["amos"],
+    30: ["obadiah", "obad"],
+    31: ["jonah"],
+    32: ["micah", "mic"],
+    33: ["nahum", "nah"],
+    34: ["habakkuk", "hab"],
+    35: ["zephaniah", "zeph"],
+    36: ["haggai", "hag"],
+    37: ["zechariah", "zech"],
+    38: ["malachi", "mal"],
+    39: ["matthew", "matt", "mt"],
+    40: ["mark", "mk"],
+    41: ["luke", "lk"],
+    42: ["john", "jn"],
+    43: ["acts", "acts of the apostles"],
+    44: ["romans", "rom"],
+    45: ["1 corinthians", "1 cor"],
+    46: ["2 corinthians", "2 cor"],
+    47: ["galatians", "gal"],
+    48: ["ephesians", "eph"],
+    49: ["philippians", "phil"],
+    50: ["colossians", "col"],
+    51: ["1 thessalonians", "1 thess"],
+    52: ["2 thessalonians", "2 thess"],
+    53: ["1 timothy", "1 tim"],
+    54: ["2 timothy", "2 tim"],
+    55: ["titus"],
+    56: ["philemon"],
+    57: ["hebrews", "heb"],
+    58: ["james", "jas"],
+    59: ["1 peter", "1 pet"],
+    60: ["2 peter", "2 pet"],
+    61: ["1 john", "1 jn"],
+    62: ["2 john", "2 jn"],
+    63: ["3 john", "3 jn"],
+    64: ["jude"],
+    65: ["revelation", "revelations", "rev", "apocalypse"]
+  };
+  // longest alias first so "1 john" wins over "john"
+  var ALIAS_LIST = [];
+  Object.keys(ALIASES).forEach(function (b) {
+    ALIASES[b].forEach(function (a) { ALIAS_LIST.push({ a: a, b: +b }); });
+  });
+  ALIAS_LIST.sort(function (x, y) { return y.a.length - x.a.length; });
+
+  var SMALL = { one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9,
+    ten:10, eleven:11, twelve:12, thirteen:13, fourteen:14, fifteen:15, sixteen:16,
+    seventeen:17, eighteen:18, nineteen:19 };
+  var TENS = { twenty:20, thirty:30, forty:40, fifty:50, sixty:60, seventy:70,
+    eighty:80, ninety:90 };
+
+  // "one hundred nineteen" → "119"; "twenty three" → "23". One spoken number per
+  // pass — "thirteen four" stays "13 4" (a chapter and a verse), never 17.
+  function wordsToDigits(text) {
+    var w = text.split(" "), out = [], i = 0;
+    while (i < w.length) {
+      var n = null, j = i;
+      if (SMALL[w[j]] != null && w[j + 1] === "hundred") {   // "one hundred …"
+        n = SMALL[w[j]] * 100; j += 2;
+        if (w[j] === "and") j++;
+      }
+      if (TENS[w[j]] != null) {                              // "seventy (six)"
+        n = (n || 0) + TENS[w[j]]; j++;
+        if (SMALL[w[j]] != null && SMALL[w[j]] < 10) { n += SMALL[w[j]]; j++; }
+      } else if (SMALL[w[j]] != null) {                      // "sixteen"
+        n = (n || 0) + SMALL[w[j]]; j++;
+      }
+      if (n != null && j > i) { out.push(String(n)); i = j; }
+      else { out.push(w[i]); i++; }
+    }
+    return out.join(" ");
+  }
+
+  function normalizeQuery(q) {
+    q = q.toLowerCase()
+      .replace(/[:.,;!?"'’‘“”\-–—]/g, " ")
+      .replace(/\b(first|1st)\b/g, "1")
+      .replace(/\b(second|2nd)\b/g, "2")
+      .replace(/\b(third|3rd)\b/g, "3")
+      .replace(/\bsaint\b/g, "").replace(/\bst\b/g, "")
+      .replace(/\b(chapter|verse|verses|the book of|book of|in the|in|to|go to|open|read|show me|show|find|look up)\b/g, " ")
+      .replace(/\s+/g, " ").trim();
+    return wordsToDigits(q);
+  }
+
+  // Try to read "…John 3 16…" → {b, c, v}. Returns null if no book found.
+  function parseReference(raw) {
+    var q = normalizeQuery(raw);
+    if (!q) return null;
+    var found = null;
+    for (var k = 0; k < ALIAS_LIST.length; k++) {
+      var al = ALIAS_LIST[k];
+      var re = new RegExp("(^|\\s)" + al.a.replace(/ /g, "\\s+") + "(\\s|$)");
+      var m = re.exec(q);
+      if (m) { found = { b: al.b, rest: q.slice(m.index + m[0].length) }; break; }
+    }
+    if (!found) return null;
+
+    var book = BIBLE.books[found.b];
+    var nums = (found.rest.match(/\d+/g) || []).map(Number);
+    var ref = { b: found.b, c: 1, v: null };
+
+    if (nums.length >= 2) {
+      ref.c = nums[0]; ref.v = nums[1];
+    } else if (nums.length === 1) {
+      var n = nums[0];
+      if (n <= book.chapters.length) {
+        ref.c = n;                              // "psalm 23"
+      } else {
+        // recognizer glued chapter+verse: "316" in John → 3:16
+        var s = String(n), ok = null;
+        for (var cut = 1; cut < s.length; cut++) {
+          var ch = +s.slice(0, cut), vs = +s.slice(cut);
+          if (ch >= 1 && ch <= book.chapters.length &&
+              vs >= 1 && vs <= book.chapters[ch - 1].length) { ok = { c: ch, v: vs }; break; }
+        }
+        if (ok) { ref.c = ok.c; ref.v = ok.v; }
+        else return null;                        // number fits nothing — not a reference
+      }
+    }
+    if (ref.c < 1 || ref.c > book.chapters.length) return null;
+    if (ref.v != null && (ref.v < 1 || ref.v > book.chapters[ref.c - 1].length)) ref.v = null;
+    return ref;
+  }
+
+  /* ===== phrase search ===== */
+  function buildIndex() {
+    flat = [];
+    BIBLE.books.forEach(function (bk, b) {
+      bk.chapters.forEach(function (ch, c) {
+        ch.forEach(function (t, v) {
+          flat.push({ b: b, c: c, v: v, low: plain(t).toLowerCase() });
+        });
+      });
+    });
+  }
+
+  function phraseSearch(raw, limit) {
+    var q = raw.toLowerCase().replace(/[{}"'’‘“”]/g, "").replace(/\s+/g, " ").trim();
+    if (q.length < 3) return [];
+    var words = q.split(" ").filter(function (w) { return w.length > 1; });
+    if (!words.length) return [];
+    var hits = [];
+    for (var i = 0; i < flat.length; i++) {
+      var t = flat[i].low, all = true;
+      for (var w = 0; w < words.length; w++) {
+        if (t.indexOf(words[w]) === -1) { all = false; break; }
+      }
+      if (!all) continue;
+      var score = t.indexOf(q) !== -1 ? 0 : 1;   // exact phrase floats to the top
+      hits.push({ e: flat[i], score: score });
+      if (hits.length > 400) break;
+    }
+    hits.sort(function (a, b) { return a.score - b.score; });
+    return hits.slice(0, limit || 40).map(function (h) { return h.e; });
+  }
+
+  /* ===== rendering ===== */
+  function refName(b, c, v) {
+    return BIBLE.books[b].name + " " + (c + 1) + (v != null ? ":" + (v + 1) : "");
+  }
+
+  function renderChapter(targetVerse) {
+    stopSpeaking();
+    var bk = BIBLE.books[cur.b], verses = bk.chapters[cur.c];
+    var html = "<h2 class='chapterhead'>" + esc(bk.name) + " " + (cur.c + 1) + "</h2>";
+    for (var i = 0; i < verses.length; i++) {
+      html += "<p class='verse" + (i === targetVerse ? " target" : "") +
+        "' data-i='" + i + "' title='Tap to read aloud from here'>" +
+        "<span class='vn'>" + (i + 1) + "</span>" + verseHTML(verses[i]) + "</p>";
+    }
+    $("reader").innerHTML = html;
+    $("results").classList.add("hidden");
+    $("reader").classList.remove("hidden");
+    $("bookSel").value = cur.b;
+    fillChapterSel();
+    $("chapterSel").value = cur.c;
+    $("prevBtn").disabled = cur.b === 0 && cur.c === 0;
+    $("nextBtn").disabled = cur.b === BIBLE.books.length - 1 &&
+                            cur.c === bk.chapters.length - 1;
+    if (targetVerse != null) {
+      var el = $("reader").querySelector("[data-i='" + targetVerse + "']");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    } else {
+      window.scrollTo({ top: 0 });
+    }
+    store.set("pos", JSON.stringify(cur));
+  }
+
+  function renderResults(query, hits) {
+    stopSpeaking();
+    var words = query.toLowerCase().split(/\s+/).filter(function (w) { return w.length > 1; });
+    var mark = function (t) {
+      var h = verseHTML(t);
+      words.forEach(function (w) {
+        h = h.replace(new RegExp("(" + w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "gi"),
+          "<mark>$1</mark>");
+      });
+      return h;
+    };
+    var html = "<div class='backlink'><button id='backBtn'>‹ Back to reading</button></div>" +
+      "<h2>" + hits.length + (hits.length === 40 ? "+" : "") +
+      " result" + (hits.length === 1 ? "" : "s") + " for “" + esc(query) + "”</h2>";
+    if (!hits.length) html += "<p>Nothing found. Try fewer or different words.</p>";
+    hits.forEach(function (e, i) {
+      html += "<div class='hit' data-n='" + i + "'><div class='ref'>" +
+        esc(refName(e.b, e.c, e.v)) + "</div><div class='txt'>" +
+        mark(BIBLE.books[e.b].chapters[e.c][e.v]) + "</div></div>";
+    });
+    $("results").innerHTML = html;
+    $("results").classList.remove("hidden");
+    $("reader").classList.add("hidden");
+    $("results")._hits = hits;
+    window.scrollTo({ top: 0 });
+  }
+
+  function fillChapterSel() {
+    var n = BIBLE.books[cur.b].chapters.length, sel = $("chapterSel"), html = "";
+    for (var i = 0; i < n; i++) html += "<option value='" + i + "'>" + (i + 1) + "</option>";
+    sel.innerHTML = html;
+  }
+
+  function setStatus(msg, isErr) {
+    $("status").textContent = msg || "";
+    $("status").className = isErr ? "err" : "";
+  }
+
+  /* ===== read aloud (speech synthesis) ===== */
+  var synth = window.speechSynthesis || null;
+
+  function voices() {
+    if (!synth) return [];
+    return synth.getVoices().filter(function (v) { return /^en/i.test(v.lang); });
+  }
+  function fillVoices() {
+    var vs = voices(), sel = $("voiceSel"), html = "<option value=''>default</option>";
+    vs.forEach(function (v) {
+      html += "<option value='" + esc(v.name) + "'" +
+        (v.name === settings.voice ? " selected" : "") + ">" +
+        esc(v.name.replace(/ English.*$/, "")) + "</option>";
+    });
+    sel.innerHTML = html;
+  }
+
+  function speakVerses(b, c, from, single) {
+    if (!synth) { setStatus("This browser has no speech synthesis.", true); return; }
+    stopSpeaking();
+    var verses = BIBLE.books[b].chapters[c];
+    var i = from;
+    reading = { b: b, c: c, i: i };
+    $("readBtn").classList.add("hidden");
+    $("stopBtn").classList.remove("hidden");
+
+    function next() {
+      if (!reading || i >= verses.length) { stopSpeaking(); return; }
+      reading.i = i;
+      highlight(i);
+      var u = new SpeechSynthesisUtterance(plain(verses[i]));
+      u.rate = settings.rate;
+      var vs = voices();
+      for (var k = 0; k < vs.length; k++) {
+        if (vs[k].name === settings.voice) { u.voice = vs[k]; break; }
+      }
+      u.onend = function () {
+        if (!reading) return;
+        if (single) { stopSpeaking(); return; }
+        i++; next();
+      };
+      u.onerror = function () { stopSpeaking(); };
+      synth.speak(u);
+    }
+    next();
+  }
+
+  function highlight(i) {
+    var prev = $("reader").querySelector(".verse.reading");
+    if (prev) prev.classList.remove("reading");
+    var el = $("reader").querySelector("[data-i='" + i + "']");
+    if (el && !$("reader").classList.contains("hidden")) {
+      el.classList.add("reading");
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }
+
+  function stopSpeaking() {
+    reading = null;
+    if (synth) synth.cancel();
+    var prev = document.querySelector(".verse.reading");
+    if (prev) prev.classList.remove("reading");
+    $("readBtn").classList.remove("hidden");
+    $("stopBtn").classList.add("hidden");
+  }
+
+  /* ===== voice search (speech recognition) ===== */
+  var Recognition = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+
+  function startListening() {
+    if (!Recognition) {
+      setStatus("This browser has no speech recognition — type your search instead.", true);
+      return;
+    }
+    if (listening) { stopListening(); return; }
+    stopSpeaking();               // don't transcribe our own voice
+    recog = new Recognition();
+    recog.lang = "en-US";
+    recog.interimResults = true;
+    recog.maxAlternatives = 1;
+    listening = true;
+    $("micBtn").classList.add("listening");
+    setStatus("Listening… say a reference (“John three sixteen”) or a phrase.");
+    var finalText = "";
+    recog.onresult = function (ev) {
+      var interim = "";
+      for (var i = ev.resultIndex; i < ev.results.length; i++) {
+        if (ev.results[i].isFinal) finalText += ev.results[i][0].transcript;
+        else interim += ev.results[i][0].transcript;
+      }
+      setStatus("“" + (finalText || interim).trim() + "”");
+    };
+    recog.onerror = function (ev) {
+      stopListening();
+      var msg = ev.error === "not-allowed" ?
+        "Microphone permission was denied." :
+        ev.error === "no-speech" ? "Didn’t hear anything — try again." :
+        "Speech recognition error: " + ev.error;
+      setStatus(msg, true);
+    };
+    recog.onend = function () {
+      stopListening();
+      var heard = finalText.trim();
+      if (heard) runQuery(heard, true);
+    };
+    recog.start();
+  }
+  function stopListening() {
+    listening = false;
+    $("micBtn").classList.remove("listening");
+    if (recog) { try { recog.stop(); } catch (e) {} recog = null; }
+  }
+
+  /* ===== query dispatch ===== */
+  function runQuery(raw, fromVoice) {
+    var ref = parseReference(raw);
+    if (ref) {
+      cur = { b: ref.b, c: ref.c - 1 };
+      var vi = ref.v != null ? ref.v - 1 : null;
+      renderChapter(vi);
+      setStatus(refName(cur.b, cur.c, vi));
+      if (fromVoice && settings.autoRead) {
+        speakVerses(cur.b, cur.c, vi != null ? vi : 0, vi != null);
+      }
+      return;
+    }
+    var hits = phraseSearch(raw, 40);
+    if (hits.length === 1) {
+      var e = hits[0];
+      cur = { b: e.b, c: e.c };
+      renderChapter(e.v);
+      setStatus(refName(e.b, e.c, e.v));
+      if (fromVoice && settings.autoRead) speakVerses(e.b, e.c, e.v, true);
+      return;
+    }
+    renderResults(raw, hits);
+    setStatus(hits.length ? "Tap a result to open it." :
+      "No verses matched “" + raw + "”.", !hits.length);
+    if (fromVoice && settings.autoRead && hits.length && synth) {
+      var u = new SpeechSynthesisUtterance(hits.length + " results for " + raw);
+      u.rate = settings.rate;
+      synth.cancel(); synth.speak(u);
+    }
+  }
+
+  /* ===== navigation ===== */
+  function move(delta) {
+    var b = cur.b, c = cur.c + delta;
+    if (c < 0) {
+      if (b === 0) return;
+      b--; c = BIBLE.books[b].chapters.length - 1;
+    } else if (c >= BIBLE.books[b].chapters.length) {
+      if (b === BIBLE.books.length - 1) return;
+      b++; c = 0;
+    }
+    cur = { b: b, c: c };
+    renderChapter(null);
+    setStatus("");
+  }
+
+  /* ===== wiring ===== */
+  function wire() {
+    var bsel = $("bookSel"), html = "";
+    BIBLE.books.forEach(function (bk, i) {
+      html += "<option value='" + i + "'>" + esc(bk.name) + "</option>";
+    });
+    bsel.innerHTML = html;
+
+    bsel.addEventListener("change", function () {
+      cur = { b: +bsel.value, c: 0 };
+      renderChapter(null); setStatus("");
+    });
+    $("chapterSel").addEventListener("change", function () {
+      cur.c = +$("chapterSel").value;
+      renderChapter(null); setStatus("");
+    });
+    $("prevBtn").addEventListener("click", function () { move(-1); });
+    $("nextBtn").addEventListener("click", function () { move(1); });
+
+    $("readBtn").addEventListener("click", function () {
+      speakVerses(cur.b, cur.c, 0, false);
+    });
+    $("stopBtn").addEventListener("click", stopSpeaking);
+    $("reader").addEventListener("click", function (ev) {
+      var p = ev.target.closest(".verse");
+      if (p) speakVerses(cur.b, cur.c, +p.dataset.i, false);
+    });
+    $("results").addEventListener("click", function (ev) {
+      if (ev.target.id === "backBtn") { renderChapter(null); setStatus(""); return; }
+      var h = ev.target.closest(".hit");
+      if (h) {
+        var e = $("results")._hits[+h.dataset.n];
+        cur = { b: e.b, c: e.c };
+        renderChapter(e.v);
+        setStatus(refName(e.b, e.c, e.v));
+      }
+    });
+
+    $("micBtn").addEventListener("click", startListening);
+    var doSearch = function () {
+      var q = $("searchBox").value.trim();
+      if (q) runQuery(q, false);
+    };
+    $("goBtn").addEventListener("click", doSearch);
+    $("searchBox").addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter") doSearch();
+    });
+
+    $("autoRead").addEventListener("change", function () {
+      settings.autoRead = $("autoRead").checked; saveSettings();
+    });
+    $("rate").addEventListener("input", function () {
+      settings.rate = +$("rate").value;
+      $("rateVal").textContent = settings.rate.toFixed(1) + "×";
+      saveSettings();
+    });
+    $("voiceSel").addEventListener("change", function () {
+      settings.voice = $("voiceSel").value; saveSettings();
+    });
+    if (synth) {
+      fillVoices();
+      if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = fillVoices;
+    }
+    if (!Recognition) $("micBtn").title = "Voice search is not supported in this browser";
+
+    document.addEventListener("keydown", function (ev) {
+      var tag = document.activeElement && document.activeElement.tagName;
+      if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+      switch (ev.key) {
+        case "ArrowLeft": move(-1); break;
+        case "ArrowRight": move(1); break;
+        case "v": case "V": startListening(); break;
+        case "r": case "R": reading ? stopSpeaking() : speakVerses(cur.b, cur.c, 0, false); break;
+        case "/": ev.preventDefault(); $("searchBox").focus(); break;
+      }
+    });
+  }
+
+  function saveSettings() { store.set("settings", JSON.stringify(settings)); }
+
+  /* ===== boot ===== */
+  try {
+    var s = JSON.parse(store.get("settings"));
+    if (s) {
+      settings.rate = +s.rate || 1;
+      settings.voice = s.voice || "";
+      settings.autoRead = s.autoRead !== false;
+    }
+  } catch (e) {}
+  $("rate").value = settings.rate;
+  $("rateVal").textContent = settings.rate.toFixed(1) + "×";
+  $("autoRead").checked = settings.autoRead;
+
+  try {
+    var p = JSON.parse(store.get("pos"));
+    if (p && p.b >= 0 && p.b < 66) cur = p;
+  } catch (e) {}
+
+  loadBible().then(function (data) {
+    BIBLE = data;
+    if (cur.c >= BIBLE.books[cur.b].chapters.length) cur.c = 0;
+    buildIndex();
+    $("transLine").textContent = data.translation + " · works offline once loaded";
+    wire();
+    $("loading").classList.add("hidden");
+    $("app").classList.remove("hidden");
+    renderChapter(null);
+  }).catch(function (err) {
+    $("loadMsg").textContent =
+      "Could not load the Bible text (" + err.message + "). " +
+      "Serve this folder over http(s) — file:// blocks fetch in most browsers.";
+  });
+
+  if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
+  }
+})();
+</script>
+</body>
+</html>
