@@ -110,6 +110,10 @@
 
   /* ---- the select caret, baked per dressing ---- */
   --caret:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%23d4a53a' stroke-width='1.6'/></svg>");
+
+  /* ---- the invitation code: always dark on light, or cameras can't read it ---- */
+  --qr-ink:#1b1310;
+  --qr-paper:#f3e9d2;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -492,6 +496,42 @@ kbd{
 .foot{margin-top:22px;text-align:right}
 .credit{text-align:center;margin-top:34px;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--faint)}
 
+/* ---------- table link (spectators) ---------- */
+.qrbox{display:flex;justify-content:center;margin:4px 0 6px;min-height:40px}
+.qrbox:empty::before{content:"\2026";font-size:28px;color:var(--parch-3);line-height:1}
+svg.qr{width:min(280px,72vw);height:auto;border-radius:var(--r-sm);box-shadow:0 0 0 1px var(--rule)}
+.qr-paper{fill:var(--qr-paper)}
+.qr-ink{fill:var(--qr-ink)}
+.linkrow{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:14px 0}
+.linkrow .btn{flex:1;min-width:140px}
+#linkDlg .row input{min-width:0;font-family:var(--mono);font-size:13px}
+#linkCam{display:block;width:100%;max-height:240px;object-fit:cover;border-radius:var(--r-sm);margin-bottom:12px;background:var(--ink)}
+#linkCam[hidden]{display:none}
+.linkstat{margin:12px 0 0;min-height:1.4em;font-size:13px;font-style:italic;color:var(--brass-hi);text-align:center}
+.code{
+  margin:0;padding:8px 10px;border-radius:var(--r-sm);background:var(--field-bg);border:1px solid var(--rule);
+  font-family:var(--mono);font-size:11px;line-height:1.5;word-break:break-all;color:var(--parch-2);user-select:all;
+}
+.code:empty{display:none}
+.watchbar{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;
+  max-width:760px;margin:-8px auto 20px;padding:9px 14px;border-radius:var(--r-sm);
+  border:var(--border-w) solid var(--rule);background:linear-gradient(180deg,var(--tint),var(--tint-2));
+  font-size:14px;text-align:center;
+}
+.watchbar[hidden]{display:none}
+.watchbar .dot{width:9px;height:9px;border-radius:50%;background:var(--parch-3);flex:none}
+.watchbar.live .dot{background:var(--felt-hi);box-shadow:0 0 0 3px rgba(var(--felt-rgb),.25);animation:pulse 1.6s ease-in-out infinite}
+.watchbar .txt{flex:1;min-width:180px;color:var(--parch-2)}
+#watchWait{max-width:640px;margin:0 auto;text-align:center}
+#watchWait .sub{margin:0}
+/* a spectator's page is a window, not a table: the controls that would move
+   the game are gone, and a capture-phase click guard backs this up in the script */
+[data-watch] #setup,[data-watch] #undoBtn,[data-watch] #newBtn,[data-watch] #stakesToggle,[data-watch] #linkBtn,
+[data-watch] #clearPad,[data-watch] .actions,[data-watch] .manual,[data-watch] .face .minus,
+[data-watch] #stakesBtn,[data-watch] #potClearBtn{display:none!important}
+[data-watch] .face .die{cursor:default;pointer-events:none}
+
 /* ============================================================
    DRESSING 2 · NEON — an arcade cabinet at 3am.
    Monospaced, sharp-cornered, scanlined, everything humming.
@@ -575,6 +615,8 @@ kbd{
   --die-shadow:drop-shadow(0 0 7px rgba(0,233,255,.5));
   --die-hover:translateY(-3px) scale(1.04);
   --caret:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%2300e9ff' stroke-width='1.6'/></svg>");
+  --qr-ink:#05060a;
+  --qr-paper:#e6fcff;
 }
 [data-theme="neon"] body{text-shadow:0 0 12px rgba(0,233,255,.14)}
 [data-theme="neon"] h2,[data-theme="neon"] .dlg h3{text-shadow:0 0 14px rgba(0,233,255,.5)}
@@ -688,6 +730,8 @@ kbd{
   --die-shadow:drop-shadow(2px 2px 0 rgba(23,21,15,.22));
   --die-hover:translateY(-2px);
   --caret:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%2317150f' stroke-width='1.6'/></svg>");
+  --qr-ink:#17150f;
+  --qr-paper:#fbf8ef;
 }
 [data-theme="broadsheet"] h1{border-top:4px solid var(--ink);border-bottom:2px solid var(--ink);padding:6px 0 8px;text-indent:0}
 [data-theme="broadsheet"] .tagline{letter-spacing:.24em;text-indent:.24em;color:var(--parch-2)}
@@ -815,6 +859,8 @@ kbd{
   --die-shadow:drop-shadow(0 5px 0 rgba(58,42,77,.18));
   --die-hover:translateY(-5px) rotate(-8deg) scale(1.06);
   --caret:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%23ff3fa4' stroke-width='2.4' stroke-linecap='round'/></svg>");
+  --qr-ink:#2b1640;
+  --qr-paper:#ffffff;
 }
 @keyframes blob{0%,100%{transform:translateX(-50%) translateY(0) scale(1)}50%{transform:translateX(-50%) translateY(-4vh) scale(1.08)}}
 @keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-5px) rotate(3deg)}}
@@ -953,6 +999,8 @@ kbd{
   --die-shadow:drop-shadow(0 6px 8px rgba(11,95,122,.22));
   --die-hover:translateY(-3px) rotate(3deg);
   --caret:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%230f8f9e' stroke-width='2' stroke-linecap='round'/></svg>");
+  --qr-ink:#08343f;
+  --qr-paper:#ffffff;
 }
 @keyframes sway{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-4px) rotate(5deg)}}
 [data-theme="caye"] .masthead .bones svg{animation:sway 4.6s ease-in-out infinite;opacity:.95}
@@ -1076,6 +1124,8 @@ kbd{
   --die-shadow:drop-shadow(0 4px 8px rgba(0,10,30,.6));
   --die-hover:translateY(-3px) rotate(-3deg);
   --caret:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%23e8b100' stroke-width='1.8'/></svg>");
+  --qr-ink:#0a1a44;
+  --qr-paper:#fffdf5;
 }
 /* the flag's two red bands, top and bottom of every panel */
 [data-theme="independence"] .panel{border-top:5px solid var(--oxblood);border-bottom:5px solid var(--oxblood)}
@@ -1199,7 +1249,7 @@ kbd{
   .dressing .lab{display:none}
 }
 @media (prefers-reduced-motion:reduce){
-  body::before,.hot,.masthead .bones svg{animation:none}
+  body::before,.hot,.masthead .bones svg,.watchbar.live .dot{animation:none}
   body.quake .wrap{animation:none}
   .stamp span,
   [data-theme="neon"] .stamp span,
@@ -1232,7 +1282,19 @@ kbd{
     <button class="btn ghost" id="cbBtn" aria-pressed="false">Color Blind: Off</button>
     <button class="btn ghost" id="stakesToggle" aria-pressed="false" hidden>Beachcombing: Off</button>
     <button class="btn ghost" id="newBtn" data-lex="newGame" hidden>New Tide</button>
+    <button class="btn ghost" id="linkBtn">On the Dock</button>
   </nav>
+
+  <!-- a spectator's status line: shown only in watch mode -->
+  <div class="watchbar" id="watchBar" hidden>
+    <span class="dot" aria-hidden="true"></span>
+    <span class="txt" id="watchTxt" aria-live="polite"></span>
+    <button class="btn tiny" id="replyBtn" data-lex="watchReply">Show My Reply</button>
+    <button class="btn tiny ghost" id="leaveBtn" data-lex="watchLeave">Leave the Dock</button>
+  </div>
+  <section class="panel" id="watchWait" hidden>
+    <p class="sub" data-lex="watchWait">No tide running yet. The game will wash up here the moment it starts.</p>
+  </section>
 
   <!-- ============ SETUP ============ -->
   <section class="panel" id="setup">
@@ -1355,6 +1417,43 @@ kbd{
     <p class="note" id="rulesNote"></p>
     <p class="note" id="keysNote"></p>
     <div class="foot"><button class="btn" id="closeRules" data-lex="closeRules">Back to the Sand</button></div>
+  </div>
+</dialog>
+
+<!-- ============ TABLE LINK ============ -->
+<!-- One dialog, two sides: the scorer's invitation (#linkHost) and the
+     spectator's reply (#linkGuest). Only one side is ever shown. -->
+<dialog id="linkDlg">
+  <div class="dlg">
+    <div id="linkHost">
+      <h3 data-lex="linkHead">Watchers on the Dock</h3>
+      <p class="sub" data-lex="linkSub">Let someone follow the tide from their own phone.</p>
+      <div class="qrbox" id="linkQR"></div>
+      <p class="note" data-lex="linkHelp"></p>
+      <div class="linkrow">
+        <button class="btn brass" id="listenBtn">Listen</button>
+        <button class="btn" id="scanBtn" hidden>Scan Their Screen</button>
+      </div>
+      <video id="linkCam" playsinline muted hidden></video>
+      <form class="row" id="pasteForm" autocomplete="off">
+        <input type="text" id="pasteIn" class="grow" spellcheck="false" autocapitalize="off">
+        <button class="btn" type="submit" data-lex="linkConnect">Connect</button>
+      </form>
+      <p class="linkstat" id="linkStat" aria-live="polite"></p>
+    </div>
+    <div id="linkGuest" hidden>
+      <h3 data-lex="watchHead">Walking Out to the Dock</h3>
+      <p class="sub" data-lex="watchSub">One more step: send your reply to the scorer.</p>
+      <div class="qrbox" id="replyQR"></div>
+      <div class="linkrow">
+        <button class="btn brass" id="playBtn">Play the Reply</button>
+        <button class="btn" id="copyBtn" data-lex="watchCopy">Copy Code</button>
+      </div>
+      <p class="code" id="replyCode"></p>
+      <p class="note" data-lex="watchHelp"></p>
+      <p class="linkstat" id="watchStat" aria-live="polite"></p>
+    </div>
+    <div class="foot"><button class="btn" id="closeLink" data-lex="closeRules">Back to the Sand</button></div>
   </div>
 </dialog>
 
@@ -1533,6 +1632,379 @@ var SFX = {
   win:   function(){ [523,659,784,1047,1319].forEach(function(f,i){ tone(f,0.62,"sine",0.055,i*0.11); }); }
 };
 
+/* ================= qr code =================
+   A byte-mode QR encoder at error-correction level M, versions 1–15 —
+   enough for a join link. After Nayuki's reference implementation, cut
+   down to what the table link needs. Pure: bytes in, a module grid out. */
+var QR_ECC = [0,10,16,26,18,24,16,18,22,22,26,30,22,22,24,24];   // ecc codewords per block, level M
+var QR_BLK = [0,1,1,1,2,2,4,4,4,5,5,5,8,9,9,10];                  // blocks, level M
+var QR_MASKS = [
+  function(x,y){ return (x + y) % 2 === 0; },
+  function(x,y){ return y % 2 === 0; },
+  function(x,y){ return x % 3 === 0; },
+  function(x,y){ return (x + y) % 3 === 0; },
+  function(x,y){ return (Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0; },
+  function(x,y){ return x * y % 2 + x * y % 3 === 0; },
+  function(x,y){ return (x * y % 2 + x * y % 3) % 2 === 0; },
+  function(x,y){ return ((x + y) % 2 + x * y % 3) % 2 === 0; }
+];
+function gfMul(x, y){   // GF(256) over 0x11D, the field both QR and nothing else here use
+  var z = 0;
+  for(var i=7; i>=0; i--){ z = (z << 1) ^ ((z >>> 7) * 0x11D); z ^= ((y >>> i) & 1) * x; }
+  return z;
+}
+function qrECC(data, degree){
+  var div = [], i, j, root = 1;
+  for(i=0; i<degree; i++) div.push(0);
+  div[degree - 1] = 1;
+  for(i=0; i<degree; i++){
+    for(j=0; j<degree; j++){
+      div[j] = gfMul(div[j], root);
+      if(j + 1 < degree) div[j] ^= div[j + 1];
+    }
+    root = gfMul(root, 2);
+  }
+  var rem = div.map(function(){ return 0; });
+  data.forEach(function(b){
+    var f = b ^ rem.shift();
+    rem.push(0);
+    for(var k=0; k<degree; k++) rem[k] ^= gfMul(div[k], f);
+  });
+  return rem;
+}
+function qrRawModules(v){
+  var r = (16 * v + 128) * v + 64;
+  if(v >= 2){
+    var na = Math.floor(v / 7) + 2;
+    r -= (25 * na - 10) * na - 55;
+    if(v >= 7) r -= 36;
+  }
+  return r;
+}
+function qrDataWords(v){ return Math.floor(qrRawModules(v) / 8) - QR_ECC[v] * QR_BLK[v]; }
+function qrAlign(v){
+  if(v === 1) return [];
+  var na = Math.floor(v / 7) + 2, size = v * 4 + 17;
+  var step = Math.floor((v * 8 + na * 3 + 5) / (na * 4 - 4)) * 2;
+  var out = [6];
+  for(var p = size - 7; out.length < na; p -= step) out.splice(1, 0, p);
+  return out;
+}
+function qrPenalty(mod, size){
+  var p = 0, x, y, run, dark = 0;
+  for(y=0; y<size; y++){
+    for(var pass=0; pass<2; pass++){
+      run = 1;
+      for(x=1; x<size; x++){
+        var a = pass ? mod[x][y] : mod[y][x], b = pass ? mod[x-1][y] : mod[y][x-1];
+        if(a === b){ run++; if(run === 5) p += 3; else if(run > 5) p++; }
+        else run = 1;
+      }
+    }
+  }
+  for(y=0; y<size-1; y++) for(x=0; x<size-1; x++){
+    var c = mod[y][x];
+    if(c === mod[y][x+1] && c === mod[y+1][x] && c === mod[y+1][x+1]) p += 3;
+  }
+  for(y=0; y<size; y++) for(x=0; x<size; x++) if(mod[y][x]) dark++;
+  return p + Math.floor(Math.abs(dark * 20 - size * size * 10) / (size * size)) * 10;
+}
+function qrEncode(bytes){
+  var v, i, j;
+  for(v=1; v<=15; v++){
+    if(4 + (v < 10 ? 8 : 16) + bytes.length * 8 <= qrDataWords(v) * 8) break;
+  }
+  if(v > 15) return null;
+  var size = v * 4 + 17, cap = qrDataWords(v) * 8;
+
+  // --- the bit stream: mode, count, bytes, terminator, padding ---
+  var bits = [];
+  function put(val, n){ for(var k=n-1; k>=0; k--) bits.push((val >>> k) & 1); }
+  put(4, 4);
+  put(bytes.length, v < 10 ? 8 : 16);
+  for(i=0; i<bytes.length; i++) put(bytes[i], 8);
+  put(0, Math.min(4, cap - bits.length));
+  put(0, (8 - bits.length % 8) % 8);
+  var data = [];
+  for(i=0; i<bits.length; i+=8){
+    var w = 0;
+    for(j=0; j<8; j++) w = (w << 1) | bits[i + j];
+    data.push(w);
+  }
+  for(var padw = 0xEC; data.length < cap / 8; padw ^= 0xEC ^ 0x11) data.push(padw);
+
+  // --- split into blocks, add error correction, interleave ---
+  var nb = QR_BLK[v], ecc = QR_ECC[v], raw = Math.floor(qrRawModules(v) / 8);
+  var nShort = nb - raw % nb, shortLen = Math.floor(raw / nb), blocks = [], at = 0;
+  for(i=0; i<nb; i++){
+    var dl = shortLen - ecc + (i < nShort ? 0 : 1);
+    var dat = data.slice(at, at + dl);
+    at += dl;
+    var blk = dat.concat(qrECC(dat, ecc));
+    if(i < nShort) blk.splice(dl, 0, 0);   // a placeholder so every block lines up
+    blocks.push(blk);
+  }
+  var words = [];
+  for(i=0; i<blocks[0].length; i++){
+    for(j=0; j<nb; j++){
+      if(i !== shortLen - ecc || j >= nShort) words.push(blocks[j][i]);
+    }
+  }
+
+  // --- the function patterns ---
+  var mod = [], fn = [];
+  for(i=0; i<size; i++){ mod.push([]); fn.push([]); for(j=0; j<size; j++){ mod[i].push(false); fn[i].push(false); } }
+  function set(x, y, d){ mod[y][x] = d; fn[y][x] = true; }
+  for(i=0; i<size; i++){ set(6, i, i % 2 === 0); set(i, 6, i % 2 === 0); }
+  [[3,3],[size-4,3],[3,size-4]].forEach(function(c){
+    for(var dy=-4; dy<=4; dy++) for(var dx=-4; dx<=4; dx++){
+      var x = c[0] + dx, y = c[1] + dy, d = Math.max(Math.abs(dx), Math.abs(dy));
+      if(x >= 0 && x < size && y >= 0 && y < size) set(x, y, d !== 2 && d !== 4);
+    }
+  });
+  var al = qrAlign(v), n = al.length;
+  for(i=0; i<n; i++) for(j=0; j<n; j++){
+    if((i === 0 && j === 0) || (i === 0 && j === n-1) || (i === n-1 && j === 0)) continue;
+    for(var ay=-2; ay<=2; ay++) for(var ax=-2; ax<=2; ax++){
+      set(al[i] + ax, al[j] + ay, Math.max(Math.abs(ax), Math.abs(ay)) !== 1);
+    }
+  }
+  function drawFormat(mask){
+    var d = mask, r = d;   // level M's format bits are 00, so the data is just the mask
+    for(var k=0; k<10; k++) r = (r << 1) ^ ((r >>> 9) * 0x537);
+    var fb = ((d << 10) | r) ^ 0x5412;
+    var g = function(k){ return ((fb >>> k) & 1) !== 0; };
+    for(k=0; k<=5; k++) set(8, k, g(k));
+    set(8, 7, g(6)); set(8, 8, g(7)); set(7, 8, g(8));
+    for(k=9; k<15; k++) set(14 - k, 8, g(k));
+    for(k=0; k<8; k++) set(size - 1 - k, 8, g(k));
+    for(k=8; k<15; k++) set(8, size - 15 + k, g(k));
+    set(8, size - 8, true);
+  }
+  drawFormat(0);   // reserves the format area before the data goes down
+  if(v >= 7){
+    var vr = v;
+    for(i=0; i<12; i++) vr = (vr << 1) ^ ((vr >>> 11) * 0x1F25);
+    var vb = (v << 12) | vr;
+    for(i=0; i<18; i++){
+      var bit = ((vb >>> i) & 1) !== 0, a = size - 11 + i % 3, b = Math.floor(i / 3);
+      set(a, b, bit); set(b, a, bit);
+    }
+  }
+
+  // --- the data, in the zigzag ---
+  var bi = 0, total = words.length * 8;
+  for(var right = size - 1; right >= 1; right -= 2){
+    if(right === 6) right = 5;
+    for(var vert=0; vert<size; vert++){
+      for(j=0; j<2; j++){
+        var x = right - j, up = ((right + 1) & 2) === 0, y = up ? size - 1 - vert : vert;
+        if(!fn[y][x] && bi < total){
+          mod[y][x] = ((words[bi >>> 3] >>> (7 - (bi & 7))) & 1) !== 0;
+          bi++;
+        }
+      }
+    }
+  }
+
+  // --- the mask that reads cleanest ---
+  function applyMask(m){
+    for(var y=0; y<size; y++) for(var x=0; x<size; x++){
+      if(!fn[y][x] && QR_MASKS[m](x, y)) mod[y][x] = !mod[y][x];
+    }
+  }
+  var best = 0, bestP = Infinity;
+  for(var m=0; m<8; m++){
+    applyMask(m); drawFormat(m);
+    var pen = qrPenalty(mod, size);
+    if(pen < bestP){ bestP = pen; best = m; }
+    applyMask(m);
+  }
+  applyMask(best); drawFormat(best);
+  return mod;
+}
+function utf8(s){
+  var out = [], e = unescape(encodeURIComponent(s));
+  for(var i=0; i<e.length; i++) out.push(e.charCodeAt(i));
+  return out;
+}
+// Colors come from CSS (.qr-ink / .qr-paper, tokens per dressing) — only shape here.
+function qrSVG(text){
+  var m = qrEncode(utf8(text));
+  if(!m) return "";
+  var n = m.length, q = 4, d = "", side = n + 2 * q;
+  for(var y=0; y<n; y++) for(var x=0; x<n; x++){
+    if(m[y][x]) d += "M" + (x + q) + " " + (y + q) + "h1v1h-1z";
+  }
+  return '<svg class="qr" viewBox="0 0 ' + side + ' ' + side + '" shape-rendering="crispEdges" ' +
+         'xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+         '<rect class="qr-paper" width="' + side + '" height="' + side + '"/>' +
+         '<path class="qr-ink" d="' + d + '"/></svg>';
+}
+
+/* ================= chirp modem =================
+   How a spectator's phone hands its reply back to the scorer: it sings it.
+   Each symbol is 50 ms holding two tones at once — one from a bank of 16 for
+   the high nibble, one from a second bank for the low — so a byte a symbol.
+   A frame is a six-symbol preamble alternating two marker tones, then a
+   length byte, the payload and a CRC-16. The sender loops it; the listener
+   finds the preamble, reads each symbol from the middle 40 ms (every tone
+   sits on a 25 Hz bin of that window, so they don't bleed into each other),
+   and sums what it hears across repeats until the CRC comes up clean.
+   Sine only, whatever the dressing: harmonics would land in the other bank.
+   Pure: chirpRender() makes samples, Ear eats them — tests can wire one
+   straight into the other. */
+var MODEM = {
+  sym: 0.05, win: 0.04, pre: 6,
+  bankA: 1500, bankB: 2775, step: 75,        // 1500–2625 Hz and 2775–3900 Hz
+  markA: 1125, markB: 4200,
+  ref: [1800, 2400, 3000, 3600],             // data-band tones: a preamble sits silent on them
+  thresh: 4.8                                // of 6 — above 4, which an alternating preamble scores two symbols early
+};
+function crc16(bytes){
+  var c = 0xFFFF;
+  for(var i=0; i<bytes.length; i++){
+    c ^= bytes[i] << 8;
+    for(var k=0; k<8; k++) c = (c & 0x8000) ? ((c << 1) ^ 0x1021) & 0xFFFF : (c << 1) & 0xFFFF;
+  }
+  return c;
+}
+function chirpRender(payload, fs){
+  var M = MODEM, frame = [payload.length].concat(Array.prototype.slice.call(payload));
+  var c = crc16(frame);
+  frame.push(c >> 8, c & 255);
+  var ns = Math.round(M.sym * fs), lead = Math.round(0.08 * fs), tail = Math.round(0.45 * fs);
+  var out = new Float32Array(lead + (M.pre + frame.length) * ns + tail);
+  var ramp = Math.round(0.004 * fs);
+  function tone(at, f, amp){
+    var w = 2 * Math.PI * f / fs;
+    for(var i=0; i<ns; i++){
+      var e = i < ramp ? i / ramp : (i > ns - ramp ? (ns - i) / ramp : 1);
+      out[at + i] += amp * e * Math.sin(w * i);
+    }
+  }
+  for(var s=0; s<M.pre; s++) tone(lead + s * ns, s % 2 ? M.markB : M.markA, 0.6);
+  frame.forEach(function(b, j){
+    var at = lead + (M.pre + j) * ns;
+    tone(at, M.bankA + M.step * (b >> 4), 0.3);
+    tone(at, M.bankB + M.step * (b & 15), 0.3);
+  });
+  return out;
+}
+// The listener. Feed it Float32Array chunks at sample rate `fs`; it calls
+// onFrame(bytes) for every payload whose CRC checks out.
+function Ear(fs, onFrame){
+  var M = MODEM, ns = M.sym * fs, nw = Math.round(M.win * fs), hop = ns / 10;
+  var cap = Math.round(fs * 12), buf = new Float32Array(cap), len = 0, base = 0;
+  var h = 0, S = {}, trig = null, frame = null, accs = {};
+  var eps = 1e-10 * nw * nw;
+
+  function E(p, f){   // Goertzel energy of the window starting at absolute sample p
+    var w = 2 * Math.PI * f / fs, c = 2 * Math.cos(w), s1 = 0, s2 = 0, i0 = Math.round(p) - base;
+    for(var i=0; i<nw; i++){ var s0 = buf[i0 + i] + c * s1 - s2; s2 = s1; s1 = s0; }
+    return s1 * s1 + s2 * s2 - c * s1 * s2;
+  }
+  function balance(k){   // +1 on marker A, −1 on marker B, ~0 on silence or data
+    var p = k * hop, a = E(p, M.markA), b = E(p, M.markB), r = 0;
+    for(var q=0; q<M.ref.length; q++) r += E(p, M.ref[q]);
+    return (a - b) / (a + b + r + eps);
+  }
+  function C(k){
+    var t = 0;
+    for(var i=0; i<M.pre; i++){
+      var s = S[k + 10 * i];
+      if(s == null) return -Infinity;
+      t += i % 2 ? -s : s;
+    }
+    return t;
+  }
+  function symbol(p){
+    var a = [], b = [], sa = 0, sb = 0, k;
+    for(k=0; k<16; k++){
+      a.push(E(p, M.bankA + k * M.step)); sa += a[k];
+      b.push(E(p, M.bankB + k * M.step)); sb += b[k];
+    }
+    for(k=0; k<16; k++){ a[k] /= sa + eps; b[k] /= sb + eps; }
+    return [a, b];
+  }
+  function argmax(v){ var m = 0; for(var k=1; k<v.length; k++) if(v[k] > v[m]) m = k; return m; }
+  function byteOf(s){ return (argmax(s[0]) << 4) | argmax(s[1]); }
+  function check(bytes){
+    var n = bytes.length, c = crc16(bytes.slice(0, n - 2));
+    if(bytes[0] !== n - 3 || c !== ((bytes[n-2] << 8) | bytes[n-1])) return false;
+    accs = {};
+    onFrame(bytes.slice(1, n - 2));
+    return true;
+  }
+  function decode(f){
+    if(check(f.syms.map(byteOf))) return;
+    // A single pass didn't make it — add it to what earlier repeats heard.
+    var acc = accs[f.len];
+    if(!acc){
+      acc = accs[f.len] = f.syms.map(function(){ return [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]; });
+    }
+    f.syms.forEach(function(s, j){
+      for(var k=0; k<16; k++){ acc[j][0][k] += s[0][k]; acc[j][1][k] += s[1][k]; }
+    });
+    check(acc.map(byteOf));
+  }
+  function skipTo(p){ frame = null; trig = null; S = {}; h = Math.ceil(p / hop); }
+  // Returns false while it needs more samples.
+  function readFrame(end){
+    var f = frame;
+    if(f.len < 0){
+      var p = f.p0 + M.pre * ns;
+      if(p + nw + 1 > end) return false;
+      var s0 = symbol(p);
+      f.len = byteOf(s0);
+      // A false start: nothing we send is that short, or that long.
+      if(f.len < 8 || f.len > 160){ skipTo(p); return true; }
+      f.syms = [s0];
+    }
+    var n = f.len + 3;
+    if(f.p0 + (M.pre + n - 1) * ns + nw + 1 > end) return false;
+    for(var j=1; j<n; j++) f.syms.push(symbol(f.p0 + (M.pre + j) * ns));
+    decode(f);
+    skipTo(f.p0 + (M.pre + n) * ns);
+    return true;
+  }
+
+  this.push = function(x){
+    if(len + x.length > cap){
+      var drop = len + x.length - cap;
+      buf.copyWithin(0, drop, len);
+      len -= drop; base += drop;
+    }
+    buf.set(x, len);
+    len += x.length;
+    var end = base + len;
+    for(;;){
+      if(frame){
+        if(frame.p0 < base){ skipTo(base); continue; }
+        if(!readFrame(end)) return;
+        continue;
+      }
+      if(h * hop < base) h = Math.ceil(base / hop);
+      if(h * hop + nw + 1 > end) return;
+      S[h] = balance(h);
+      delete S[h - 10 * M.pre - 10];
+      var k = h - 10 * (M.pre - 1);   // the start whose last preamble symbol lands on h
+      if(trig === null && C(k) > M.thresh) trig = k;
+      if(trig !== null && k >= trig + 8){
+        // The preamble scores flat across the guard time; aim for the middle of that plateau.
+        var best = trig, j;
+        for(j=trig; j<=trig+8; j++) if(C(j) > C(best)) best = j;
+        var lo = best, hi = best, top = C(best) - 0.3;
+        while(lo > trig && C(lo - 1) >= top) lo--;
+        while(hi < trig + 8 && C(hi + 1) >= top) hi++;
+        frame = { p0: (lo + hi) / 2 * hop, len: -1 };
+        trig = null;
+      }
+      h++;
+    }
+  };
+}
+
 /* ================= state ================= */
 var LS = "sixbones.v1";
 var state = null;
@@ -1564,7 +2036,11 @@ function freshState(players, target, threshold, highStakes){
 }
 function save(){
   try{
-    localStorage.setItem(LS, JSON.stringify({ s:state, r:roster, m:muted, t:theme, c:cbMode }));
+    // A spectator's `state` is someone else's game. Leave the saved one exactly
+    // as it is — in another tab of this same browser it may be the scorer's.
+    var s = state;
+    if(watching){ var o = JSON.parse(localStorage.getItem(LS) || "null"); s = o ? o.s : null; }
+    localStorage.setItem(LS, JSON.stringify({ s:s, r:roster, m:muted, t:theme, c:cbMode }));
   }catch(e){}
 }
 function load(){
@@ -1697,6 +2173,39 @@ var DRESSINGS = [
 
       rulesHead:"Rules of the House", rulesSub:"Scoring as this ledger counts it.",
       closeRules:"Back to the Table",
+      // --- table link: spectators on their own phones ---
+      linkBtn:function(n){ return "Onlookers" + (n ? ": " + n : ""); },
+      linkHead:"Onlookers at the Rail",
+      linkSub:"Let someone watch the table from their own phone. Same Wi-Fi — they watch, you keep the ledger.",
+      linkHelp:
+        "<b>1.</b> Have them point their phone camera at this code and open the link.<br>" +
+        "<b>2.</b> Their phone answers with a reply. Hold it close and <b>listen</b>, <b>scan</b> their " +
+        "screen, or <b>paste</b> the code they send you.",
+      linkListen:"Listen", linkScan:"Scan Their Screen", linkStop:"Stop",
+      linkPastePh:"…or paste their reply code", linkConnect:"Connect",
+      linkMaking:"Drawing up an invitation…",
+      linkWait:"Waiting on their reply.",
+      linkHearing:"Listening — hold their phone near and play the reply.",
+      linkLooking:"Looking — hold their screen up to the camera.",
+      linkConnecting:"Got it. Shaking hands…",
+      linkJoined:function(n){ return n + (n === 1 ? " onlooker" : " onlookers") + " at the rail. The code above is fresh for the next."; },
+      linkBad:"That code isn’t for this invitation.",
+      linkFailed:"The handshake didn’t take. Both phones on the same Wi-Fi? Here’s a fresh invitation.",
+      linkNoMic:"No microphone to be had — scan or paste instead.",
+      linkNoCam:"No camera to be had — listen or paste instead.",
+      linkNoRtc:"This browser can’t open a direct line to another phone.",
+      watchHead:"Pulling Up to the Rail",
+      watchSub:"One more step: send your reply to the scorer.",
+      watchHelp:
+        "Hold this phone near theirs and play the reply, let them scan the code, or copy it and send it " +
+        "over. This page only watches — nothing you tap here changes the game.",
+      watchPlay:"Play the Reply", watchCopy:"Copy Code", watchCopied:"Copied.",
+      watchReady:"Your reply is ready.",
+      watchLive:"Watching the table live — the ledger is theirs to keep.",
+      watchLost:"The line to the table went dead. Scan a fresh invitation to watch again.",
+      watchLeave:"Leave the Rail", watchReply:"Show My Reply",
+      watchWait:"The table hasn’t opened yet. The game will appear here the moment it does.",
+      watchStale:"That invitation has gone cold. Ask the scorer for a fresh one.",
       // --- high stakes: the progressive pot ---
       dice:function(n){ return n + (n === 1 ? " bone" : " bones"); },
       stakesLabel:"High Stakes",
@@ -1808,6 +2317,39 @@ var DRESSINGS = [
 
       rulesHead:"System Manual", rulesSub:"Scoring as this terminal computes it.",
       closeRules:"Return to Terminal",
+      // --- table link: spectators on their own phones ---
+      linkBtn:function(n){ return "Uplink" + (n ? ": " + n : ""); },
+      linkHead:"Spectator Uplink",
+      linkSub:"Mirror this terminal to another device on the same Wi-Fi. Read-only feed.",
+      linkHelp:
+        "<b>1.</b> Target device scans this code with its camera and opens the link.<br>" +
+        "<b>2.</b> It generates a reply packet. Hold it close and <b>listen</b>, <b>scan</b> its " +
+        "screen, or <b>paste</b> the code.",
+      linkListen:"Listen", linkScan:"Scan Screen", linkStop:"Abort",
+      linkPastePh:"…or paste reply packet", linkConnect:"Link",
+      linkMaking:"Compiling handshake…",
+      linkWait:"Awaiting reply packet.",
+      linkHearing:"Mic open — play the reply packet near this device.",
+      linkLooking:"Camera open — hold the reply code up to the lens.",
+      linkConnecting:"Packet received. Negotiating…",
+      linkJoined:function(n){ return n + (n === 1 ? " spectator" : " spectators") + " linked. Code above refreshed for the next."; },
+      linkBad:"Packet rejected — not for this handshake.",
+      linkFailed:"Handshake timed out. Same network? New code generated.",
+      linkNoMic:"Mic unavailable — scan or paste.",
+      linkNoCam:"Camera unavailable — listen or paste.",
+      linkNoRtc:"This browser can’t open a peer link.",
+      watchHead:"Spectator Mode",
+      watchSub:"Last step: transmit your reply packet to the host.",
+      watchHelp:
+        "Hold this device near the host and transmit, let them scan the code, or copy it and send it. " +
+        "Read-only: inputs here change nothing.",
+      watchPlay:"Transmit", watchCopy:"Copy Packet", watchCopied:"Copied.",
+      watchReady:"Reply packet ready.",
+      watchLive:"Live feed — read-only mirror of the host terminal.",
+      watchLost:"Feed lost. Scan a fresh code to relink.",
+      watchLeave:"Disconnect", watchReply:"Show Reply",
+      watchWait:"Host hasn’t booted a table yet. Feed starts when it does.",
+      watchStale:"Handshake expired. Request a new code from the host.",
       // --- high stakes: the progressive pot ---
       dice:function(n){ return n + (n === 1 ? " cube" : " cubes"); },
       stakesLabel:"Greed Protocol",
@@ -1919,6 +2461,39 @@ var DRESSINGS = [
 
       rulesHead:"The Style Guide", rulesSub:"Scoring as this desk counts it.",
       closeRules:"Back to the Desk",
+      // --- table link: spectators on their own phones ---
+      linkBtn:function(n){ return "Readers" + (n ? ": " + n : ""); },
+      linkHead:"The Wire Service",
+      linkSub:"Send the live edition to a reader’s phone on the same Wi-Fi. They read; the desk keeps the copy.",
+      linkHelp:
+        "<b>1.</b> Have the reader point their phone camera at this code and open the link.<br>" +
+        "<b>2.</b> Their phone files a reply. Hold it close and <b>listen</b>, <b>scan</b> their " +
+        "screen, or <b>paste</b> the code they send.",
+      linkListen:"Listen", linkScan:"Scan Their Screen", linkStop:"Stop",
+      linkPastePh:"…or paste the reply code", linkConnect:"Connect",
+      linkMaking:"Setting the invitation in type…",
+      linkWait:"Awaiting the reader’s reply.",
+      linkHearing:"Listening. Hold their phone near and play the reply.",
+      linkLooking:"Camera up. Hold their screen to the lens.",
+      linkConnecting:"Reply received. Connecting the wire…",
+      linkJoined:function(n){ return n + (n === 1 ? " reader" : " readers") + " on the wire. The code above is fresh for the next."; },
+      linkBad:"That code doesn’t match this invitation.",
+      linkFailed:"The wire didn’t connect. Same Wi-Fi? A fresh invitation is set.",
+      linkNoMic:"No microphone available. Scan or paste instead.",
+      linkNoCam:"No camera available. Listen or paste instead.",
+      linkNoRtc:"This browser can’t open a direct wire.",
+      watchHead:"Subscribing",
+      watchSub:"One step left: send your reply to the desk.",
+      watchHelp:
+        "Hold this phone near the scorer’s and play the reply, let them scan the code, or copy it and " +
+        "send it. This copy is read-only; nothing here changes the record.",
+      watchPlay:"Play the Reply", watchCopy:"Copy Code", watchCopied:"Copied.",
+      watchReady:"Your reply is ready.",
+      watchLive:"Reading the live edition. The desk keeps the record.",
+      watchLost:"The wire went dead. Scan a fresh invitation to keep reading.",
+      watchLeave:"Cancel Subscription", watchReply:"Show My Reply",
+      watchWait:"No edition in print yet. It will appear here as soon as one opens.",
+      watchStale:"That invitation is yesterday’s paper. Ask for a fresh one.",
       // --- high stakes: the progressive pot ---
       dice:function(n){ return n + (n === 1 ? " die" : " dice"); },
       stakesLabel:"The Scoop",
@@ -2031,6 +2606,39 @@ var DRESSINGS = [
 
       rulesHead:"How to Play", rulesSub:"Here’s how the points work.",
       closeRules:"Back to the Game",
+      // --- table link: spectators on their own phones ---
+      linkBtn:function(n){ return "Watch Party" + (n ? ": " + n : ""); },
+      linkHead:"Watch Party!",
+      linkSub:"Friends can follow along on their own phones — same Wi-Fi, look but don’t touch.",
+      linkHelp:
+        "<b>1.</b> Your friend points their phone camera at this code and opens the link.<br>" +
+        "<b>2.</b> Their phone makes a reply. Hold it close and <b>listen</b>, <b>scan</b> their " +
+        "screen, or <b>paste</b> the code they send you.",
+      linkListen:"Listen!", linkScan:"Scan Their Screen", linkStop:"Stop",
+      linkPastePh:"…or paste their code", linkConnect:"Connect!",
+      linkMaking:"Blowing up an invite…",
+      linkWait:"Waiting for their reply!",
+      linkHearing:"Ears on! Hold their phone close and play the reply.",
+      linkLooking:"Camera on! Hold their screen up to it.",
+      linkConnecting:"Got it! Connecting…",
+      linkJoined:function(n){ return n + (n === 1 ? " friend" : " friends") + " watching! The code above is ready for the next one."; },
+      linkBad:"Oops — that code is for a different invite.",
+      linkFailed:"Hmm, that didn’t connect. Same Wi-Fi? Here’s a new invite!",
+      linkNoMic:"No microphone — try scanning or pasting!",
+      linkNoCam:"No camera — try listening or pasting!",
+      linkNoRtc:"This browser can’t connect to other phones. Bummer!",
+      watchHead:"Joining the Party!",
+      watchSub:"Almost there: send your reply back!",
+      watchHelp:
+        "Hold this phone near the scorer’s and play the reply, let them scan your code, or copy it and " +
+        "send it. You’re just watching — tapping here won’t change the game.",
+      watchPlay:"Play the Reply!", watchCopy:"Copy Code", watchCopied:"Copied!",
+      watchReady:"Your reply is ready!",
+      watchLive:"Watching live! The scorer does the scooping.",
+      watchLost:"Uh-oh, the connection popped. Scan a new code to keep watching!",
+      watchLeave:"Leave the Party", watchReply:"Show My Reply",
+      watchWait:"No game yet! It’ll pop up here as soon as one starts.",
+      watchStale:"That invite went flat. Ask for a new one!",
       // --- high stakes: the progressive pot ---
       dice:function(n){ return n + (n === 1 ? " cube" : " cubes"); },
       stakesLabel:"Big Bonus",
@@ -2141,6 +2749,39 @@ var DRESSINGS = [
 
       rulesHead:"Beach Rules", rulesSub:"Scoring as this bar counts it.",
       closeRules:"Back to the Sand",
+      // --- table link: spectators on their own phones ---
+      linkBtn:function(n){ return "On the Dock" + (n ? ": " + n : ""); },
+      linkHead:"Watchers on the Dock",
+      linkSub:"Let someone follow the tide from their own phone. Same Wi-Fi — they watch, you keep the tally.",
+      linkHelp:
+        "<b>1.</b> Have them point their phone camera at this code and open the link.<br>" +
+        "<b>2.</b> Their phone sends back a reply. Hold it close and <b>listen</b>, <b>scan</b> their " +
+        "screen, or <b>paste</b> the code they send you.",
+      linkListen:"Listen", linkScan:"Scan Their Screen", linkStop:"Stop",
+      linkPastePh:"…or paste their reply code", linkConnect:"Connect",
+      linkMaking:"Writing the invitation in the sand…",
+      linkWait:"Waiting on their reply.",
+      linkHearing:"Listening — hold their phone near and play the reply.",
+      linkLooking:"Camera’s up — hold their screen to it.",
+      linkConnecting:"Heard it. Tying up…",
+      linkJoined:function(n){ return n + (n === 1 ? " watcher" : " watchers") + " on the dock. The code above is fresh for the next."; },
+      linkBad:"That code isn’t from this invitation.",
+      linkFailed:"Didn’t tie up. Both phones on the same Wi-Fi? Here’s a fresh invitation.",
+      linkNoMic:"No microphone to use — scan or paste instead.",
+      linkNoCam:"No camera to use — listen or paste instead.",
+      linkNoRtc:"This browser can’t reach another phone directly.",
+      watchHead:"Walking Out to the Dock",
+      watchSub:"One more step: send your reply to the scorer.",
+      watchHelp:
+        "Hold this phone near theirs and play the reply, let them scan the code, or copy it and send it " +
+        "over. This page only watches — nothing you tap here changes the tally.",
+      watchPlay:"Play the Reply", watchCopy:"Copy Code", watchCopied:"Copied.",
+      watchReady:"Your reply is ready.",
+      watchLive:"Watching the tide live — the scorer keeps the tally.",
+      watchLost:"The line to the table went slack. Scan a fresh invitation to watch again.",
+      watchLeave:"Leave the Dock", watchReply:"Show My Reply",
+      watchWait:"No tide running yet. The game will wash up here the moment it starts.",
+      watchStale:"That invitation washed out. Ask the scorer for a fresh one.",
       // --- high stakes: the progressive pot ---
       dice:function(n){ return n + (n === 1 ? " shell" : " shells"); },
       stakesLabel:"Beachcombing",
@@ -2253,6 +2894,39 @@ var DRESSINGS = [
 
       rulesHead:"The Charter", rulesSub:"Scoring as this record counts it.",
       closeRules:"Back to the Ceremony",
+      // --- table link: spectators on their own phones ---
+      linkBtn:function(n){ return "The Stands" + (n ? ": " + n : ""); },
+      linkHead:"Seats in the Stands",
+      linkSub:"Let someone follow the parade from their own phone. Same Wi-Fi — they cheer, you keep the record.",
+      linkHelp:
+        "<b>1.</b> Have them point their phone camera at this code and open the link.<br>" +
+        "<b>2.</b> Their phone sends back a reply. Hold it close and <b>listen</b>, <b>scan</b> their " +
+        "screen, or <b>paste</b> the code they send you.",
+      linkListen:"Listen", linkScan:"Scan Their Screen", linkStop:"Stop",
+      linkPastePh:"…or paste their reply code", linkConnect:"Connect",
+      linkMaking:"Printing the ticket…",
+      linkWait:"Waiting on their reply.",
+      linkHearing:"Listening — hold their phone near and play the reply.",
+      linkLooking:"Camera’s up — hold their screen to it.",
+      linkConnecting:"Heard it. Seating them…",
+      linkJoined:function(n){ return n + (n === 1 ? " celebrant" : " celebrants") + " in the stands. The code above is fresh for the next."; },
+      linkBad:"That code isn’t for this ticket.",
+      linkFailed:"They couldn’t be seated. Same Wi-Fi? Here’s a fresh ticket.",
+      linkNoMic:"No microphone available — scan or paste instead.",
+      linkNoCam:"No camera available — listen or paste instead.",
+      linkNoRtc:"This browser can’t reach another phone directly.",
+      watchHead:"Taking a Seat",
+      watchSub:"One more step: send your reply to the scorer.",
+      watchHelp:
+        "Hold this phone near theirs and play the reply, let them scan the code, or copy it and send it " +
+        "over. From the stands you only watch — nothing you tap here changes the record.",
+      watchPlay:"Play the Reply", watchCopy:"Copy Code", watchCopied:"Copied.",
+      watchReady:"Your reply is ready.",
+      watchLive:"Watching the parade live from the stands — the scorer keeps the record.",
+      watchLost:"The line to the parade dropped. Scan a fresh ticket to watch again.",
+      watchLeave:"Leave the Stands", watchReply:"Show My Reply",
+      watchWait:"The parade hasn’t stepped off yet. It will appear here the moment it does.",
+      watchStale:"That ticket has expired. Ask the scorer for a fresh one.",
       // --- high stakes: the progressive pot ---
       dice:function(n){ return n + (n === 1 ? " stone" : " stones"); },
       stakesLabel:"The Handover",
@@ -2346,6 +3020,7 @@ function applyLexicon(){
   var st = $("stakesSel");
   st.options[0].textContent = L.stakesOff;
   st.options[1].textContent = L.stakesOn;
+  renderLinkUI();
 }
 function applyTheme(id, quiet){
   theme = dressing(id).id;
@@ -2437,7 +3112,9 @@ $("startBtn").addEventListener("click", function(){
 /* ================= game rendering ================= */
 function renderAll(){
   var on = !!state;
+  syncOut();                        // every render reaches the spectators, if any
   $("setup").hidden = on;
+  $("watchWait").hidden = !(watching && !on);
   $("game").hidden = !on;
   $("newBtn").hidden = !on;
   $("undoBtn").hidden = !on;
@@ -2509,7 +3186,7 @@ function renderTurn(){
 // Pad edits change what the stakes banner should say — an offer closes the
 // moment dice are set aside, and reopens if the pad is cleared — so the three
 // handlers that touch the pad repaint all of it together.
-function renderPadArea(){ renderPad(); renderReading(); renderStakes(); }
+function renderPadArea(){ renderPad(); renderReading(); renderStakes(); syncOut(); }
 
 // The toolbar latch for the optional rule. It is locked — not hidden — while a
 // gamble is armed: those dice were rolled short on the promise of a pot, and
@@ -2918,13 +3595,504 @@ $("rulesDlg").addEventListener("click", function(e){
   if(e.target === this) this.close();
 });
 
+/* ================= table link =================
+   Spectators on their own phones, peer to peer over the local Wi-Fi.
+   WebRTC data channels with no ICE servers at all: nothing leaves the
+   network, and nothing but the two phones is involved.
+
+   Pairing takes two hand-offs, since a browser can't discover the phone
+   across the table on its own:
+     1. the scorer shows a QR code — a join link carrying a packed offer;
+        the spectator's camera app opens it in their browser;
+     2. the spectator's page answers with a packed reply, which gets back
+        by sound (chirp modem), a QR scanned with BarcodeDetector where the
+        browser has one, or a code pasted by hand.
+   After that the scorer's page is the only writer: every render sends
+   {s: state, p: pad} to each spectator, and a spectator's page only draws
+   it. Dressing, sound and color blind mode stay per device. */
+
+// --- packing: an SDP is ~2 KB, but only a handful of its fields vary ---
+var LINK_OFFER = 1, LINK_ANSWER = 2;
+function b64u(bytes){
+  var s = "";
+  for(var i=0; i<bytes.length; i++) s += String.fromCharCode(bytes[i]);
+  return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function unb64u(str){
+  try{
+    var s = atob(String(str).trim().replace(/-/g, "+").replace(/_/g, "/")), out = [];
+    for(var i=0; i<s.length; i++) out.push(s.charCodeAt(i));
+    return out;
+  }catch(e){ return null; }
+}
+var MDNS = /^([0-9a-f]{8})-?([0-9a-f]{4})-?([0-9a-f]{4})-?([0-9a-f]{4})-?([0-9a-f]{12})\.local$/i;
+function packCand(addr, port){
+  var m, out;
+  if(/^\d+\.\d+\.\d+\.\d+$/.test(addr)) out = [4].concat(addr.split(".").map(Number));
+  else if((m = MDNS.exec(addr))){
+    out = [77];
+    var hex = m.slice(1).join("");
+    for(var i=0; i<32; i+=2) out.push(parseInt(hex.substr(i, 2), 16));
+  }
+  else return null;   // IPv6 and TCP are left out: host UDP over v4 or mDNS is the LAN case
+  return out.concat([port >> 8, port & 255]);
+}
+function packSDP(sdp, kind, id, maxCands){
+  var get = function(re){ var m = re.exec(sdp); return m ? m[1] : null; };
+  var ufrag = get(/a=ice-ufrag:(\S+)/), pwd = get(/a=ice-pwd:(\S+)/);
+  var fp = get(/a=fingerprint:sha-256 ([0-9A-Fa-f:]+)/);
+  if(!ufrag || !pwd || !fp || ufrag.length > 64 || pwd.length > 64) return null;
+  var out = [kind, id & 255];
+  [ufrag, pwd].forEach(function(s){
+    out.push(s.length);
+    for(var i=0; i<s.length; i++) out.push(s.charCodeAt(i) & 127);
+  });
+  var fpb = fp.split(":").map(function(h){ return parseInt(h, 16); });
+  if(fpb.length !== 32) return null;
+  out = out.concat(fpb);
+  var cands = [], seen = {}, re = /a=candidate:\S+ 1 udp \d+ (\S+) (\d+) typ host/gi, m;
+  while((m = re.exec(sdp)) && cands.length < maxCands){
+    var c = packCand(m[1], +m[2]);
+    if(c && !seen[c.join()]){ seen[c.join()] = 1; cands.push(c); }
+  }
+  out.push(cands.length);
+  cands.forEach(function(c){ out = out.concat(c); });
+  return out;
+}
+function unpackSDP(b){
+  if(!b || b.length < 40) return null;
+  var i = 0, k, kind = b[i++], id = b[i++];
+  if(kind !== LINK_OFFER && kind !== LINK_ANSWER) return null;
+  function str(){
+    var n = b[i++], s = "";
+    for(var q=0; q<n; q++) s += String.fromCharCode(b[i++]);
+    return s;
+  }
+  var ufrag = str(), pwd = str(), fp = [];
+  for(k=0; k<32; k++) fp.push(("0" + (b[i++] || 0).toString(16).toUpperCase()).slice(-2));
+  var nc = b[i++], cands = [];
+  for(k=0; k<nc; k++){
+    var t = b[i++], addr;
+    if(t === 4){ addr = b.slice(i, i + 4).join("."); i += 4; }
+    else if(t === 77){
+      var hex = b.slice(i, i + 16).map(function(x){ return ("0" + x.toString(16)).slice(-2); }).join("");
+      i += 16;
+      addr = [hex.substr(0,8), hex.substr(8,4), hex.substr(12,4), hex.substr(16,4), hex.substr(20)].join("-") + ".local";
+    }
+    else return null;
+    var port = (b[i] << 8) | b[i + 1];
+    i += 2;
+    cands.push("a=candidate:" + (k + 1) + " 1 udp " + (2122260223 - k) + " " + addr + " " + port + " typ host generation 0");
+  }
+  if(i !== b.length || !ufrag || !pwd) return null;
+  var sdp = [
+    "v=0", "o=- " + (1e6 + id) + " 2 IN IP4 127.0.0.1", "s=-", "t=0 0",
+    "a=group:BUNDLE 0", "a=msid-semantic: WMS",
+    "m=application 9 UDP/DTLS/SCTP webrtc-datachannel", "c=IN IP4 0.0.0.0",
+    "a=ice-ufrag:" + ufrag, "a=ice-pwd:" + pwd, "a=ice-options:trickle",
+    "a=fingerprint:sha-256 " + fp.join(":"),
+    "a=setup:" + (kind === LINK_OFFER ? "actpass" : "active"),
+    "a=mid:0", "a=sctp-port:5000", "a=max-message-size:262144"
+  ].concat(cands).join("\r\n") + "\r\n";
+  return { kind: kind, id: id, sdp: sdp };
+}
+// Host candidates only, so gathering is quick; the timeout covers a browser
+// that never reports "complete".
+function gathered(pc){
+  return new Promise(function(done){
+    if(pc.iceGatheringState === "complete") return done();
+    pc.addEventListener("icegatheringstatechange", function(){
+      if(pc.iceGatheringState === "complete") done();
+    });
+    setTimeout(done, 2500);
+  });
+}
+function newPeer(){ return new RTCPeerConnection({ iceServers: [] }); }
+
+// --- the scorer's side ---
+var link = { peers: [], invite: null, ear: null, cam: null, status: "" };
+var syncQueued = false;
+
+function linkSay(s){ link.status = s; $("linkStat").innerHTML = s || ""; }
+function renderLinkUI(){
+  var b = $("linkBtn");
+  b.textContent = L.linkBtn(link.peers.length);
+  b.setAttribute("aria-pressed", link.peers.length ? "true" : "false");
+  $("listenBtn").textContent = link.ear ? L.linkStop : L.linkListen;
+  $("scanBtn").textContent = link.cam ? L.linkStop : L.linkScan;
+  $("scanBtn").hidden = !("BarcodeDetector" in window);
+  $("pasteIn").placeholder = L.linkPastePh;
+  $("playBtn").textContent = watchPeer && watchPeer.src ? L.linkStop : L.watchPlay;
+  renderWatchBar();
+}
+function openLink(){
+  if(watching) return;
+  $("linkHost").hidden = false;
+  $("linkGuest").hidden = true;
+  $("linkDlg").showModal();
+  linkSay("");
+  newInvite();
+  renderLinkUI();
+}
+// `note` stays on the status line instead of the usual progress copy — the
+// news that someone joined, or that the last handshake failed.
+function newInvite(note){
+  dropInvite();
+  $("linkQR").innerHTML = "";
+  if(!window.RTCPeerConnection){ linkSay(L.linkNoRtc); return; }
+  var pc = newPeer();
+  var inv = { pc: pc, id: Math.floor(Math.random() * 256), open: false, answered: false };
+  inv.ch = pc.createDataChannel("sixbones", { ordered: true });
+  inv.ch.onopen = function(){ adopt(inv); };
+  link.invite = inv;
+  linkSay(note || L.linkMaking);
+  pc.createOffer()
+    .then(function(o){ return pc.setLocalDescription(o); })
+    .then(function(){ return gathered(pc); })
+    .then(function(){
+      if(link.invite !== inv) return;
+      var bytes = packSDP(pc.localDescription.sdp, LINK_OFFER, inv.id, 3);
+      if(!bytes){ linkSay(L.linkNoRtc); return; }
+      inv.url = location.href.split("#")[0] + "#join=" + b64u(bytes);
+      // The code is also a link: on a laptop, a click opens the watch view in
+      // a new window — for a second screen, or a quick check of the link.
+      $("linkQR").innerHTML = '<a href="' + esc(inv.url) + '" target="_blank" rel="noopener">' +
+                              qrSVG(inv.url) + '</a>';
+      linkSay(note || (link.ear ? L.linkHearing : (link.cam ? L.linkLooking : L.linkWait)));
+    })
+    .catch(function(){ if(link.invite === inv) linkSay(L.linkNoRtc); });
+}
+function dropInvite(){
+  var inv = link.invite;
+  link.invite = null;
+  if(inv && !inv.open){ try{ inv.pc.close(); }catch(e){} }
+}
+// `quiet`: a reply heard or seen that belongs to some other invitation (a
+// spectator still singing an old one) is ignored rather than reported.
+function acceptReply(bytes, quiet){
+  var inv = link.invite;
+  if(!inv || inv.answered) return false;
+  var o = unpackSDP(bytes);
+  if(!o || o.kind !== LINK_ANSWER || o.id !== inv.id){
+    if(!quiet) linkSay(L.linkBad);
+    return false;
+  }
+  inv.answered = true;
+  stopListen(); stopScan();
+  linkSay(L.linkConnecting);
+  var fail = function(){
+    if(link.invite !== inv || inv.open) return;
+    newInvite(L.linkFailed);
+  };
+  inv.pc.setRemoteDescription({ type: "answer", sdp: o.sdp }).catch(fail);
+  setTimeout(fail, 15000);
+  return true;
+}
+function adopt(inv){
+  inv.open = true;
+  var peer = { pc: inv.pc, ch: inv.ch };
+  link.peers.push(peer);
+  if(link.invite === inv) link.invite = null;
+  var gone = function(){
+    var i = link.peers.indexOf(peer);
+    if(i === -1) return;
+    link.peers.splice(i, 1);
+    try{ peer.pc.close(); }catch(e){}
+    renderLinkUI();
+  };
+  peer.ch.onclose = gone;
+  peer.pc.addEventListener("connectionstatechange", function(){
+    if(peer.pc.connectionState === "failed" || peer.pc.connectionState === "closed") gone();
+  });
+  sendTable(peer, tableMsg());
+  SFX.keep();
+  // The next spectator's code, ready to go.
+  if($("linkDlg").open && !watching) newInvite(L.linkJoined(link.peers.length));
+  else linkSay(L.linkJoined(link.peers.length));
+  renderLinkUI();
+}
+// The log is capped for the wire; a spectator sees the recent lines.
+function tableMsg(){
+  var s = state;
+  if(s && s.log.length > 60){
+    s = JSON.parse(JSON.stringify(s));
+    s.log.length = 60;
+  }
+  return JSON.stringify({ v: 1, s: s, p: pad });
+}
+function sendTable(peer, msg){
+  try{ if(peer.ch.readyState === "open") peer.ch.send(msg); }catch(e){}
+}
+// Called at the end of every render. Coalesced, so a handler that renders
+// twice still sends once.
+function syncOut(){
+  if(watching || !link.peers.length || syncQueued) return;
+  syncQueued = true;
+  setTimeout(function(){
+    syncQueued = false;
+    var msg = tableMsg();
+    link.peers.forEach(function(p){ sendTable(p, msg); });
+  }, 0);
+}
+
+function startListen(){
+  var a = ac();
+  if(!a || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ linkSay(L.linkNoMic); return; }
+  navigator.mediaDevices.getUserMedia({
+    audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+  }).then(function(stream){
+    if(!$("linkDlg").open){ stream.getTracks().forEach(function(t){ t.stop(); }); return; }
+    var src = a.createMediaStreamSource(stream);
+    var proc = a.createScriptProcessor(4096, 1, 1);
+    var sink = a.createGain();
+    sink.gain.value = 0;
+    var ear = new Ear(a.sampleRate, function(bytes){ acceptReply(bytes, true); });
+    proc.onaudioprocess = function(e){ ear.push(e.inputBuffer.getChannelData(0)); };
+    src.connect(proc); proc.connect(sink); sink.connect(a.destination);
+    link.ear = { stream: stream, src: src, proc: proc, sink: sink };
+    linkSay(L.linkHearing);
+    renderLinkUI();
+  }).catch(function(){ linkSay(L.linkNoMic); renderLinkUI(); });
+}
+function stopListen(){
+  var e = link.ear;
+  if(!e) return;
+  link.ear = null;
+  e.stream.getTracks().forEach(function(t){ t.stop(); });
+  try{ e.src.disconnect(); e.proc.disconnect(); e.sink.disconnect(); }catch(x){}
+  e.proc.onaudioprocess = null;
+  renderLinkUI();
+}
+function startScan(){
+  var det;
+  try{ det = new window.BarcodeDetector({ formats: ["qr_code"] }); }catch(e){ linkSay(L.linkNoCam); return; }
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ linkSay(L.linkNoCam); return; }
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function(stream){
+    if(!$("linkDlg").open){ stream.getTracks().forEach(function(t){ t.stop(); }); return; }
+    var v = $("linkCam");
+    v.srcObject = stream;
+    v.hidden = false;
+    v.play();
+    var cam = link.cam = { stream: stream, t: 0 };
+    var tick = function(){
+      if(link.cam !== cam) return;
+      det.detect(v).then(function(codes){
+        for(var i=0; i<codes.length; i++){
+          if(acceptReply(unb64u(codes[i].rawValue), true)) return;
+        }
+        cam.t = setTimeout(tick, 250);
+      }).catch(function(){ cam.t = setTimeout(tick, 400); });
+    };
+    tick();
+    linkSay(L.linkLooking);
+    renderLinkUI();
+  }).catch(function(){ linkSay(L.linkNoCam); renderLinkUI(); });
+}
+function stopScan(){
+  var c = link.cam;
+  if(!c) return;
+  link.cam = null;
+  clearTimeout(c.t);
+  c.stream.getTracks().forEach(function(t){ t.stop(); });
+  $("linkCam").srcObject = null;
+  $("linkCam").hidden = true;
+  renderLinkUI();
+}
+
+$("linkBtn").addEventListener("click", openLink);
+$("listenBtn").addEventListener("click", function(){ if(link.ear) stopListen(); else startListen(); });
+$("scanBtn").addEventListener("click", function(){ if(link.cam) stopScan(); else startScan(); });
+$("pasteForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  var v = $("pasteIn").value;
+  if(!v.trim()) return;
+  // A pasted join link or a pasted reply code: take the part after the last "=".
+  if(acceptReply(unb64u(v.trim().split("=").pop()), false)) $("pasteIn").value = "";
+});
+$("closeLink").addEventListener("click", function(){ $("linkDlg").close(); });
+$("linkDlg").addEventListener("click", function(e){ if(e.target === this) this.close(); });
+$("linkDlg").addEventListener("close", function(){
+  stopListen(); stopScan(); stopReply();
+  if(!watching) dropInvite();
+});
+
+// --- the spectator's side ---
+// Watch mode: the page opened from a join link. `state` becomes the mirror;
+// save() never writes it, and leaving reads the page's own game back from
+// storage.
+var watching = false, watchPeer = null;
+
+function watchSay(s){ $("watchStat").innerHTML = s || ""; }
+function renderWatchBar(){
+  var bar = $("watchBar");
+  bar.hidden = !watching;
+  if(!watching) return;
+  var live = !!(watchPeer && watchPeer.live);
+  bar.classList.toggle("live", live);
+  $("watchTxt").innerHTML = live ? L.watchLive
+    : (watchPeer && watchPeer.lost ? L.watchLost
+    : (watchPeer && watchPeer.stale ? L.watchStale : L.watchReady));
+  $("replyBtn").hidden = live || !(watchPeer && watchPeer.reply);
+}
+function joinFromHash(){
+  var m = /#join=([A-Za-z0-9_-]+)/.exec(location.hash);
+  if(!m) return;
+  // Forget the link at once: a reload shouldn't replay a spent invitation.
+  try{ history.replaceState(null, "", location.pathname + location.search); }catch(e){}
+  watching = true;
+  state = null; undoStack = []; clearPad();
+  document.documentElement.setAttribute("data-watch", "");
+  watchPeer = { pc: null, ch: null, reply: null, live: false, lost: false, stale: false, src: null };
+  $("linkHost").hidden = true;
+  $("linkGuest").hidden = false;
+  $("replyQR").innerHTML = "";
+  $("replyCode").textContent = "";
+  $("playBtn").disabled = $("copyBtn").disabled = true;
+  var o = unpackSDP(unb64u(m[1]));
+  if(!o || o.kind !== LINK_OFFER || !window.RTCPeerConnection){
+    watchPeer.stale = true;
+    return;
+  }
+  watchSay(L.linkMaking);
+  $("linkDlg").showModal();
+  var pc = watchPeer.pc = newPeer(), me = watchPeer;
+  pc.ondatachannel = function(e){
+    var ch = me.ch = e.channel;
+    ch.onopen = function(){ if(watchPeer === me) watchLive(); };
+    ch.onmessage = function(ev){ if(watchPeer === me) receiveTable(ev.data); };
+    ch.onclose = function(){ if(watchPeer === me) watchDropped(); };
+  };
+  pc.addEventListener("connectionstatechange", function(){
+    if(watchPeer === me && me.live && pc.connectionState === "failed") watchDropped();
+  });
+  pc.setRemoteDescription({ type: "offer", sdp: o.sdp })
+    .then(function(){ return pc.createAnswer(); })
+    .then(function(a){ return pc.setLocalDescription(a); })
+    .then(function(){ return gathered(pc); })
+    .then(function(){
+      if(watchPeer !== me) return;
+      // One candidate is plenty: the scorer learns our address from our own
+      // connectivity checks anyway, and every byte is 50 ms of singing.
+      var bytes = packSDP(pc.localDescription.sdp, LINK_ANSWER, o.id, 1);
+      if(!bytes) throw new Error("no reply");
+      me.reply = bytes;
+      var code = b64u(bytes);
+      $("replyQR").innerHTML = qrSVG(code);
+      $("replyCode").textContent = code;
+      $("playBtn").disabled = $("copyBtn").disabled = false;
+      watchSay(L.watchReady);
+      renderLinkUI();
+    })
+    .catch(function(){
+      if(watchPeer !== me) return;
+      me.stale = true;
+      watchSay(L.watchStale);
+      renderLinkUI();
+    });
+}
+function watchLive(){
+  watchPeer.live = true;
+  stopReply();
+  if($("linkDlg").open) $("linkDlg").close();
+  SFX.hot();
+  renderLinkUI();
+}
+function watchDropped(){
+  if(!watchPeer || watchPeer.lost) return;
+  watchPeer.live = false;
+  watchPeer.lost = true;
+  SFX.drop();
+  renderLinkUI();
+}
+function receiveTable(data){
+  var o;
+  try{ o = JSON.parse(data); }catch(e){ return; }
+  if(!o || o.v !== 1) return;
+  var before = state;
+  state = o.s && o.s.players ? o.s : null;
+  pad = Array.isArray(o.p) && o.p.length === 7 ? o.p : [0,0,0,0,0,0,0];
+  echoCue(before, state);
+  renderAll();
+}
+// The spectator hears the table: cash-ins, farkles and the finish get their
+// cue (and the finish its stamp) as the scorer's page plays them.
+function echoCue(a, b){
+  if(!a || !b) return;
+  if(b.over && !a.over){ SFX.win(); stamp(L.stampWin, true); return; }
+  var ha = a.log[0], hb = b.log[0];
+  if(!hb || b.log.length < a.log.length || JSON.stringify(ha) === JSON.stringify(hb)) return;
+  var fresh = b.log.slice(0, Math.max(1, b.log.length - a.log.length));
+  var has = function(k){ return fresh.some(function(e){ return e.k === k; }); };
+  if(has("bank")) SFX.bank();
+  else if(has("bust")){ SFX.bust(); quake(); }
+  else SFX.keep();
+}
+function leaveWatch(){
+  stopReply();
+  if(watchPeer){ try{ watchPeer.pc && watchPeer.pc.close(); }catch(e){} }
+  watchPeer = null;
+  watching = false;
+  document.documentElement.removeAttribute("data-watch");
+  state = null; undoStack = []; clearPad();
+  load();                           // the page's own game, as it stands in storage now
+  if($("linkDlg").open) $("linkDlg").close();
+  renderLinkUI();
+  renderAll();
+}
+function playReply(){
+  var a = ac();
+  if(!a || !watchPeer || !watchPeer.reply) return;
+  // iOS mutes Web Audio under the ring/silent switch unless the page says it's playback.
+  try{ if(navigator.audioSession) navigator.audioSession.type = "playback"; }catch(e){}
+  var s = chirpRender(watchPeer.reply, a.sampleRate);
+  var buf = a.createBuffer(1, s.length, a.sampleRate);
+  buf.getChannelData(0).set(s);
+  var src = a.createBufferSource();
+  src.buffer = buf;
+  src.loop = true;   // over and over until the scorer's page picks up
+  src.connect(a.destination);
+  src.start();
+  watchPeer.src = src;
+  renderLinkUI();
+}
+function stopReply(){
+  if(!watchPeer || !watchPeer.src) return;
+  try{ watchPeer.src.stop(); }catch(e){}
+  watchPeer.src = null;
+  renderLinkUI();
+}
+$("playBtn").addEventListener("click", function(){
+  if(watchPeer && watchPeer.src) stopReply(); else playReply();
+});
+$("copyBtn").addEventListener("click", function(){
+  var code = $("replyCode").textContent;
+  var done = function(){ watchSay(L.watchCopied); };
+  try{
+    navigator.clipboard.writeText(code).then(done, function(){ selectCode(); });
+  }catch(e){ selectCode(); }
+});
+function selectCode(){
+  var r = document.createRange();
+  r.selectNodeContents($("replyCode"));
+  var sel = window.getSelection();
+  sel.removeAllRanges(); sel.addRange(r);
+}
+$("replyBtn").addEventListener("click", function(){ if(watching && !$("linkDlg").open) $("linkDlg").showModal(); });
+$("leaveBtn").addEventListener("click", leaveWatch);
+// Belt and braces for the CSS that hides the controls: in watch mode no
+// click inside the game reaches a handler that could move it.
+$("game").addEventListener("click", function(e){
+  if(watching){ e.stopPropagation(); e.preventDefault(); }
+}, true);
+
 /* ================= keyboard ================= */
 document.addEventListener("keydown", function(e){
   var t = e.target.tagName;
   if(t === "INPUT" || t === "SELECT" || t === "TEXTAREA") return;
-  if($("rulesDlg").open) return;
+  if($("rulesDlg").open || $("linkDlg").open) return;
   if(e.key === "t" || e.key === "T"){ e.preventDefault(); cycleDressing(); return; }
   if(e.key === "c" || e.key === "C"){ e.preventDefault(); toggleCB(); return; }
+  if(watching) return;              // a spectator can re-dress their window, never move the game
   if(!state || state.over){
     if(e.key === "u" || e.key === "U"){ e.preventDefault(); undo(); }
     return;
@@ -2944,6 +4112,9 @@ document.addEventListener("keydown", function(e){
 /* ================= boot ================= */
 load();
 applyTheme(theme, true);   // paints the dressing, then renders through it
+joinFromHash();            // opened from a scorer's invitation? become a spectator
+renderLinkUI();
+renderAll();
 
 })();
 </script>
