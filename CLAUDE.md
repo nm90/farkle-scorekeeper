@@ -1,8 +1,11 @@
 # Six Bones — Farkle scorekeeper
 
-A **single static file**: `index.html`. No build step, no dependencies, no network calls, no
-external assets. Open it in a browser and it runs. Keep it that way — any new feature must ship
-inside this one file (SVG inline, sounds synthesized, styles in the `<style>` block).
+A **single static file**: `index.html`. No build step, no dependencies, no external assets, and
+no network calls to any host. Open it in a browser and it runs. Keep it that way — any new
+feature must ship inside this one file (SVG inline, sounds synthesized, styles in the `<style>`
+block). The one piece of traffic is the opt-in **table link** (see below): WebRTC between two
+devices on the same local network, with no ICE servers configured — no STUN, no TURN, no
+signaling server. Never add one; a third-party host is exactly what that design avoids.
 
 The app wears one of six **dressings** (themes), switched from the toolbar or with <kbd>T</kbd>.
 A dressing is a whole world, not a palette — it changes colors, type, geometry, texture, motion,
@@ -32,10 +35,12 @@ cost of clarity about the actual score. Numbers stay numbers everywhere.
 | `<style>` ~9–470 | Base CSS. Ordered by region, with `/* ---------- name ---------- */` banners. |
 | `<style>` ~479–1130 | The five non-default dressings, one `/* ===== DRESSING n ===== */` block each, then the `/* ===== COLOR BLIND MODE ===== */` block (see "Color blind mode"). |
 | `<header class="masthead">` | Title, tagline, and `#potLine` (target score, rewritten at render). |
-| `<nav class="toolbar">` | `#dressingSel` (the dressing dropdown) + Rules / Undo / Sound / Color Blind / High Stakes / New Game. `#undoBtn`, `#stakesToggle` and `#newBtn` are hidden until a game exists; `#cbBtn` never hides. |
+| `<nav class="toolbar">` | `#dressingSel` (the dressing dropdown) + Rules / Undo / Sound / Color Blind / High Stakes / New Game / `#linkBtn` (spectators). `#undoBtn`, `#stakesToggle` and `#newBtn` are hidden until a game exists; `#cbBtn` never hides; `#linkBtn` hides only in watch mode. |
+| `#watchBar`, `#watchWait` | A spectator's status line and "no game yet" panel. Shown only in watch mode. |
 | `<section id="setup">` | Roster builder + pot/buy-in selects. Visible when `state === null`. |
 | `<section id="game">` | `#crownSlot` (winner banner) + `.board` — a 2-col grid: turn panel left, ledger + log right. Collapses to 1 col under 880px. |
 | `<dialog id="rulesDlg">` | Scoring table and key bindings. Update this whenever scoring changes. |
+| `<dialog id="linkDlg">` | The table link: `#linkHost` (the scorer's invitation) or `#linkGuest` (a spectator's reply) — one side shown at a time. |
 | `<script>` ~1007–1970 | The whole app, one IIFE, banner-separated sections (see below). |
 
 CSS conventions: **everything a dressing can change is a token on `:root`** — colors, radii
@@ -64,6 +69,11 @@ Each is introduced by a `/* ===== name ===== */` banner.
   Every cue is filtered through `voice()`, the current dressing's `{wave, tune, gain, dur}` — so a
   cue written once rings soft in the saloon, buzzes in neon, clacks dry in broadsheet and chimes in
   bubblegum. Pass a `type` to `tone()` as the saloon default; a dressing's `wave` overrides it.
+- **qr code** — `qrEncode(bytes)` (byte mode, level M, versions 1–15) and `qrSVG(text)`. Pure;
+  colors come from `.qr-ink`/`.qr-paper`, i.e. the `--qr-ink`/`--qr-paper` tokens, which every
+  dressing sets dark-on-light because phone cameras won't read an inverted code.
+- **chirp modem** — `MODEM` (the frequency plan), `crc16`, `chirpRender(bytes, fs)` → samples, and
+  `Ear(fs, onFrame)`, a listener fed sample chunks. Pure, so a test can pipe one into the other.
 - **state** — `freshState()`, `save()`/`load()` (localStorage key `sixbones.v1`, all access wrapped
   in try/catch because file:// and sandboxed frames can throw), `snapshot()`/`undo()`.
 - **helpers** — `$`, `num` (thousands separators), `esc` (**always** escape player names — they go
@@ -76,7 +86,11 @@ Each is introduced by a `/* ===== name ===== */` banner.
   renderLedger / renderLog / renderCrown`.
 - **turn actions** — pad clicks, `commitPad()`, and the Keep / Cash In / Farkle handlers,
   plus `nextPlayer()` and `finish()`.
-- **toolbar**, **keyboard**, **boot**.
+- **toolbar**.
+- **table link** — SDP packing (`packSDP`/`unpackSDP`), the scorer's side (`openLink`,
+  `newInvite`, `acceptReply`, `adopt`, `syncOut`, `startListen`/`startScan`) and the spectator's
+  (`joinFromHash`, `receiveTable`, `echoCue`, `playReply`, `leaveWatch`). See "Table link".
+- **keyboard**, **boot**.
 
 ## State
 
@@ -113,7 +127,8 @@ Three things live **outside** `state`:
   put the old one back.
 
 The localStorage blob is `{s: state, r: roster, m: muted, t: theme, c: cbMode}` — `cbMode` is the
-color blind mode flag, a house setting like sound (see "Color blind mode").
+color blind mode flag, a house setting like sound (see "Color blind mode"). In watch mode `s` is
+written back exactly as stored, never the mirrored game (see "Table link").
 
 `undoStack` holds `JSON.stringify({s: state, p: pad})` snapshots, capped at 60. **Call
 `snapshot()` before any mutation** so Undo stays honest. If a handler snapshots and then bails out
@@ -328,6 +343,68 @@ snapshotted, so Undo puts the rule back — unlike the dressing, which deliberat
 - The latch is lit via `.btn.ghost[aria-pressed="true"]`, a token-only rule, so it re-colors per
   dressing with no per-dressing CSS.
 
+## Table link (spectators)
+
+One scorer, any number of read-only spectators on their own phones, peer to peer over the local
+Wi-Fi. Nothing is ever sent anywhere but the other device.
+
+**Pairing.** A browser can't discover devices on the network, so two hand-offs replace a signaling
+server:
+
+1. The scorer opens `#linkBtn` → `newInvite()` builds an `RTCPeerConnection` (no ICE servers),
+   gathers host candidates, packs the offer and shows it as a QR of
+   `<this page>#join=<base64url>`. The spectator scans it with the **native camera app**, which
+   works on every phone, including iPhones, whose Safari has no `BarcodeDetector`.
+2. The spectator's page boots into watch mode (`joinFromHash()`), answers, and packs the reply.
+   It gets back to the scorer three ways, and `acceptReply()` takes whichever arrives first:
+   **sound** (`playReply()` loops the chirp, the scorer's `startListen()` feeds the mic into an
+   `Ear`), a **QR scan** (`startScan()`, only where `BarcodeDetector` exists — Chrome on Android
+   and macOS), or a **pasted code**.
+
+**Packing** (`packSDP`/`unpackSDP`). A real SDP is ~2 KB; only the ICE ufrag/pwd, the DTLS
+sha-256 fingerprint and the host candidates vary, so those go in a byte string:
+`[kind, id, ufragLen, ufrag…, pwdLen, pwd…, fp×32, nCands, (4 a b c d | 77 uuid×16) portHi portLo …]`.
+`unpackSDP` rebuilds a minimal data-channel SDP around them. Candidates are IPv4 or Chrome/Safari
+mDNS (`<uuid>.local`); IPv6 and TCP are dropped. The reply carries at most one candidate — the
+scorer learns the rest as peer-reflexive from the spectator's checks — because every reply byte is
+50 ms of chirp. `id` is a random byte per invitation, echoed in the reply, so a spectator still
+singing an old invitation is ignored rather than wired to the wrong peer connection.
+
+**The modem** (see its banner comment). The frequency plan, symbol time and window are coupled:
+every tone must sit on a multiple of `1/MODEM.win` (25 Hz) or the banks bleed into each other.
+Tones stay sine in every dressing — a shaped wave's harmonics land in the other bank. A ~84-byte
+reply is a frame of about 4.7 s; the listener sums repeats (soft combining) until the CRC passes.
+
+**Sync.** The scorer is the only writer. `renderAll()` and `renderPadArea()` call `syncOut()`,
+which coalesces into one `{v:1, s: state, p: pad}` message per tick to every open channel (the
+log is capped at 60 lines on the wire). A new spectator gets the table as soon as its channel
+opens. Every render path already runs through one of those two functions; a new one that changes
+what's on screen must too.
+
+**Watch mode** — `html[data-watch]`, `watching === true`:
+
+- `save()` never writes the mirror: in watch mode it re-reads the stored `s` and writes it back
+  untouched, because a spectator window in the same browser (a second screen) shares its
+  localStorage with the scorer's tab. `leaveWatch()` runs `load()` to get the page's own game back
+  as it stands now. The join hash is cleared at boot, so a reload also returns to the own game.
+- The invitation QR is also a link: on a laptop, clicking it opens the watch view in a new window.
+- Dressing, sound and color blind mode stay per device — the mirror carries only `s` and `p`.
+- Nothing can move the game: CSS hides every control (`[data-watch] …` in the table link CSS),
+  a capture-phase click listener on `#game` swallows clicks, the keyboard handler returns after
+  <kbd>T</kbd>/<kbd>C</kbd>, and the toolbar's Undo / New Game / High Stakes / link buttons are
+  hidden.
+- `echoCue()` replays the scorer's cues (cash-in, farkle, the finish) from what changed in the
+  log, so the room hears the table on every phone. An undo on the scorer's side plays nothing.
+- `#watchBar` shows the link state (`watchReady` → `watchLive` → `watchLost`, or `watchStale`
+  for a spent or garbled invitation), with Leave and, until live, Show My Reply.
+
+**Per-dressing copy**: `linkBtn(n)` (the toolbar label with the spectator count) and every
+`link*` / `watch*` key — all six lexicons. The dialog's close button reuses `closeRules`.
+
+**Limits, stated plainly.** Guest Wi-Fi with client isolation (hotels, cafés) blocks direct
+connections between devices and there is no fallback — adding a TURN server would break the
+no-third-party rule. A sleeping phone drops its channel; the spectator rescans a fresh invitation.
+
 ## Turn flow
 
 Set aside scoring dice → **Keep & Reroll** (`commitPad`) adds to `state.turn` and subtracts from
@@ -350,7 +427,7 @@ per-turn flags `stakes`/`hot`/`threw`.
   `renderPad()` alone. The stakes banner depends on `padTotal()` — an offer closes as soon as dice
   are set aside and reopens when the pad is cleared — so skipping it leaves a live "Take the Gamble"
   button on screen that `offerOpen()` will refuse.
-- Keyboard handlers bail out when focus is in an input or the dialog is open. New shortcuts go in
+- Keyboard handlers bail out when focus is in an input or either dialog is open. New shortcuts go in
   the same `switch`, and must be added to `keysNote` in **all six** lexicons — the key list in the
   rules dialog is per-dressing copy, not static markup.
 - `T` (cycle dressing) is handled *before* the `!state || state.over` bail-out, so you can change
@@ -405,6 +482,18 @@ Screenshots for visual checks — take one per dressing; a change that only look
 is not done:
 `google-chrome --headless --disable-gpu --hide-scrollbars --window-size=1280,1180 --screenshot=out.png <url>`
 (check 420px wide too — the board collapses at 880 and the dice pad goes 3-across at 520).
+
+The table link has two throwaway harnesses of its own (validated: 28 + 53 assertions). The pure
+parts — slice from the `qr code` banner to the `state` banner, plus `// --- packing:` up to
+`// Host candidates only` — run in Node: SDP pack/unpack round trips, and `chirpRender` piped into
+`Ear` across 48k/44.1k rates, clock drift, echo, SNR down to −6 dB, and 40 s of noise that must
+decode nothing. Write the QR grids out as PNGs and decode them with zxing-cpp (OpenCV's detector
+misses version 15; ZXing reads every version). The end-to-end run uses Playwright with two pages in
+one Chromium: launch with `--use-fake-ui-for-media-stream --use-fake-device-for-media-stream
+--use-file-for-fake-audio-capture=reply.wav`, read the invitation from `#linkQR a[href]`, write the
+spectator's rendered chirp to `reply.wav` *before* clicking Listen, and the reply really does travel
+through the microphone path. A closed spectator page takes Chrome's ICE consent timeout (~30 s) to
+drop from the scorer's count.
 
 Note: `file://` URLs are blocked by the Chrome extension tooling, so always serve over
 `http://127.0.0.1` when driving the page.
